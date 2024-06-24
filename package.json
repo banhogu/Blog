@@ -19,6 +19,7 @@
     "next": "^14.2.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-icons": "^5.2.1",
     "react-tweet": "^3.1.1",
     "react-wrap-balancer": "^0.2.4",
     "react-youtube": "^10.1.0",
@@ -28,19 +29,13 @@
     "remark-mdx-frontmatter": "^4.0.0"
   },
   "devDependencies": {
-    "typescript": "^5",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
+    "eslint": "^8",
+    "eslint-config-next": "14.2.4",
     "postcss": "^8",
     "tailwindcss": "^3.4.1",
-    "eslint": "^8",
-    "eslint-config-next": "14.2.4"
-  },
-  "postcss": {
-    "plugins": {
-      "tailwindcss": {},
-      "autoprefixer": {}
-    }
+    "typescript": "^5"
   }
 }
