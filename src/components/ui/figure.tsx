@@ -1,3 +1,4 @@
+'use client';
 export function Figure({ wide = false, children }) {
   return (
     <div

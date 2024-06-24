@@ -1,3 +1,4 @@
+'use client';
 import { A } from './a';
 import { P } from './p';
 

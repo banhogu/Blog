@@ -1,3 +1,4 @@
+'use client';
 import { Caption } from './caption';
 
 export const Snippet = ({ children, scroll = true, caption = null }) => (

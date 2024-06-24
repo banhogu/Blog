@@ -1,3 +1,4 @@
+'use client';
 import { Children } from 'react';
 
 export function withHeadingId(children) {

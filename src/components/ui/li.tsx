@@ -1,4 +1,4 @@
-// we use `[ul_&]` prefix for the <UL> variety
+'use client';
 export function LI({ children }) {
   return (
     <li

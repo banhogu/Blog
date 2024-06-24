@@ -1,3 +1,4 @@
+'use client';
 import { withHeadingId } from './utils';
 
 export function H3({ children }) {

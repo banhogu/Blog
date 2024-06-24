@@ -1,3 +1,4 @@
+'use client';
 import Link from 'next/link';
 
 export function A({ children, className = '', href, ...props }) {

@@ -1,3 +1,4 @@
+'use client';
 export const Code = ({ children }) => {
   return (
     <code
