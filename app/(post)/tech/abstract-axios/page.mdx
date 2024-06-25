@@ -1,0 +1,224 @@
+---
+title: API 공통 사항 관리를 위한, Axios 추상화 구현
+tag: tech
+---
+
+## 도입배경
+
+Offispace 프로젝트는 로그인/회원가입, 커뮤니티, 공유 오피스, 마이페이지 등 다양한 기능을 포함한다. 이전 프로젝트에서는 각 기능 담당 팀원들이 각자의 컴포넌트에서 Axios 요청을 직접 처리 해야 했는데, 해당 방식은 다음과 같은 문제점을 가지고 있다.
+
+- **반복적인 코드:** 토큰 헤더 포함, 공통 에러 처리 등 반복되는 코드가 많아 개발 효율성이 떨어짐.
+- **관리 어려움:** 프로젝트 규모가 커지면서 Axios 요청 관리가 어려워짐.
+- **일관성 부족:** 각 팀원마다 Axios 사용 방식에 차이가 발생하여 코드 일관성이 저하
+
+또한 이번 프로젝트에서는 JWT 토큰 방식의 로그인을 구현했는데, 로그인 이후 모든 API 호출에 토큰을 헤더에 포함해야 하며, 토큰 유무 및 유효성에 따라 로그인 페이지로 Redirect 되어야 한다. 이러한 토큰 관리 과정을 각 컴포넌트에서 직접 처리하면 코드 복잡성이 증가하고 개발 효율성이 저하될 것이라고 생각했다.
+
+따라서 위와 같은 문제점을 해결하기 위해 Axios 추상화를 도입하기로 했다. <br /><br />
+
+<hr />
+
+## 시작하기도 전에 발생한 문제
+
+아무리 Axios Instance를 잘 설계하고, 추상화를 진행해도 백엔드에서 내려주는 데이터가 통일되지 않은 형식으로 제공된다면 추상화된 코드에서 데이터를 제대로 사용할 수 없다는 문제가 발생했다.
+
+이전까지 백엔드 팀 또한 각자의 개인화된 방식으로 요청 데이터를 내려줬기 때문에, 통일된 요청 데이터 형식이 필요하다는 것을 인지하게 되었고, BE팀과 회의를 통해 데이터 형식과 에러 코드 형식을 통일했다.
+
+**📎 [API 명세서 / Swagger LInk](https://joo-api.store/swagger-ui/index.html#/)**
+
+[에러 Custom Code 명세서 ](https://banhogudev.oopy.io/a072a6b2-ba87-4c70-b5ee-f72a905867d4) <br /><br />
+
+<hr />
+
+## Axios 인스턴스 생성
+
+먼저 Axios Instance를 생성 해야하는데, Instance를 만드는 이유를 알기 위해서는 객체지향 프로그래밍과, 구성요소인 클래스, 인스턴스에 대한 개념 이해가 필요했다.
+
+### 객체지향프로그래밍이란?
+
+- 소프트웨어를 개발하는 데 사용되는 프로그래밍 패러다임 중 하나이다.
+- 프로그램을 객체 중심으로 설계하고 구성하는 방법론
+- 코드를 더 모듈화하고 추상화하여 프로그램의 복잡성을 줄이고 유지보수를 쉽게 만드는 것
+
+### 클래스와 인스턴스
+
+- **클래스(Class)**: 클래스는 어떤 객체를 빠르게 생성해내기 위한 틀과 같은 것이다. 클래스는 객체가 가져야 할 속성과 메서드를 정의한다.
+- **인스턴스(Instance)**: 틀에 적용되어 생성된 객체를 의미한다. 클래스에 정의된 속성과 메서드를 가지며, 서로 다른 인스턴스는 독립적으로 상태를 관리할 수 있다.
+
+> 간단히 말하면, 클래스는 객체를 만들기 위한 틀이고, 인스턴스는 그 틀을 이용하여 실제로 만들어진 객체라고 이해하면 쉽다.
+
+<br />
+
+<aside>
+❗ Axios에서 사용되는 클래스는 Axios 라이브러리 내부에 정의되어 있으며 HTTP 클라이언트의 기능과 설정을 추상화하는 역할을 한다. 이 때 인스턴스로 baseURL, header, params등이 있는데, 이러한 인스턴스 중 프로젝트에 자주 사용되는 내용들, 예를 들어 baseURL, token, Content-Type 등을 미리 지정하여, 간편하게 반복된 코드 없이 Axios 요청을 보낼 수 있다.
+
+</aside>
+
+<hr />
+
+## 그럼 본격적으로 인스턴스를 만들어보자
+
+> src 아래 api 폴더를 만들고 instance 이름으로 파일을 만든다.
+
+![](/images/tech/abstract-axios/1.png)
+
+```tsx
+export const instance: Axios = axios.create({
+  baseURL: process.env.NEXT_PUBLIC_BASE_URL,
+  withCredentials: true,
+  headers: {
+    'Content-Type': 'application/json',
+    Accept: '*/*'
+  },
+  timeout: 3000
+```
+
+- **baseURL: process.env.NEXT_PUBLIC_BASE_URL**
+  - `baseURL`은 모든 HTTP 요청에 기본적으로 사용될 URL을 설정한다. 이는 `NEXT_PUBLIC_BASE_URL`의 값을 사용하여 동적으로 설정된다.
+- **withCredentials: true**
+  - `withCredentials` 옵션은 요청에 자격 증명(쿠키, 인증 헤더 등)을 포함할지 여부를 설정한다. `true`로 설정하면 브라우저가 크로스 도메인 요청에 쿠키를 포함할 수 있게 된다. 이는 주로 사용자 인증이 필요한 상황에서 사용된다.
+- **headers**
+  - 요청에 포함될 기본 헤더를 설정
+    - `'Content-Type': 'application/json'`: 서버에 전송하는 데이터의 타입을 `application/json`으로 설정.
+    - `Accept: '*/*'`: 클라이언트가 서버로부터 모든 종류의 응답을 받을 수 있음
+- **timeout: 3000**
+  - 요청이 취소되기 전에 기다리는 시간을 밀리초 단위로 설정. 여기서는 3000 밀리초(3초)로 설정되어 있는데 즉, 요청이 3초 안에 완료되지 않으면 요청이 타임아웃된다.
+
+### 인터셉터 설정
+
+> 인터셉터는 요청이나 응답을 처리하기 전에 실행되는 함수다. 이를 이용하면 요청 또는 응답 데이터를 수정하거나 오류 또는 인증을 처리하는 데 사용할 수 있다.
+
+```tsx
+instance.interceptors.request.use(
+  (config: InternalAxiosRequestConfig): InternalAxiosRequestConfig => {
+    const token = getCookie('token') as string;
+    if (config && config.headers) {
+      if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+      }
+    }
+    if (process.env.NODE_ENV === 'development') {
+      const { method, url } = config;
+      logOnDev(`🚀 [API] ${method?.toUpperCase()} ${url} | Request`);
+    }
+    return config;
+  },
+  (error: AxiosError | Error): Promise<AxiosError> => {
+    return Promise.reject(error);
+  }
+);
+
+instance.interceptors.response.use(
+  (response: AxiosResponse): AxiosResponse => {
+    return response;
+  },
+  (error: AxiosError | Error): Promise<AxiosError> => {
+    if (process.env.NODE_ENV === 'development') {
+      if (axios.isAxiosError(error)) {
+        const { message } = error;
+        const { method, url } = error.config as InternalAxiosRequestConfig;
+        const { status, statusText } = error.response as AxiosResponse;
+        logOnDev(
+          `🚨 [API] ${method?.toUpperCase()} ${url} | Error ${status} ${statusText} | ${message}`
+        );
+        switch (status) {
+          case 401: {
+            toast.error('로그인이 필요합니다');
+            break;
+          }
+         ,,,
+        }
+      } else {
+        logOnDev(`🚨 [API] | Error ${error.message}`);
+      }
+    }
+    return Promise.reject(error);
+  }
+);
+```
+
+### 요청 인터셉터
+
+- `getCookie('token')`을 사용해 쿠키에서 토큰을 가져 온 후 `Authorization` 헤더에 `Bearer {token}` 형태로 추가한다.
+- 개발 환경(`process.env.NODE_ENV === 'development'`)에서 요청 메서드와 URL을 로그로 출력하여, API 요청 상황을 확인 할 수 있다.
+- 요청 설정 중 에러가 발생하면 이를 거부하고, 에러를 다음 처리 단계로 전달한다.
+
+### 응답 인터셉터
+
+- 에러 상태 코드에 따라 사용자에게 알맞은 에러 메시지를 로그에 표시한다.
+
+## API 요청 함수 생성
+
+> 마지막으로, 앞서 생성한 인스턴스를 이용하여 API 요청 함수를 작성했다.
+
+```tsx
+/* get 요청 */
+export const getRequest = async <T,>(url: string, config?: AxiosRequestConfig): Promise<T> => {
+  const response = await instance.get<T>(url, config as InternalAxiosRequestConfig);
+  return response.data;
+};
+
+/* post 요청 */
+export const postRequest = async <T, D>(
+  url: string,
+  data?: D,
+  config?: AxiosRequestConfig
+): Promise<T> => {
+  const response = await instance.post<T>(url, data, config as InternalAxiosRequestConfig);
+  return response.data;
+};
+
+/* delete 요청 */
+export const deleteRequest = async <T,>(url: string, config?: AxiosRequestConfig): Promise<T> => {
+  const response = await instance.delete<T>(url, config as InternalAxiosRequestConfig);
+  return response.data;
+};
+```
+
+이 함수는 제네릭 타입을 사용하여 호출 시 지정된 타입의 데이터를 반환할 수 있는데,
+
+- **`<T>`**: 제네릭 타입 파라미터로, 함수 호출 시 반환될 데이터의 타입을 지정한다. **여기서 BE 팀과 맞춘 기본 데이터 형식 중 data 안에 들어가는 타입을 지정하게 된다.**
+
+<br />
+
+```tsx
+export interface ICommon<T> {
+  //BE팀과 맞춘 데이터 형식
+  status: string;
+  errorCode: string;
+  message: string;
+  data: T;
+}
+```
+
+- **`url: string`**: 요청을 보낼 URL을 나타내는 문자열 파라미터
+- **`config?: AxiosRequestConfig`**: 옵셔널한 요청 추가 설정. Axios의 요청 설정을 커스터마이즈할 때 사용한다.
+
+<br />
+
+### 사용 예시
+
+```tsx
+export const userinfo = async () => {
+  const response = await getRequest<UserInfoType>('members');
+  return response;
+};
+
+type UserInfoType = ICommon<IUserInfo>;
+```
+
+<br />
+<hr />
+
+## 요약 및 느낀점
+
+### 1. 코드 재사용성 향상
+
+Axios를 추상화함으로써 가장 크게 느낀 점은 코드 재사용성이 현저히 향상되었다는 것이다. 모든 API 호출에 대해 반복적으로 설정해야 하는 부분들을 하나의 폴더에서 관리할 수 있게 되면서, 각 모듈에서 코드 중복을 피할 수 있었는데, 이는 유지보수 측면에서도 큰 이점으로 다가왔다.
+
+### 2. 에러 핸들링의 일관성
+
+API 호출 시 발생할 수 있는 다양한 에러를 인터셉터를 통해 일관되게 처리할 수 있게 되었다. 이전에는 각 컴포넌트에서 개별적으로 에러 처리를 해야 했기 때문에, 에러 메시지나 처리 방식이 중구난방이였지만, 추상화된 Axios파일에서 에러를 관리함으로써 에러 핸들링과, 에러 메시지의 일관성을 유지 할 수 있었다.
+
+### 3. 수정의 용이성
+
+API 호출 시 공통적으로 필요한 헤더나 인증 토큰 등의 설정을 중앙에서 관리할 수 있게 되어, 설정 변경이 필요할 때마다 수정할 필요가 없어졌다. 이를 통해 헤더나 인증 토큰 변경이 단 한줄로 변경될만큼 훨씬 쉬워졌고, 실수로 인해 발생할 수 있는 버그를 사전에 방지할 수 있었다.

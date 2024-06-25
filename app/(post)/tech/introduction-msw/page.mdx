@@ -1,0 +1,419 @@
+---
+title: API 언제나와요? 아 네… API로부터 독립된 컴포넌트 생성하기 + MSW 도입기
+tag: tech
+---
+
+## 도입 배경
+
+![](/images/tech/introduction-msw/1.png)
+
+Offispace 프로젝트는 PM, UI/UX 디자이너, 프론트엔드, 백엔드 팀이 모두 협업하는 프로젝트로, 8주라는 제한된 기간 내에 최상의 결과를 내기 위해서는 각 팀 별 스케줄 관리가 필수적이다. 특히 프론트엔드 팀으로서 시간 관리는 더욱 신경 쓸 수 밖에 없었는데, 이는 프론트엔드 개발이 기획과 디자인, 기능 정의, API 개발 등 모든 과정을 마친 후에야 시작되기 때문이다.
+
+### 발생 가능한 문제 시나리오
+
+**1. 백엔드 개발자가 API 설계 고민**
+
+- 백엔드 개발자는 개발 스펙을 보고 API를 어떻게 설계할지 고민한다.
+- 이 과정에서 프론트엔드 개발자는 백엔드의 설계가 완료될 때까지 기다려야 한다.
+- 설계된 API 문서가 명확하지 않거나 누락된 내용이 있을 수 있다.
+
+**2. 프론트엔드 개발자가 API를 사용하여 개발 시작**
+
+- API의 데이터를 파악하고, 프론트 UI에 맞춰 별도의 작업을 진행해야 한다.
+
+<aside>
+❗ 이러한 문제를 해결하기 위해 Offispace 프로젝트에서는 프론트엔드와 백엔드 팀이 협의하여 API를 먼저 설계하는 **API First Design** 방식을 도입했다.
+
+</aside>
+
+### API First Design의 장점
+
+- **문제 해결 1 :** 백엔드 개발자의 고민 시간 감소
+  - 이전에는 백엔드 팀이 혼자서 개발 스펙을 파악하고 고민했다면, 이제는 프론트엔드 팀과 함께 API를 설계하게 되어 고민 시간이 크게 줄어든다.
+  - 프론트엔드팀이 실제 화면을 담당하기 때문에, 어떤 API가 필요한지, 어떻게 사용할지를 더 잘 파악할 수 있고, 이를 통해 효율적인 API 설계가 가능해진다.
+- **문제 해결 2 :** 프론트엔드 중심의 API 설계
+  - 프론트엔드 팀이 프론트 화면에 맞게 API 설계를 요청하고, 이를 기반으로 API를 설계하면, 프론트엔드 개발자가 별도의 데이터 매핑 작업을 할 필요가 없어진다.
+  - 프론트 화면 중심으로 설계된 API를 그대로 사용하면 되므로, 개발 시간을 줄이고 불필요한 컨텐츠를 최소화할 수 있다.
+
+### 추가적인 시간 절약 방안
+
+그럼에도 시간이 부족하다고 판단하였고, **MSW** 도입과 **기존 컴포넌트에 레이어를 추가**하는 방식을 통해 해당 문제를 해결하고, API에 종속적인 프론트 개발 생산성을 증가시켰던 경험을 소개하고자 한다.
+
+<hr />
+
+## 레이어를 추가하여 API로부터 독립된 컴포넌트 생성하기
+
+![](/images/tech/introduction-msw/2.png)
+
+프론트엔드와 백엔드의 병렬적인 개발 일정을 맞추기 위해 조사한 결과, API 서버가 정상적으로 작동하지 않을 수 있어 MSW 등을 이용해 API 응답 데이터 값을 적절히 모킹해서 사용하는 경우가 많다고 한다. 그러나 Offispace 프로젝트의 경우, 디자인이 완료된 상태에서 API 설계와 화면 구현을 동시에 진행해야 했기 때문에, API에 대해 아무것도 정해진 것이 없는 상황이었다.
+
+따라서 유일한 해결책은 API 응답 데이터를 예상하여 모킹하는 것이었다. 하지만 이러한 방식으로 예측된 데이터 모델을 기반으로 코드를 구현하다 보니, 실제 API가 확정되면 코드를 다시 작성해야 하는 번거로움이 발생했다.
+
+<br />
+
+![](/images/tech/introduction-msw/3.png)
+
+> 해당 화면은 커뮤니티페이지에서 보여지는 상세 글 조회 페이지이다. 해당 화면을 토대로 API 데이터 응답을 미리 예측해서 데이터를 정리해보면,
+
+<br />
+
+![](/images/tech/introduction-msw/4.png)
+
+> 해당 코드로 미리 모킹 할 수 있고 이를, 컴포넌트에 적용하기 위해
+
+<br />
+
+```tsx
+const PostPage = () => {
+  // !!데이터를 가져오는 함수!!
+  // !!데이터 가공작업!!
+
+  return (
+    <div style={styles.pageContainer}>
+      <Post1
+        postId={data.postId}
+        tag={data.tag}
+        category={data.category}
+        createdDate={data.createdDate}
+      />
+      <Post2 title={data.title} content={data.content} images={data.images} />
+      <Post3
+        viewCount={data.viewCount}
+        likeCount={data.likeCount}
+        commentCount={data.commentCount}
+      />
+      <Post4 title={data.title} content={data.content} images={data.images} />
+      <Post5 profile={data.profile} userCategory={data.userCategory} nickname={data.nickname} />
+    </div>
+  );
+};
+
+const Post = ({
+  postId,
+  tag,
+  category,
+  title,
+  content,
+  images,
+  createdDate,
+  viewCount,
+  likeCount,
+  commentCount,
+  profile,
+  userCategory,
+  nickname,
+}) => {
+  // !!필요하다면 받아온 Props를 컴포넌트에 적용하기 위해 재가공 작업이 필요!!
+
+  return (
+    <div style={styles.postContainer}>
+      <h2>{title}</h2>
+      <div style={styles.meta}>
+        <span>{createdDate}</span>
+        <span>{nickname}</span>
+        <span>{userCategory}</span>
+      </div>
+      <div style={styles.content}>
+        <p>{content}</p>
+        {images && <img src={images} alt="Post image" style={styles.image} />}
+      </div>
+      <div style={styles.stats}>
+        <span>조회수: {viewCount}</span>
+        <span>좋아요: {likeCount}</span>
+        <span>댓글: {commentCount}</span>
+      </div>
+    </div>
+  );
+};
+```
+
+> 위와 같은 형태로 사용 하는데, 이는 실제 API가 확정되면 데이터 변경 작업에 많은 시간이 필요하게 될 것이다.
+
+<br />
+
+![](/images/tech/introduction-msw/5.png)
+
+> 실제로 내려온 데이터 형식만 봐도 이미지는 배열 형태, 글쓴이는 추가 depth 데이터, 기존에는 없던 isWriter와 isLiked까지 이전 데이터 형식과는 크게 차이가 발생 한 것을 볼 수 있다.
+
+<br />
+
+![](/images/tech/introduction-msw/6.png)
+
+즉, Index 페이지에서 API로 받아온 모든 데이터를 처리하여 각 컴포넌트에 적절하게 전달해야 하는데, 컴포넌트 1에는 어떤 데이터를 넘겨줘야 하고, 컴포넌트 2에는 어떤 데이터를 넘겨줘야 하는지 결정한 후, 데이터를 가공하여 정확한 Props를 내려주는 작업이 필요했고, API가 변경되면 이러한 데이터 가공 작업을 처음부터 다시 수행해야 했다.
+
+<br />
+
+```tsx
+>PostComponent1
+
+viewCount && likeCount && (
+    <div>
+      {viewCount} {likeCount}
+    </div>);
+```
+
+> 심지어 컴포넌트에서 받아온 가공된 Props를 직접 사용하는것이 아닌, 다시 컴포넌트 형식에 맞게 바꿔주는 작업 또한 필요했다.
+
+<aside>
+❗ Index Page에서는 단순히 컴포넌트를 결합하여 화면으로 보여주는 역할만 수행해야 하는데, API 요청, 데이터 가공, 컴포넌트 결합 등 책임이 많아졌고, Index Page에서의 가공된 Props에 따라서 다시 컴포입맛에 맞게 바꿔야 하므로, 전체 코드 구조가 달라진다는점에서 결합도가 높은 상황이다.
+
+</aside>
+
+<br />
+
+![](/images/tech/introduction-msw/7.png)
+
+따라서 Index에서의 API 요청, 데이터 가공작업, 자식 컴포넌트의 코드 변경을 최소화하기 위해, API 데이터가 어떻게 내려오는지에 대한 관심사는 모두 Factory에게 넘겨주고, UI 컴포넌트에서는 Factory에서 화면을 그리는 데 필요한 데이터들만 받아서 바로 사용 할 수 있도록 변경했다.
+
+<br />
+
+> **Factory 함수**
+
+```tsx
+import { useQuery } from 'react-query';
+import { useEnumToTag } from '../hooks/useEnumToTag';
+import { useEnumToCategory } from '../hooks/useEnumToCategory';
+import { getPostDetail } from '../remote/post';
+
+export const usePostDetail = (postId: string) => {
+  //api 호출
+  const { data: postData, ...queryProps } = useQuery(
+    ['post', postId],
+    () => getPostDetail(postId),
+    {
+      enabled: postId != null,
+    }
+  );
+
+  const tag = useEnumToTag(postData?.tag); //데이터 가공
+  const category = useEnumToCategory(postData?.category); //데이터 가공
+  const heartImg = postData?.isLiked //분기처리도 위임
+    ? '/community/colorHeart.svg'
+    : '/community/heart.svg';
+
+  return {
+    postData,
+    tag,
+    category,
+    ...queryProps,
+  };
+};
+```
+
+<br />
+
+> **기존 Index**
+
+```tsx
+const PostDetailIndex = () => {
+  // !!코드가 길어 간략하게 어떤 느낌인지만 소개!!
+
+  const { open } = useModalStore();
+  const router = useRouter();
+  const { id } = router.query as { id: string };
+
+  const { data: postData } = useQuery(['post', id], () => getPostDetail(id), {
+    enabled: id != null,
+  });
+
+  if (postData?.status == 'FAIL') {
+    return <ConfirmModal />;
+  }
+
+  return (
+    <div className="mx-4">
+      <div className="h-[60px]" />
+      <ToBackComunity />
+      <PostDetail postData={postData && postData} />
+      {/* 구분선 */}
+      {open ? <DeleteModal /> : ''}
+    </div>
+  );
+};
+```
+
+API 요청, 데이터 가공, 컴포넌트 결합 등 대체 얘는 뭐하는 컴포넌트인가 싶다.
+
+<br />
+
+> **수정 Index**
+
+```tsx
+const PostDetailIndex = () => {
+  const { open } = useModalStore();
+
+  return (
+    <div className="mx-4">
+      <div className="h-[60px]" />
+      <ToBackComunity />
+      <PostDetail />
+      {/* 구분선 */}
+      <div className="w-full h-1 bg-gray-100" />
+    </div>
+  );
+};
+```
+
+이제 Index 컴포넌트에서는 API 요청과 데이터 가공 작업이 없어졌으며, 오직 컴포넌트 조합에만 집중하게 되었다
+
+<br />
+
+> **기존 PostDetail**
+
+```tsx
+const PostDetail = ({ postData }: PostDetailType) => {
+
+const tag = useEnumToTag(postData?.tag);
+const category = useEnumToCategory(postData?.category);
+
+return (
+<div> ... </div>
+...
+)
+}
+```
+
+부모로 부터 받아온 props를 재가공하여, 불필요한 로직이 수행되고 있다.
+
+<br />
+
+> **수정 PostDetail**
+
+```tsx
+const PostDetail = () => {
+  const router = useRouter();
+  const { id } = router.query as { id: string };
+
+  const { postData, tag, category } = usePostDetail(id);
+  return (
+<div> ... </div>
+...
+)
+}
+```
+
+자신이 필요한 데이터 형식을 가지고 있는 Factory 함수에게 데이터를 요청하면 가공할 필요 없이 바로 사용 할 수 있게 되었다.
+
+<br />
+
+<aside>
+💡 API 응답 데이터가 확정되지 않은 상황에서 Factory 함수를 추가함으로써 UI 컴포넌트들을 API로부터 독립시킬 수 있게 되었다. 이렇게 개발된 UI 컴포넌트들은 예상과는 다른 API 데이터 형식으로 변경 되어도 Factory 함수에서 변경 작업을 통해 수정을 최소화할 수 있고, 테스트 코드를 일찌감치 확정 지을 수 있고, 분기 처리를 할 때에도 Factory가 담당하여 UI 컴포넌트를 좀 더 간결하게 유지할 수 있다.
+
+</aside>
+
+<hr />
+
+## MSW 도입
+
+Next.js는 프론트엔드 노드 서버를 제공하기에 보통 Mock Data가 필요할 경우 Next.js의 노드 서버를 이용해 Mock API를 만들어서 사용하곤 했다. 보통 이 방식은 Next.js 서버 자체를 API의 엔드포인트로 사용하게 되는데, 이는 실제 API가 완성되고 배포되면 모든 요청 주소를 변경해야 하는 번거로움이 있었고, 어디 파일에서 Mock API를 쓰는지 정확히 인지하고 문서화를 해두어야 실제 배포 때 실수로 Mock API로 요청이 가는 불상사를 방지 할 수 있다.
+
+이러한 문제를 해결하기 위해 MSW를 선택하게 되었는데, MSW는 클라이언트 측에서 HTTP 요청을 가로채서 Mock 데이터를 반환하는 오픈소스 라이브러리다. 서비스 워커를 활용하여 실제 HTTP 요청을 가로챌 수 있고, 이는 브라우저 환경에서도 동작하기 때문에 개발 및 테스트 시나리오를 구현할 수 있다는 장점이 있다.
+
+<br />
+
+> **src > Mocks > index.ts - 서버와 클라이언트 환경에 따라 API 모킹 설정을 초기화**
+
+```tsx
+const initMocks = async () => {
+  const isServer = typeof window === 'undefined'; //node 환경인가?
+
+  if (isServer) {
+    const { server } = await import('./server');
+    server.listen({ onUnhandledRequest: 'bypass' }); // 처리되지 않은 요청이라도 통과시키도록
+  } else {
+    const { worker } = await import('./browser');
+    await worker.start({ onUnhandledRequest: 'bypass' }); // 처리되지 않은 요청이라도 통과시키도록
+  }
+};
+export default initMocks;
+```
+
+`isServer` 변수를 통해 현재 실행 환경이 서버인지 클라이언트인지 확인합니다. `typeof window === 'undefined'` 조건은 서버 환경 (Node.js)에서 `window` 객체가 존재하지 않음을 이용한 확인 방법!
+
+<br />
+
+> **src > Mocks > handlers.ts - API주소를 기반으로 만들어진 handlers를 하나로 통합**
+
+```tsx
+import { postHandlers } from './postHandler';
+
+export const handlers = [
+  ...
+  ...postHandlers
+];
+```
+
+<br />
+
+> **src > Mocks > browser.ts, server.ts - 서버 및 클라이언트 환경에서 handlers 설정**
+
+```tsx
+import { setupServer } from 'msw/node';
+
+import { handlers } from './handlers';
+
+export const server = setupServer(...handlers);
+export const worker = setupWorker(...handlers);
+```
+
+<br />
+
+> **src > Mocks > postHandler > index.ts - 상세 글 API 요청에 대해 데이터 반환**
+
+```tsx
+import { http, HttpResponse } from 'msw';
+import { MOCK_POSTDETAIL_DATA } from './mocks';
+
+export const postHandlers = [
+  /* ----- 글 상세 데이터 가져오기 api ----- */
+  http.get(`https://joo-api.store/posts/39`, () => {
+    return HttpResponse.json(MOCK_POSTDETAIL_DATA);
+  }),
+];
+/* ----- 글 상세 MOCK DATA ----- */
+export const MOCK_POSTDETAIL_DATA = {
+  status: 'SUCCESS',
+  errorCode: null,
+  data: {
+    postId: 39,
+    category: 'FREE_BOARD',
+    tag: 'BRAG',
+    title: '이것은 모킹된 데이터여',
+    content: '모킹이 잘 됐나?',
+    createdDate: '2024-06-12T23:01:05',
+    viewCount: 12,
+    likeCount: 4,
+    commentCount: 2,
+    images: [
+      'https://sabujak-image-bucket.s3.ap-northeast-2.amazonaws.com/bc1e70ab-dIMG_2661.jpeg',
+    ],
+    writer: {
+      profile:
+        'https://sabujak-image-bucket.s3.ap-northeast-2.amazonaws.com/8968ebd6-bIMG_8418.jpeg',
+      job: 'ITDEV',
+      nickname: '웃고있는 감자칩',
+    },
+    isWriter: false,
+    isLiked: false,
+  },
+  message: null,
+};
+```
+
+<br />
+
+> **결과**
+
+![](/images/tech/introduction-msw/8.png)
+
+<hr />
+<br />
+
+## 마무리
+
+<aside>
+💡 UI 컴포넌트와 API 간의 결합을 줄이기 위해 중간 레이어 Factory 함수를 도입했다. 해당 함수는 직접 API와 상호 작용하고, 데이터에 접근하여 각 컴포넌트에 알맞은 데이터를 내려주었고, 이를 통해 컴포넌트는 보다 독립적으로 설계될 수 있었고, 유지보수가 용이해졌다.
+
+또한, MSW를 사용하여 API 응답 데이를을 가상으로 생성함으로써 프론트엔드 개발 과정에서 실제 API 호출의 필요성을 제거했다. 이를 통해 백엔드 개발이 완료되지 않은 상태에서도 프론트엔드 작업을 지속할 수 있었고, 각 팀이 독립적, 병렬적으로 작업을 진행할 수 있었다.
+
+</aside>
