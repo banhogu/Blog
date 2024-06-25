@@ -1,0 +1,274 @@
+---
+title: 눈물을 흘리며 개발한 1인석 좌석 배치도 구현기
+tag: tech
+---
+
+## 요구 사항
+
+![](/images/tech/implement-focuszone/1.png)
+
+Offispace는 거점 공유 오피스 서비스로, 지점 선택 후 미팅룸, 휴게실, 1인석(포커스존) 등의 공간을 예약할 수 있다. 내가 담당한 1인석 구현은 위와 같은 이미지의 디자인을 가지고 있는데,
+
+좌석 배치도에서 특정 좌석을 클릭하면 해당 좌석 번호가 표시되고 예약을 진행할 수 있는 로직을 구현해야 했다. 좌석 상태는 예약 마감, 선택한 좌석, 예약 가능한 좌석에 따라 다르게 표시되어야 한다.
+
+![](/images/tech/implement-focuszone/2.png)
+
+또한 좌석 선택 시 해당 유저가 현재 1인석을 이용중인지 체크하고, 이용중이면 위 이미지와 같이 기존 좌석을 취소하고 예약 할 것인지, 좌석 선택을 취소할것인지 여부를 판단해야 한다.
+
+처음 디자인을 받았을 때, 이게 가능할까 싶었다. 이미지 형태로 좌석 배치도를 제공받았기 때문에 유저가 좌석을 클릭할 때 정확한 x, y 좌표를 알아야 해당 이미지에서 좌석 번호를 매칭할 수 있었다. 그렇지 않으면 좌석 배치도를 직접 구현해야 했는데, 이는 CSS로 좌석 배치를 그린 후 각 좌석마다 ID를 지정하고 해당 ID마다 좌석 번호를 지정하는 방식이다
+
+![](/images/tech/implement-focuszone/3.png)
+
+도움을 얻기 위해 구글에 영화관 좌석 선택 예제들을 조사해본 결과 대부분의 예제는 열/행 수가 같은 단순한 테이블 형식의 좌석 배치도를 사용하고 있어, 주어진 디자인 같이 무작위 열 형식의 좌석 선택에는 참고할 수 없었다.
+
+결국, 이미지 형태의 좌석 배치도를 기반으로 좌표를 추적하는 방식이나 직접 CSS로 좌석 배치를 그리는 방식을 통해 구현을 진행해야 했다. <br/><br/>
+
+## 구현
+
+### 구현 아이디어는 다음과 같다
+
+![](/images/tech/implement-focuszone/4.png)
+
+<div className="bg-my-gray py-1 px-2 rounded-xl dark:text-white dark:bg-gray-800">
+  💡 아주 간단하다 먼저 좌석배치도를 각 열로 FirstCol, SecondCol, ThirdCol로 나누고, CSS로 일일이
+  **전부 직접 그린 후 합친다.**
+</div>
+
+![](/images/tech/implement-focuszone/5.png)
+
+> 아주 다행히 PM측과 상의 결과 모든 지점의 1인석은 20개의 좌석이고, 모든 지점의 배치도는 동일해서, 일일이 모든 지점의 다른 좌석 배치도를 만들지 않아도 되었다.
+
+### #1
+
+```tsx
+const { data: allSeatInfo } = useQuery(
+  ['seatInfo', branchId],
+  () => getFocuszoneSeatInfo(branchId),
+  {
+    enabled: !!branchId,
+  }
+);
+```
+
+![](/images/tech/implement-focuszone/6.png)
+
+> 먼저 1인석 좌석 선택 페이지에 진입하면 현재 지점 정보를 받아와 useQuery에 넣어주어 해당 지점의 1인석 좌석 데이터를 받아온다.
+
+`focusDeskId` 는 1인석을 예약 할 때 실질적으로 넘겨주는 좌석 ID이다. 해당 ID는 각 지점마다 다르다.
+
+`focusDeskNumber` 는 해당 좌석 ID에 맞는 좌석 번호이다. 즉, 강남1호점의 포커스존 1번 좌석의 ID는 4113이다 라고 이해하면 된다. 해당 좌석 번호는 1번부터 20번까지 오름차순으로 주어진다
+
+`canReserve` 는 좌석을 예약 할 수 있는 상태를 의미한다. 다른 유저가 해당 좌석을 예약 했으면 false, 사용가능하면 true가 받아진다.
+
+```tsx
+<div className="mt-8 bg-gray-50">
+  <FirstColSeat allSeatInfo={allSeatInfo && allSeatInfo} />
+  <SecondColSeat allSeatInfo={allSeatInfo && allSeatInfo} />
+  <ThirdColSeat allSeatInfo={allSeatInfo && allSeatInfo} />
+</div>
+```
+
+> 성공적으로 데이터를 받아오면 각 열에 대해 해당 좌석 정보를 넘겨준다.
+
+<br />
+
+### #2
+
+```tsx
+const FirstColSeat = ({
+  allSeatInfo
+}: FirstColSeatType) => {
+
+const [seatInfo, setSeatInfo] = useState<FocusSeatData[]>([]);
+
+const renderedSeat = () => {
+
+    const firstCol = ['1', '2', '3', '4', '5'];
+
+    const selectedNum: FocusSeatData[] = [];
+
+    firstCol.forEach((col) => {
+      const matchingSeat = allSeatInfo?.find(
+        (seat) => seat.focusDeskNumber.toString() === col
+      );
+      if (matchingSeat) {
+        selectedNum.push(matchingSeat);
+      }
+    });
+    return selectedNum;
+  };
+
+  useEffect(() => {
+    setSeatInfo(renderedSeat());
+  }, [allSeatInfo]);
+```
+
+![](/images/tech/implement-focuszone/7.png)
+
+각 열에서는 해당 열에서 가질 수 있는 좌석번호를 아래와 같이 지정하고
+
+firstCol = ['1', '2', '3', '4', '5']
+
+secondCol = ['6', '7', '8', '15', '16']
+
+thirdCol = ['9', '10', '11', '17', '18', '12', '13', '14', '19', '20']
+
+받아온 `seatInfo` 데이터에서 `focusDeskNumber` 의 데이터와 매칭시킨 후 setState로 초기 상태값을 지정한다.
+
+![](/images/tech/implement-focuszone/8.png)
+
+<div className="bg-my-gray py-1 px-2 rounded-xl dark:text-white dark:bg-gray-800">
+  ❗ 저장된 seatInfo State는 DeskNumber가 1,2,3,4,5 정렬되어 있기 때문에 각 좌석 div에 대해 id를
+  지정할 필요없이 seatInfo[0]은 1번좌석 seatInfo[1]은 2번좌석 이렇게 [] 배열안에 인덱스로 각 좌석을
+  순서대로 구분짓고 canReserve에 따라 좌석 예약 가능 여부를 표시했다.
+</div>
+
+쉽게 말해
+
+FirstCol에서 seatInfo State의 [0]은 1번 좌석이고
+
+FirstCol에서 seatInfo State의 [4]은 5번 좌석이다.
+
+SecondCol에서 seatInfo State의 [0]은 6번좌석이고
+
+SecondCol에서 seatInfo State의 [4]은 16번좌석이다
+
+ThirdCol에서 seatInfo State의 [0]은 9번좌석이고
+
+ThirdCol에서 seatInfo State의 [9]은 20번좌석이다
+
+<br />
+
+### #3
+
+```tsx
+<div
+  onClick={() => {
+    if (seatInfo[0]?.canReserve) {
+      handleSeatClick({
+        deskId: seatInfo[0]?.focusDeskId,
+        deskNumber: '1',
+      });
+    } else {
+      return;
+    }
+  }}
+  className={`
+    ${
+      seatInfo[0]?.canReserve
+        ? selectedSeat === '1'
+          ? 'bg-space-purple text-white'
+          : 'bg-space-purple-light text-space-black'
+        : 'bg-gray-500 text-gray-200'
+    }
+    flex items-center justify-center rounded-md h-full w-8 text-xs font-medium cursor-pointer`}
+>
+  1
+</div>
+```
+
+> 각 좌석 번호 별 배치도를 그린다. 위 코드처럼 1번좌석은 seatInfo[0]이고 해당 데이터 중 canReserve(예약 가능) 여부에 따라 스타일을 달리했다. 각 열마다 좌석 디자인도 다르고 Entrance, Locker, Service Bar을 가지는 열이 따로 존재했기 때문에, 공통 컴포넌트로 빼진 못했고 일일이 margin, padding, border, flex를 사용해 그려줬다.
+
+![](/images/tech/implement-focuszone/9.png)
+
+> 특히 Service Bar의 입구쪽 |- -| 부분은 어떻게 구도를 나눌까 정말 고민을 많이 했고, 오른쪽 좌석에 비해 살짝 내려온 왼쪽 좌석 디자인도 꽤 애를 썻다.
+
+<br />
+
+### #4
+
+각 좌석이 클릭 될 시 해당 유저가 이미 포커스존을 이용중인지 처리하는 onClick 함수를 각 Col에 넘겨주고, 해당 함수를 받은 Col은 각 좌석에 대해 onClick 메서드를 달아준다.
+
+```tsx
+const [selectedSeat, setSelectedSeat] = useState<string | null>(null);
+const [currentDeskId, setCurrentDeskId] = useState<number | null>(null);
+
+const handleSeatClick = async ({
+  deskId, //좌석 Id
+  deskNumber, // 좌석 번호
+}: {
+  deskId: number;
+  deskNumber: string;
+}) => {
+  const { alreadyUsing } = await checkDeskId(deskId);
+  if (!alreadyUsing) {
+    //예약한 좌석 없을 때
+    if (selectedSeat === deskNumber) {
+      setSelectedSeat(null); // 선택된 좌석을 다시 클릭하면 선택 해제
+      setCurrentDeskId(null);
+      setModalDeskNumber(null);
+    } else {
+      setSelectedSeat(deskNumber); // 새로운 좌석 선택
+      setCurrentDeskId(deskId);
+      setModalDeskNumber(deskNumber);
+    }
+  } else {
+    setModalDeskId(deskId);
+    setModalDeskNumber(deskNumber);
+    setCheckModal(true);
+  }
+};
+
+<div
+  onClick={() => {
+    if (seatInfo[0]?.canReserve) {
+      handleSeatClick({
+        deskId: seatInfo[0]?.focusDeskId,
+        deskNumber: '1',
+      });
+    } else {
+      return;
+    }
+  }}
+  className={`
+    ${
+      seatInfo[0]?.canReserve
+        ? selectedSeat === '1'
+          ? 'bg-space-purple text-white'
+          : 'bg-space-purple-light text-space-black'
+        : 'bg-gray-500 text-gray-200'
+    }
+    flex items-center justify-center rounded-md h-full w-8 text-xs font-medium cursor-pointer`}
+>
+  1
+</div>;
+```
+
+각 좌석에서는 연결된 seatInfo의 canReserve에 따라 해당 클릭 여부를 판단하고, 예약 가능한 좌석일 경우, `handleSeatClick` 에 deskId와 deskNumber을 넘겨준다. `handleSeatClick` 함수에서는 `checkDeskId` 로 해당 유저의 포커스존 이용 여부를 받아오고, 포커스존 이용중일 시 이미 이용중입니다 모달을 띄우고, 포커스존 이용중이지 않을시 정상적으로 `setSelectedSeat` 가 동작되어 해당 좌석이 selectSeat로 설정된다.<br/><br/>
+
+### #5
+
+```tsx
+const { mutateAsync } = useMutation(async (deskId: number) => reservationFocus(deskId), {
+  onSuccess: () => {
+    setModalOpen(true);
+  },
+});
+
+<SelectSeatBtn
+  selectedSeat={selectedSeat}
+  currentDeskId={currentDeskId}
+  setSelectedSeat={setSelectedSeat}
+  mutateAsync={mutateAsync}
+/>;
+```
+
+![](/images/tech/implement-focuszone/10.png)
+
+> 선택된 좌석 정보를 `SelectSeatBtn` 컴포넌트에 넘겨주어, 해당 버튼에서는 `mutateAsync`를 통해 예약 확정 버튼이 클릭될 시 좌석 ID로 예약이 이루어진다.
+
+![](/images/tech/implement-focuszone/11.png)
+
+<br />
+
+## 결과 및 후기
+
+![](/images/tech/implement-focuszone/12.png)
+
+<div className="bg-my-gray py-1 px-2 rounded-xl dark:text-white dark:bg-gray-800">
+  💡 사실 글에서는 눈물의 구현기라고 적어놨지만, 한 번도 구현해본적 없는 컴포넌트라서 정말 재밌었던
+  구현 과정이었다. 다른 FE 팀원이 와 이걸 하나하나 그리신거에요? 고생 많으셨네요 했을 때 눈물이 좀
+  나긴 했지만, 받아온 좌석 정보 데이터를 HTML에 하나하나 매칭시키는 작업과, 내가 알고 있는 온갖 CSS
+  속성을 사용해서 오류 없이 구현했을 때 큰 성취감이 들었다. 덕분에 이제 Tailwind 클래스는 눈감고도
+  칠 수 있다.
+</div>
