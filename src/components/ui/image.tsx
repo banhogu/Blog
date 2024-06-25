@@ -62,7 +62,13 @@ export async function Image({
 
     return (
       <span className="my-5 flex flex-col items-center">
-        <NextImage width={width * factor} height={height * factor} alt={alt ?? ''} src={src} />
+        <NextImage
+          width={width * factor}
+          height={height * factor}
+          alt={alt ?? ''}
+          src={src}
+          className="rounded-lg"
+        />
 
         {alt && <Caption>{alt}</Caption>}
       </span>
