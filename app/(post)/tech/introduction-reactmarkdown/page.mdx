@@ -1,0 +1,149 @@
+---
+title: React-markdown을 도입하여 생산성 높이기
+tag: tech
+---
+
+## 도입 배경
+
+![](/images/tech/introduction-reactmarkdown/1.png)
+
+Offispace 프로젝트의 회원가입 페이지에서 약관 동의 컴포넌트는 필수 약관에 모두 동의해야만 회원가입이 진행되는 일반적인 로직을 따른다. 실제 서비스되는 사이트는 아니므로 PM측에서 제공한 fake 약관 데이터를 사용하며, 해당 데이터는 변경되지 않는 static한 데이터이다. 따라서 FE측에서는 constants 파일에 약관 제목과 내용을 저장하여 이를 화면에 매칭시켜 보여주기만 하면 된다.
+
+하지만, 각 약관 글에 일일이 css 효과를 적용하는 것은 매우 비효율적이다. 이를 해결하기 위해 약관 내용을 마크다운 형식으로 작성하고, 이를 constants 파일에 저장하여 사용하는 아이디어가 떠올랐다. 이 방법을 통해 css 요소를 보다 효율적으로 관리할 수 있을것이다.
+
+<br />
+
+## terms 파일 저장
+
+> PM측에서 제공해준 약관 내용
+
+![](/images/tech/introduction-reactmarkdown/2.png)
+
+```tsx
+export const 약관목록 = [
+  {
+    id: 1,
+    title: '(필수) 서비스 이용약관 동의',
+    subTitle: '서비스 이용약관 동의서',
+    description: `## 서비스 이용약관 동의서
+
+### 제 1장 총칙
+#### 제 1조 (목적)
+이 약관은 Offispace가 운영하는 Offispace 멤버용 웹사이트, Offispace 멤버용 앱, "Offispace"와 계약을 체결한 제휴지점 운영자 전용 웹사이트(이하 "웹사이트" 및 "앱"을 통칭하 여 "웹사이트 등"이라 한다)에서 제공하는 인터넷 관련 서비스(이하 “서비스")를 이용함에 있어 "Offispace"와 이용자의 권리, 의무 및 책임 사항을 규정함을 목적으로 합니다.
+
+#### 제 2조 (정의)
+1) "웹사이트 등"이라 함은 "Offispace"가 재화 또는 용역(이하 "재화 등"이라 함)을 멤버(아래에서 정의됨)에게 제공하기 위하여 컴퓨터 등 정보통신설비를 이용한 가상의 영업장을 말합니다.
+2) "멤버"란 그룹에 소속되어 "웹사이트 등"에 접속하여 본 약관에 따라 "Offispace"가 제공하는 서비스를 "웹사이트 등"에서 이용할 수 있는 자로서 "웹사이트 등"에 멤버로 등록을 한 자를 말합니다.
+3) "그룹"이란 "Offispace"와 멤버십 등록계약 또는 제휴 계약을 체결한 법인, 단체로서, 멤버가 소속된 법인, 단체, 개인을 의미합니다.
+
+#### 제 3조 (약관 등의 명시와 설명 및 개정)
+1) "Offispace"는 이 약관의 내용과 개인정보관리책임자 등을 "멤버"가 쉽게 알 수 있도록 "서비스”에 게시합니다. 다만, 약관의 내용은 이용자가 연결 화면을 통하여 볼 수 있도록 할 수 있습니다.
+2) "Offispace"는 이용자가 약관에 동의하기에 앞서 내용을 이용자가 이해할 수 있도록 별도의 연결 화면 또는 팝업 화면 등을 제공하여 이용자의 확인을 구하여야 합니다.
+3) "Offispace"는 「전자상거래 등에서의 소비자보호에 관한 법률」, 「약관의 규제에 관한 법률」, 「전자문서 및 전자거래 기본법」, 「전자금융거래법」, 「전자서명법」, 「정보통신망 이용촉진 및 정보보호 등에 관한 법률」, 「방문판매 등에 관한 법률」, 「소비자기본법」 등 관련 법을 위배하지 않는 범위에서 이 약관을 개정할 수 있습니다.
+
+#### 제 4조 (서비스 가입)
+1) "멤버"는 "Offispace"가 정한 가입 양식에 따라 정보를 기입한 후 이 약관에 동의한다는 의사 표시를 함으로서 멤버 가입을 신청합니다.
+2) "Offispace"는 제 1항에 따라 제공된 정보를 확인 또는 인정한 후 가입을 승낙함으로써 "웹사이트 등"의 이용계약은 체결됩니다.
+3) 제1항, 제2항에도 불구하고, "Offispace"와 제휴 계약을 체결한 그룹에 속한 "멤버"에 한하여, 별도의 가입절차 없이, 서비스이용권한을 부여할 수 있으며, "Offispace”가 권한을 부여한 때로부터 "Offispace"와 이러한 "멤버" 사이에 "웹사이트 등"의 이용계약이 체결된 것으로 봅니다.
+4) "멤버"는 "Offispace"에서 제공하는 "웹사이트 등" 에 게시된 이 약관에 따라 가입한 하나의 계정으로 모든 "웹사이트 등"에 로그인하여 이용할 수 있습니다.
+
+#### 상기 본인은 위와 같이 서비스 이용약관에 동의함.`,
+    required: true
+  },
+  ...
+  ]
+
+```
+
+> PM 측에서 제공한 데이터를 마크다운 형식으로 변환하고 이를 각 약관목록의 description으로 넣어 줬다.
+
+<br />
+
+## React-markdown 적용
+
+```tsx
+import React, { Dispatch } from 'react';
+import { createPortal } from 'react-dom';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
+
+interface TermsModalProps {
+  modalDescription: string | null;
+  modalSubTitle: string | null;
+  setOpenModal: Dispatch<React.SetStateAction<boolean>>;
+}
+
+const TermsModal = ({ modalDescription, setOpenModal, modalSubTitle }: TermsModalProps) => {
+  const $portalRoot = document.getElementById('root-portal');
+
+  if ($portalRoot == null) {
+    return null;
+  }
+  if (modalDescription == null) {
+    return null;
+  }
+
+  return createPortal(
+    <div className="h-full w-full mx-auto z-10 fixed top-0 left-1/2 transform -translate-x-1/2 bg-white overflow-y-auto">
+      <div className="mx-auto mt-3 w-[393px] h-[72px] py-[25px] bg-white border-b-4 border-neutral-200 items-center justify-end relative">
+        <div className="text-center text-black text-md font-medium font-pretendard leading-snug">
+          {modalSubTitle}
+        </div>
+        <div
+          onClick={() => {
+            setOpenModal(false);
+          }}
+          className="w-[18px] h-[18px] absolute top-[25px] right-[16px] cursor-pointer"
+        >
+          <img src="/sign/positionClose.png" alt="" className="w-full" />
+        </div>
+      </div>
+      <div className=" max-w-[393px] mx-auto bg-white px-4 mb-8 mt-[36px]">
+        <ReactMarkdown
+          className="prose text-sm font-pretendard leading-[21px]"
+          remarkPlugins={[remarkGfm]}
+        >
+          {modalDescription}
+        </ReactMarkdown>
+      </div>
+    </div>,
+    $portalRoot
+  );
+};
+
+export default TermsModal;
+```
+
+- `ReactMarkdown` 컴포넌트는 마크다운 형식의 텍스트를 HTML로 변환하여 렌더링한다
+- `remarkGfm` 플러그인은 GFM 형식을 지원하여 체크박스, 표, 스트라이크 스루 등의 기능을 사용할 수 있게 해준다.
+
+> React-Markdown은 내부적으로 remark 패키지를 활용하고 아래처럼 순차적인 처리를 통해서 React 엘리먼트로 뽑아낸다.
+
+```
+                                                           react-markdown
+         +----------------------------------------------------------------------------------------------------------------+
+         |                                                                                                                |
+         |  +----------+        +----------------+        +---------------+       +----------------+       +------------+ |
+         |  |          |        |                |        |               |       |                |       |            | |
+markdown-+->+  remark  +-mdast->+ remark plugins +-mdast->+ remark-rehype +-hast->+ rehype plugins +-hast->+ components +-+->react elements
+         |  |          |        |                |        |               |       |                |       |            | |
+         |  +----------+        +----------------+        +---------------+       +----------------+       +------------+ |
+         |                                                                                                                |
+         +----------------------------------------------------------------------------------------------------------------+
+```
+
+복잡한 내부 구현에 비해 사용법은 아주 간단하다. `<ReactMarkdown>`으로 마크다운을 감싸주기만 하면 된다.
+
+<br />
+
+## 결과 및 느낀점
+
+![](/images/tech/introduction-reactmarkdown/3.png)
+
+<div className="bg-my-gray py-1 px-2 rounded-xl dark:text-white dark:bg-gray-800">
+  💡 정적인 텍스트 데이터를 스타일링하는 것은 번거로울 수 있다. 텍스트를 마크다운으로 변환하고, 이를
+  React Markdown 라이브러리를 활용하여 간단하게 서식 있는 텍스트를 작성하는 방법을 찾았고, React
+  Markdown은 GitHub Flavored Markdown(GFM)을 지원하는 remark-gfm 플러그인을 포함하여 다양한 확장
+  기능을 제공하고, 필요에 따라 유연하게 사용할 수 있다. React Markdown을 활용하여 서식이 있는 고정된
+  디자인을 비교적 쉽게 구현할 수 있어서, 개발 시간을 크게 단축하고 일정을 맞출 수 있었다.
+</div>
