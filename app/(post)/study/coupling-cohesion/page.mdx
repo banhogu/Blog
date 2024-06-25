@@ -1,0 +1,240 @@
+---
+title: 응집도와 결합도 이야기
+tag: study
+---
+
+## 개요
+
+프로그래밍이란 문제를 정의하고 하나씩 해결해나가는 과정을 말한다.
+
+문제가 복잡하고 큰 문제라면, 일반적으로 문제를 작은 부분으로 쪼개어서 하나씩 풀어나가게 될 것인데, 이 때 문제를 작은 부분으로 쪼개나가는 것을 **모듈화**라고 한다.
+
+**모듈**은 소프트웨어를 각 기능별로 나누어진 소스 단위를 의미한다. 독립적으로 컴파일 가능한 프로그램 혹은 하나의 함수나 클래스도 모듈이 된다.
+
+> **보통 좋은 소프트웨어 일수록 모듈의 독립성이 높다고 한다.**
+
+좋은 모듈화는 목적에 맞는 기능만으로 모듈을 나누게 되는데, 각각의 모듈은 주어진 기능만을 독립적으로 수행하기 때문에 재사용성이 높고 코드의 수정이 용이하기 때문이다.
+
+예를들어 해당 모듈을 수정하더라도 다른 모듈에 끼치는 영향이 적게 되며, 오류가 발생하더라도 기능 단위로 나눠져 있기 때문에 손쉽게 문제를 발견해 해결할 수 있기도 한다.
+
+이러한 모듈의 독립성은 모듈의 **결합도** 와 **응집도**의 기준 단계 측정한다.
+
+**결합도**는 모듈과 모듈 간의 의존 정도를 의미하고, **응집도**는 한 모듈 내의 구성요소들 간의 연관 정도를 의미한다.
+
+결합도와 응집도의 강도 세기에 따라 여러 단계로 나뉘게 되는데 응집도는 강할수록, 결합도는 느슨할 수록 독립성이 높은 모듈로 평가 된다.
+
+## 응집도
+
+> 응집도는 하나의 클래스가 기능에 집중하기 위한 모든 정보와 역할을 갖고 있어야 한다는것을 의미한다.
+
+정확히 응집도는 한 모듈 내의 구성 요소 간의 밀접한 정도를 의미하는데, 한 모듈이 하나의 기능(책임)을 갖고있는 것은 응집도가 높은 것이고, 한 모듈이 여러 기능을 갖고 있는 것은 응집도가 낮은 것이다.
+
+응집도가 높은 모듈은 하나의 모듈 안에 함수나 데이터와 같은 구성 요소들이 하나의 기능을 구현하기 위해 필요한 것들만 배치되어 있고 긴밀하게 협력한다. 반대로 응집도가 낮은 모듈은 모듈 내부에 서로 관련 없는 함수나 데이터들이 존재하거나 관련성이 적은 여러 기능들이 흩어져있다.
+
+예를들어 쇼핑몰 프로젝트에서 주문 처리를 담당하는 클래스에서 회원의 정보를 업데이트하는 메서드가 있다면, 이것은 응집도가 낮은 것이다. 회원 정보 업데이트는 회원만 담당하는 클래스에서 따로 분리하여 처리하는것이 옳기 때문이다.
+
+![](/images/study/coupling-cohesion/1.webp)
+
+위 사진을 예를 들어보자면, 낮은 응집도의 사진에서는 A 모듈 이외의 모듈에서 A 모듈이 가져야 할 기능인 a가 분산되어 있다. 때문에 a 기능을 수정해야 할 경우, A 모듈뿐만 아니라 다른 모듈에서도 a 기능을 찾아 수정해야 하는 번거로움이 생긴다. 하지만 높은 응집도에서는 A 모듈 안에 a 기능이 집중되어 긴밀하게 연결되어 협력하고 있기 때문에, a 기능을 수정할 때는 A 모듈만 찾아서 수정하면 된다.
+
+이처럼 응집도가 높은 모듈은 관련 기능이 하나의 모듈에 모여있어 코드를 이해하기도 쉽고, 수정 후 다른 모듈에 영향을 주지 않으므로 코드 유지보수에 유리하다. 이는 **객체지향 설계의 5원칙 중 단일 책임 원칙**과 깊은 연관이 있다.
+
+### **객체지향 설계의 5원칙**
+
+**SRP (Single Responsibility Principle) : 단일 책임 원칙**
+
+OCP (Open Closed Principle) : 개방 폐쇄 원칙
+
+LSP (Liskov Substitution Principle) : 리스코프 치환 원칙
+
+ISP (Interface Segregation Principle) : 인터페이스 분리 원칙
+
+DIP (Dependency Inversion Principle) : 의존 역전 원칙
+
+<br />
+
+로버트 마틴의 **클린 아키텍처**에서는 단일 책임 원칙을 다음과 같이 정의한다.
+
+> **하나의 모듈은 오직 하나의 액터에 대해서만 책임져야 한다.**
+
+<br />
+
+### 클린 아키텍처?
+
+[그래서 아키텍처가 뭔데? ](https://www.notion.so/3b2e7129cff14c558c0b98e8f56fdd86?pvs=21)
+
+단일 책임 원칙은 하나의 모듈은 하나의 역할만을 책임질 수 있도록 설계하는 것을 의미한다. 즉, 모든 클래스는 하나의 책임만을 가지며 클래스는 그 책임을 완전히 캡슐화(데이터와 데이터를 처리하는 행위를 묶어 외부에는 행위를 보여주지 않는 것) 해야 함을 말해준다.
+
+### 코드를 예시로 살펴보자
+
+```tsx
+//높은 응집도
+const UserProfile = {
+  user: {
+    name: 'Alice',
+    age: 25,
+    email: 'alice@example.com',
+  },
+
+  getUserInfo: function () {
+    return `${this.user.name}, Age: ${this.user.age}, Email: ${this.user.email}`;
+  },
+
+  updateUserInfo: function (newName, newAge, newEmail) {
+    this.user.name = newName;
+    this.user.age = newAge;
+    this.user.email = newEmail;
+  },
+
+  displayUserInfo: function () {
+    console.log(this.getUserInfo());
+  },
+};
+
+// Usage
+UserProfile.displayUserInfo();
+UserProfile.updateUserInfo('Bob', 30, 'bob@example.com');
+UserProfile.displayUserInfo();
+```
+
+이 예제에서 `UserProfile` 모듈은 사용자 프로필과 관련된 모든 기능을 포함하고 있는데, 사용자의 정보를 가져오고(`getUserInfo`), 업데이트하고(`updateUserInfo`), 출력하는(`displayUserInfo`) 모든 기능이 하나의 모듈에 집중되어 있다.<br /><br />
+
+```tsx
+//낮은 응집도
+const user = {
+  name: 'Alice',
+  age: 25,
+  email: 'alice@example.com',
+};
+
+function getUserInfo() {
+  return `${user.name}, Age: ${user.age}, Email: ${user.email}`;
+}
+
+function updateUserName(newName) {
+  user.name = newName;
+}
+
+function updateUserAge(newAge) {
+  user.age = newAge;
+}
+
+function updateUserEmail(newEmail) {
+  user.email = newEmail;
+}
+
+function displayUserInfo() {
+  console.log(getUserInfo());
+}
+
+// Usage
+displayUserInfo();
+updateUserName('Bob');
+updateUserAge(30);
+updateUserEmail('bob@example.com');
+displayUserInfo();
+```
+
+이 예제에서는 사용자 프로필과 관련된 기능이 여러 함수로 분산되어 있다. `getUserInfo`, `updateUserName`, `updateUserAge`, `updateUserEmail`, `displayUserInfo` 함수가 따로 존재한다.
+
+## 결합도
+
+> 결합도는 모듈(클래스 파일)간의 상호 의존 정도 또는 연관된 관계의 끈끈함 정도를 의미한다
+
+결합도가 높은 클래스는 다른 클래스와 연관 관계가 끈끈해서, 하나의 클래스의 구조를 변경하게 된다면 그에 연관된 클래스들도 전부 변경해야 할수도 있고, 객체 사용 코드도 변경해야 할 수도 있어서, 유지보수 측면에서 매우 마이너스적인 요소로 작용된다.
+
+![](/images/study/coupling-cohesion/2.jpg)
+
+실생활로 비유하자면 자동차 하나에는 여러개의 모듈들 핸들, 바퀴, 엔진, 배터리 등이 들어있을 것이다. 그리고 이렇게 하나의 프로그램(자동차) 안에서 각 모듈들이 서로 관련되어 의존하고 있는 정도가 결합도이다.
+
+핸들과 바퀴 모듈간의 관계를 예로 들자면, 이 둘은 각각의 동작이 상호작용을 통해 자동차가 굴러가기 때문에 어느정도의 결합도가 생길 수 밖에 없다. 하지만 그렇다고 해서 바퀴를 교체하는데 핸들까지 교체해야 된다면 자동차 설계 부터가 잘못 되었다고 말할 수 있다.
+
+![](/images/study/coupling-cohesion/3.webp)
+
+위 사진을 예를 들어보자면 유지 보수를 위해 b라는 기능을 수정하기 위해 b 기능이 모여있는 B 모듈을 수정해야 하는데, 다른 모듈들과 연관되어 있어 B 모듈을 수정하려면 다른 모듈과 어떤 상호작용을 하는지 확인해야 하는 번거로움이 있다. 즉 앞서 말한 응집도를 높여 b 기능들만 가진 B 모듈일지라도 결합도가 높다면, 다른 모듈까지 수정해야 한다는 것이다.
+
+반대로 A모듈은 다른 모듈들을 참조하는 부분이 없어 의존도가 낮은 상황이라고 말 할 수 있고, 이는 유지보수가 편할 것이다. 이렇게 참조가 적은 상황을 **느슨하게 연결되었다**표현하며 결합도가 낮은 상황이라 할 수 있다. 그리고 이는 응집도에서 소개한 객체지향 설계의 5원칙 중 **개방 폐쇄 원칙**과 연관이 있다.
+
+### **객체지향 설계의 5원칙**
+
+SRP (Single Responsibility Principle) : 단일 책임 원칙
+
+**OCP (Open Closed Principle) : 개방 폐쇄 원칙**
+
+LSP (Liskov Substitution Principle) : 리스코프 치환 원칙
+
+ISP (Interface Segregation Principle) : 인터페이스 분리 원칙
+
+DIP (Dependency Inversion Principle) : 의존 역전 원칙
+
+개방 폐쇄의 원칙(OCP)이란 기존의 코드를 변경하지 않으면서, 기능을 추가할 수 있도록 설계가 되어야 한다는 원칙을 의미한다. 보통 OCP를 **확장에 대해서는 개방적**이고, **수정에 대해서는 폐쇄적**이어야 한다고 말하고 있는데,
+
+**[ 확장에 대해서는 개방적이다? ]**
+
+- 모듈의 확장성을 보장하는 것을 의미한다.
+- 새로운 변경 사항이 발생했을 때 유연하게 코드를 추가함으로써 애플리케이션의 기능을 큰 힘을 들이지 않고 확장할 수 있다.
+
+**[ 수정에 대해서는 폐쇄적이다? ]**
+
+- 객체를 직접적으로 수정하는건 제한해야 한다는 것을 의미한다.
+- 새로운 변경 사항이 발생했을 때 객체를 직접적으로 수정해야 한다면 새로운 변경사항에 대해 유연하게 대응할 수 없는 애플리케이션이라고 말한다.
+- 따라서 객체를 직접 수정하지 않고도 변경사항을 적용할 수 있도록 설계해야 한다. 그래서 변경에 닫혀있다고 표현한 것이다.
+
+따라서 해석하자면, 기능 추가 요청이 오면 클래스를 확장을 통해 손쉽게 구현하면서, 확장에 따른 클래스 수정은 최소화 하도록 프로그램을 작성해야 하는 설계 기법을 말한다고 보면 된다.
+
+### 코드를 예시로 살펴보자
+
+```tsx
+//높은 결합도
+const UserModule = {
+  getUser: function (userId) {
+    return {
+      id: userId,
+      name: 'Alice',
+      email: 'alice@example.com',
+    };
+  },
+};
+
+const EmailModule = {
+  sendWelcomeEmail: function (userId) {
+    const user = UserModule.getUser(userId);
+    const email = user.email;
+    console.log(`Sending welcome email to ${email}`);
+  },
+};
+
+EmailModule.sendWelcomeEmail(1);
+```
+
+여기서 `EmailModule`은 `UserModule`에 강하게 결합되어 있다. `UserModule`이 변경되면 `EmailModule`도 영향을 받게된다.
+
+```tsx
+//낮은 결합도
+const UserModule = {
+  getUser: function (userId) {
+    return {
+      id: userId,
+      name: 'Alice',
+      email: 'alice@example.com',
+    };
+  },
+};
+
+const EmailModule = {
+  sendWelcomeEmail: function (email) {
+    console.log(`Sending welcome email to ${email}`);
+  },
+};
+
+const UserService = {
+  sendWelcomeEmailToUser: function (userId) {
+    const user = UserModule.getUser(userId);
+    EmailModule.sendWelcomeEmail(user.email);
+  },
+};
+
+UserService.sendWelcomeEmailToUser(1);
+```
+
+`UserModule`과 `EmailModule`이 직접적으로 결합되지 않고, `UserService`가 대신 두 모듈을 사용하여 사용자에게 환영 이메일을 보낸다. 해당 코드에서는 각 모듈이 독립적으로 변경될 수 있다.

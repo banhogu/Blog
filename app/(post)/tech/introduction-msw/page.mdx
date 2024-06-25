@@ -21,7 +21,7 @@ Offispace 프로젝트는 PM, UI/UX 디자이너, 프론트엔드, 백엔드 팀
 
 - API의 데이터를 파악하고, 프론트 UI에 맞춰 별도의 작업을 진행해야 한다.
 
-<div className="bg-gray-100 py-1 px-2 rounded-xl dark:text-white dark:bg-gray-800">
+<div className="bg-my-gray py-1 px-2 rounded-xl dark:text-white dark:bg-gray-800">
   ❗ 이러한 문제를 해결하기 위해 Offispace 프로젝트에서는 프론트엔드와 백엔드 팀이 협의하여 API를
   먼저 설계하는 **API First Design** 방식을 도입했다.
 </div>
@@ -152,7 +152,7 @@ viewCount && likeCount && (
 
 심지어 컴포넌트에서 받아온 가공된 Props를 직접 사용하는것이 아닌, 다시 컴포넌트 형식에 맞게 바꿔주는 작업 또한 필요했다.
 
-<div className="bg-gray-100 py-1 px-2 rounded-xl dark:text-white dark:bg-gray-800">
+<div className="bg-my-gray py-1 px-2 rounded-xl dark:text-white dark:bg-gray-800">
   ❗ Index Page에서는 단순히 컴포넌트를 결합하여 화면으로 보여주는 역할만 수행해야 하는데, API 요청,
   데이터 가공, 컴포넌트 결합 등 책임이 많아졌고, Index Page에서의 가공된 Props에 따라서 다시
   컴포입맛에 맞게 바꿔야 하므로, 전체 코드 구조가 달라진다는점에서 결합도가 높은 상황이다.
@@ -295,7 +295,7 @@ const PostDetail = () => {
 
 <br />
 
-<div className="bg-gray-100 py-1 px-2 rounded-xl dark:text-white dark:bg-gray-800">
+<div className="bg-my-gray py-1 px-2 rounded-xl dark:text-white dark:bg-gray-800">
   💡 API 응답 데이터가 확정되지 않은 상황에서 Factory 함수를 추가함으로써 UI 컴포넌트들을 API로부터
   독립시킬 수 있게 되었다. 이렇게 개발된 UI 컴포넌트들은 예상과는 다른 API 데이터 형식으로 변경
   되어도 Factory 함수에서 변경 작업을 통해 수정을 최소화할 수 있고, 테스트 코드를 일찌감치 확정 지을
@@ -412,7 +412,7 @@ export const MOCK_POSTDETAIL_DATA = {
 
 ## 마무리
 
-<div className="bg-gray-100 py-1 px-2 rounded-xl dark:text-white dark:bg-gray-800">
+<div className="bg-my-gray py-1 px-2 rounded-xl dark:text-white dark:bg-gray-800">
   💡 UI 컴포넌트와 API 간의 결합을 줄이기 위해 중간 레이어 Factory 함수를 도입했다. 해당 함수는 직접 API와 상호 작용하고, 데이터에 접근하여 각 컴포넌트에 알맞은 데이터를 내려주었고, 이를 통해 컴포넌트는 보다 독립적으로 설계될 수 있었고, 유지보수가 용이해졌다.
 
 또한, MSW를 사용하여 API 응답 데이를을 가상으로 생성함으로써 프론트엔드 개발 과정에서 실제 API 호출의 필요성을 제거했다. 이를 통해 백엔드 개발이 완료되지 않은 상태에서도 프론트엔드 작업을 지속할 수 있었고, 각 팀이 독립적, 병렬적으로 작업을 진행할 수 있었다.

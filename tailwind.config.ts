@@ -1,16 +1,20 @@
-const plugin = require("tailwindcss/plugin");
+const plugin = require('tailwindcss/plugin');
 
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  darkMode: "class", //다크 모드 클래스 지정
-  content: ["./(app|src)/**/*.{js,ts,jsx,tsx,mdx}"],
+  darkMode: 'class', //다크 모드 클래스 지정
+  content: ['./(app|src)/**/*.{js,ts,jsx,tsx,mdx}'],
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        'my-gray': 'rgb(241, 241, 239)',
+      },
+    },
   },
   plugins: [
     plugin(function ({ addVariant }) {
       //다크 모드용
-      addVariant("theme-system", ".theme-system &");
+      addVariant('theme-system', '.theme-system &');
     }),
   ],
   future: {
