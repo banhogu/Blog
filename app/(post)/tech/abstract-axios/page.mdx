@@ -13,9 +13,9 @@ Offispace 프로젝트는 로그인/회원가입, 커뮤니티, 공유 오피스
 
 또한 이번 프로젝트에서는 JWT 토큰 방식의 로그인을 구현했는데, 로그인 이후 모든 API 호출에 토큰을 헤더에 포함해야 하며, 토큰 유무 및 유효성에 따라 로그인 페이지로 Redirect 되어야 한다. 이러한 토큰 관리 과정을 각 컴포넌트에서 직접 처리하면 코드 복잡성이 증가하고 개발 효율성이 저하될 것이라고 생각했다.
 
-따라서 위와 같은 문제점을 해결하기 위해 Axios 추상화를 도입하기로 했다. <br /><br />
+따라서 위와 같은 문제점을 해결하기 위해 Axios 추상화를 도입하기로 했다.
 
-<hr />
+<br />
 
 ## 시작하기도 전에 발생한 문제
 
@@ -25,13 +25,13 @@ Offispace 프로젝트는 로그인/회원가입, 커뮤니티, 공유 오피스
 
 **📎 [API 명세서 / Swagger LInk](https://joo-api.store/swagger-ui/index.html#/)**
 
-[에러 Custom Code 명세서 ](https://banhogudev.oopy.io/a072a6b2-ba87-4c70-b5ee-f72a905867d4) <br /><br />
+[에러 Custom Code 명세서 ](https://banhogudev.oopy.io/a072a6b2-ba87-4c70-b5ee-f72a905867d4)
 
-<hr />
+<br />
 
 ## Axios 인스턴스 생성
 
-먼저 Axios Instance를 생성 해야하는데, Instance를 만드는 이유를 알기 위해서는 객체지향 프로그래밍과, 구성요소인 클래스, 인스턴스에 대한 개념 이해가 필요했다.
+먼저 Axios Instance를 생성 해야하는데, Instance를 만드는 이유를 알기 위해서는 **객체지향 프로그래밍**과, 구성요소인 클래스, 인스턴스에 대한 개념 이해가 필요했다.
 
 ### 객체지향프로그래밍이란?
 
@@ -46,14 +46,12 @@ Offispace 프로젝트는 로그인/회원가입, 커뮤니티, 공유 오피스
 
 > 간단히 말하면, 클래스는 객체를 만들기 위한 틀이고, 인스턴스는 그 틀을 이용하여 실제로 만들어진 객체라고 이해하면 쉽다.
 
-<br />
-
 <aside>
 ❗ Axios에서 사용되는 클래스는 Axios 라이브러리 내부에 정의되어 있으며 HTTP 클라이언트의 기능과 설정을 추상화하는 역할을 한다. 이 때 인스턴스로 baseURL, header, params등이 있는데, 이러한 인스턴스 중 프로젝트에 자주 사용되는 내용들, 예를 들어 baseURL, token, Content-Type 등을 미리 지정하여, 간편하게 반복된 코드 없이 Axios 요청을 보낼 수 있다.
 
 </aside>
 
-<hr />
+<br />
 
 ## 그럼 본격적으로 인스턴스를 만들어보자
 
@@ -81,7 +79,7 @@ export const instance: Axios = axios.create({
     - `'Content-Type': 'application/json'`: 서버에 전송하는 데이터의 타입을 `application/json`으로 설정.
     - `Accept: '*/*'`: 클라이언트가 서버로부터 모든 종류의 응답을 받을 수 있음
 - **timeout: 3000**
-  - 요청이 취소되기 전에 기다리는 시간을 밀리초 단위로 설정. 여기서는 3000 밀리초(3초)로 설정되어 있는데 즉, 요청이 3초 안에 완료되지 않으면 요청이 타임아웃된다.
+  - 요청이 취소되기 전에 기다리는 시간을 밀리초 단위로 설정. 여기서는 3000 밀리초(3초)로 설정되어 있는데 즉, 요청이 3초 안에 완료되지 않으면 요청이 타임아웃된다.<br /><br />
 
 ### 인터셉터 설정
 
@@ -136,15 +134,17 @@ instance.interceptors.response.use(
 );
 ```
 
-### 요청 인터셉터
+**요청 인터셉터**
 
 - `getCookie('token')`을 사용해 쿠키에서 토큰을 가져 온 후 `Authorization` 헤더에 `Bearer {token}` 형태로 추가한다.
 - 개발 환경(`process.env.NODE_ENV === 'development'`)에서 요청 메서드와 URL을 로그로 출력하여, API 요청 상황을 확인 할 수 있다.
 - 요청 설정 중 에러가 발생하면 이를 거부하고, 에러를 다음 처리 단계로 전달한다.
 
-### 응답 인터셉터
+**응답 인터셉터**
 
 - 에러 상태 코드에 따라 사용자에게 알맞은 에러 메시지를 로그에 표시한다.
+
+<br />
 
 ## API 요청 함수 생성
 
@@ -191,9 +191,7 @@ export interface ICommon<T> {
 ```
 
 - **`url: string`**: 요청을 보낼 URL을 나타내는 문자열 파라미터
-- **`config?: AxiosRequestConfig`**: 옵셔널한 요청 추가 설정. Axios의 요청 설정을 커스터마이즈할 때 사용한다.
-
-<br />
+- **`config?: AxiosRequestConfig`**: 옵셔널한 요청 추가 설정. Axios의 요청 설정을 커스터마이즈할 때 사용한다.<br /><br />
 
 ### 사용 예시
 
@@ -207,7 +205,6 @@ type UserInfoType = ICommon<IUserInfo>;
 ```
 
 <br />
-<hr />
 
 ## 요약 및 느낀점
 

@@ -1,0 +1,232 @@
+---
+title: 응집도와 결합도를 고려한 회원가입 설계와 유저가 지치지 않는 UI
+tag: tech
+---
+
+## 회원가입 재설계 배경
+
+![](/images/tech/signup-design/1.png)
+
+> Offispace 프로젝트 회원가입 페이지에서는 총 3단계를 통해 회원가입을 진행된다.
+
+- **첫번째,** 휴대폰 인증 본인인증 페이지
+- **두번째,** 미리 지정한 도메인 형식만 가입 될 수 있게, 제휴 이메일 인증 페이지
+- **세번째,** 비밀번호와 직무, 약관 동의 내역을 받는 페이지
+
+각 단계별로 돌아다니면서 정보를 모으게 되고, 해당 정보를 합쳐서 서버로 보내게 되는데, 마치 MBTI 검사 페이지에서 질문 리스트를 여러 페이지로 걸쳐서 받게 되고, 저장된 답변에 따라 검사 결과를 출력하는 형식과 유사하다.
+
+<br />
+
+![](/images/tech/signup-design/2.png)
+
+![](/images/tech/signup-design/3.png)
+
+위와 같은 형식의 장점은 각 페이지에 필요한 데이터, 그리고 데이터가 변화하는 로직, 그리고 해당 데이터를 변화시키는 코드까지 독립된 페이지에서 관리 할 수 있다. 그 코드들은 각각의 검사 페이지를 위한 코드가 되고, 두번째 세번째 페이지에서도 독립된 코드 형식을 사용하여 각 페이지마다 곂치지 않게 된다.
+
+<br />
+
+<aside>
+❗ 다만 이와 같은 형식은 단점이 존재하는데, 페이지들을 돌아다니면서 하나의 데이터를 완성시키는 과정이 각 페이지에서 이뤄지기 때문에 어떤 데이터가 언제 변하는지 알기 위해서는 각 페이지들을 돌아다니면서, 어떤 시점에 어떤 데이터를 바꿔야 하는지 찾아다녀야 한다. 또한 디버깅을 하고 싶어도 각 페이지에 데이터가 바뀌는 부분에 대해 모두 로그를 심어야 하는 단점이 존재한다. 하나의 관심사를 갖고 있지만 너무 코드가 분리 되었기 때문이다.
+
+</aside>
+
+즉, 해당 방식은 관련된 기능들이 하나의 모듈이나 페이지에 모여 있지 않아 **응집도가 낮고,** 한 페이지의 변경이 다른 페이지 부분에 영향을 미치는 정도가 매우 커 **결합도가 높다**고 얘기 할 수 있다.
+
+<br />
+
+### ❗️ 응집도와 결합도란?
+
+[**응집도와 결합도 이야기**](https://www.notion.so/249c424fc253445c80cb9ff3019a5579?pvs=21)
+
+<br />
+
+### 응집도가 낮은 이유
+
+- **분산된 기능**: 각 페이지가 독립적으로 관리되면서, 관련된 기능들이 한 페이지가 아닌, 여러 페이지에 흩어져 있다. 예를 들어, 전화번호 인증, 이메일 인증, 회원정보 입력이 각각 다른 페이지에 구현되어 있는데, 이는 관련된 데이터와 로직이 하나의 모듈이나 컴포넌트에 집중되지 못하고, 페이지 단위로 분산되었다는 것을 의미한다. 즉, 하나의 모듈이나 컴포넌트가 하나의 책임만 갖도록 설계되어야 한다는 단일 책임 원칙에 위배된다.
+
+### 결합도가 높은 이유
+
+- **상호 의존성 증가**: 각 페이지가 독립적으로 기능을 수행하지만, 전체적인 회원가입 프로세스에서는 서로 의존적이다. 예를 들어, 전화번호 인증이 완료되지 않으면 이메일 인증 페이지로 넘어갈 수 없고, 이메일 인증이 완료되지 않으면 회원정보 입력 페이지로 넘어갈 수 없다. 이러한 의존성 때문에 한 페이지에서 발생한 변경 사항이 다른 페이지에도 영향을 미치게 된다.
+- **데이터 전달의 복잡성**: 회원가입 과정에서 필요한 데이터(전화번호, 이메일, 비밀번호 등)가 여러 페이지에 걸쳐 전달되어야 한다. 이는 각 페이지 간에 데이터 전달과 상태 관리를 복잡하게 만들며, 하나의 페이지에서 데이터 형식이나 구조가 변경되면, 다른 페이지들도 코드와 구조가 함께 수정되어야 한다.
+
+<br />
+
+## 해결 아이디어
+
+![](/images/tech/signup-design/4.png)
+
+![](/images/tech/signup-design/5.png)
+
+<aside>
+💡  내가 생각한 방식은 한 페이지 안에서 step 상태를 이용해 각 단계별 컴포넌트로 분기처리 하는 방식이다. 해당 방식은 하나의 회원가입 페이지가 존재하고, 모든 회원가입에 필요한 데이터는 회원가입 페이지에서만 관리된다.
+
+각 데이터는 step에 따라서 분기가 되는데, 예를들어 step1 휴대폰 인증에 관한 코드는 회원가입 페이지 하위 휴대폰 인증 컴포넌트에서 실행되고, 해당 데이터가 정상적으로 수집됐다면, 부모 컴포넌트인 회원가입 페이지의 step을 증가시켜 다음 단계인 이메일 인증에 필요한 데이터를 받게 된다.
+
+<br />
+
+**해당 방식은 응집도와 결합도의 관점에서도 유리하다고 생각한다.**
+
+**응집도가 높다**는 것은 관련된 기능들이 하나의 모듈이나 컴포넌트 내에 모여 있어 모듈의 책임이 명확하고, 유지보수가 용이하다는 것을 의미하는데, 회원가입과 관련된 모든 데이터가 회원가입 하나의 페이지에서 관리되며, 각 단계별로 분리된 컴포넌트는 자신이 가진 데이터 (전화번호, 이메일, etc)만 관심사를 두고 있다
+
+**결합도가 낮다**는 것은 모듈이나 컴포넌트 간의 의존성이 적어 변경이 용이하다는 것을 의미한다. 각 단계별 컴포넌트가 부모 컴포넌트와 step이란 상태를 통해 상호작용하므로, 각 컴포넌트는 다른 컴포넌트와 상호작용 없이 독립적으로 동작한다.
+
+</aside>
+
+<br />
+
+## 구현
+
+```tsx
+src > pages > signup > index;
+
+const SignUpPage = () => {
+  const [applyValues, setApplyValues] = useState<Partial<ApplyValues>>({
+    step: 0,
+  });
+
+  const handlePhoneNumber = (phoneNumber: ApplyValues['memberPhone']) => {
+    setApplyValues((prev) => ({
+      ...prev,
+      memberPhone: phoneNumber,
+      step: (prev.step as number) + 1,
+    }));
+  };
+
+  const handleNameAndEmail = (name: ApplyValues['memberName'], email: ApplyValues['password']) => {
+    setApplyValues((prev) => ({
+      ...prev,
+      memberName: name,
+      email: email,
+      step: (prev.step as number) + 1,
+    }));
+  };
+
+  const handleRemainData = (
+    password: ApplyValues['password'],
+    job: ApplyValues['memberJob'],
+    smsAgree: ApplyValues['memberSmsAgree']
+  ) => {
+    setApplyValues((prev) => ({
+      ...prev,
+      password: password,
+      memberJob: job,
+      memberSmsAgree: smsAgree,
+      step: (prev.step as number) + 1,
+    }));
+  };
+
+  useEffect(() => {
+    if (applyValues.step === 3) {
+      signUpReq({
+        email: applyValues.email as string,
+        password: applyValues.password as string,
+        memberName: applyValues.memberName as string,
+        memberJob: applyValues.memberJob as string,
+        memberPhone: applyValues.memberPhone as string,
+        memberSmsAgree: applyValues.memberSmsAgree as boolean,
+      });
+    }
+  }, [applyValues, signUpReq]);
+
+  return (
+    <MainContainer>
+      {applyValues.step === 0 ? <PhoneCertification onNext={handlePhoneNumber} /> : null}
+      {applyValues.step === 1 ? <EmailVerification onNext={handleNameAndEmail} /> : null}
+      {applyValues.step === 2 ? (
+        <PasswordVerification onNext={handleRemainData} applyValues={applyValues} />
+      ) : null}
+      {applyValues.step === 4 ? <SignupDone /> : null}
+    </MainContainer>
+  );
+};
+
+export default SignUpPage;
+```
+
+- **`handlePhoneNumber`**: 사용자가 전화번호를 입력하고 다음 단계로 넘어갈 때 호출. `memberPhone`을 상태에 저장하고 `step`을 1 증가시킨다
+- **`handleNameAndEmail`**: 사용자가 이름과 이메일을 입력하고 다음 단계로 넘어갈 때 호출. `memberName`과 `email`을 상태에 저장하고 `step`을 1 증가시킨다
+- **`handleRemainData`**: 사용자가 나머지 정보를 입력하고 다음 단계로 넘어갈 때 호출. `password`, `memberJob`, `memberSmsAgree`를 상태에 저장하고 `step`을 1 증가시킨다.
+
+> **여기서 또 중요한점은 applyValues를 객체 형식으로 관리한다는 점이다**
+
+<br />
+
+```jsx
+const [step, setStep] = useState(0);
+const [memberPhone, setMemberPhone] = useState('');
+const [memberName, setMemberName] = useState('');
+const [email, setEmail] = useState('');
+const [password, setPassword] = useState('');
+const [memberJob, setMemberJob] = useState('');
+const [memberSmsAgree, setMemberSmsAgree] = useState(false);
+
+// 각 상태를 업데이트할 때마다 여러 set 함수 호출 필요
+setMemberPhone(phone);
+setStep(step + 1);
+```
+
+```jsx
+const [applyValues, setApplyValues] = useState < Partial < ApplyValues >> { step: 0 };
+
+// 한 번의 set 함수 호출로 여러 값을 업데이트 가능
+setApplyValues((prev) => ({
+  ...prev,
+  memberPhone: phone,
+  step: prev.step + 1,
+}));
+```
+
+<aside>
+❗ 상태가 복잡해질수록, 여러 개의 `useState` 호출을 사용하는 것보다 하나의 객체로 상태를 관리하는 것이 더 효율적이고, 훨씬 체계적으로 상태를 관리할 수 있다. 또한 여러 상태 값을 개별적으로 관리하면, 서로 관련된 상태 값들 간의 동기화 문제가 발생할 수 있다. 하나의 객체로 상태를 관리하면, 한 번의 `setApplyValues` 호출로 여러 값을 동시에 업데이트할 수 있어 일관성을 유지하기가 쉬워진다.<br /><br />
+
+</aside>
+```tsx
+export interface ISignIn {
+  email: string;
+  password: string;
+}
+
+export interface ISignUp extends ISignIn {
+  memberName: string;
+  memberJob: string;
+  memberPhone: string;
+  memberSmsAgree: boolean;
+}
+
+export interface ApplyValues extends ISignUp {
+  step: number;
+}
+```
+
+또한 회원가입 시 필수로 받아야 하는 모든 속성이 필수로 지정되어 있는데, `Partial<ApplyValues>`를 사용하여 모든 속성을 선택적으로 가지는 타입이 된다. 따라서, 초기 상태를 설정할 때 모든 속성을 제공하지 않아도 TypeScript에서 오류가 발생하지 않는다. 즉 `step` 속성만 초기화하고 나머지 속성들은 생략할 수 있다. 이는 각 단계별로 필요한 속성만 점진적으로 추가하고 관리하기 편리하게 만들어준다.
+
+결과적으로. 이 페이지에서는 여러 단계의 폼을 통해 사용자의 정보를 수집하고 최종적으로 회원가입 요청을 서버에 보낸다. 각 단계는 별도의 폼 컴포넌트로 구성되어 있으며, 단계가 진행됨에 따라 `applyValues` 상태를 업데이트된다.
+
+<br />
+<br />
+
+# 지치지 않는 UI
+
+해당 코드 구조는 단계별로 사용자 정보를 수집하는 데 효율적이지만, 사용자 경험 측면에서 몇 가지 문제를 일으킬 수 있다. 특히, 사용자에게 현재 단계(`step`)를 명확히 전달하지 않으면, 사용자 입장에서 지루하거나 혼란스러울 수 있을것이다.
+
+### **문제 상황 시나리오**
+
+- 현재 사용자가 어느 단계에 있는지, 앞으로 몇 단계가 남아 있는지 명확히 알 수 없다. 이는 전체 과정을 마치는 데 얼마나 걸릴지 예측할 수 없어 지루함을 유발할 수 있을 것이고, 중간에 회원가입을 포기하게 만들 수 있다.
+- 단순히 폼 컴포넌트가 전환되는 방식만으로는 현재 진행 상황을 효과적으로 전달하기 어렵다. 단계별로 진행 상황을 시각적으로 표시해주지 않으면, 사용자가 전체 과정에서 어디에 있는지 모른다.
+
+> 앞서 예시에서의 MBTI 페이지에서는 진행상황을 시각적으로 표시하여 유저가 현재 어느정도 참고 끝까지 설문을 완료 할 수 있도록 해주었다.
+
+<br />
+
+![](/images/tech/signup-design/6.png)
+
+<aside>
+❗ 따라서 UI/UX 팀에게 해당 문제를 제기하고, 회원가입 중 유저가 어느정도 진행됐는지 확인 할 수 있는 디자인을 요청했고, 프로젝트에 적용 시켜 혹시 모를 회원가입 유저 이탈을 방지 할 수 있도록 했다.
+
+<br />
+
+</aside>
+
+![](/images/tech/signup-design/7.png)
+
+개발 할 때 기술적 완성도와 효율성만을 고려하는 경우가 종종 있다. 그러나 이번 회원가입 페이지 개선 작업을 통해, 사용자 입장을 먼저 생각해보며 혹시 모를 문제를 미리 방지한 경험이었다.
