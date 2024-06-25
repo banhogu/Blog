@@ -1,0 +1,193 @@
+---
+title: Error Boundary를 이용하여 똑똑하게 에러처리해보기
+tag: tech
+---
+
+## 도입 배경
+
+![](/images/tech/introduction-errorboundary/1.png)
+
+> 현재 Offispace 프로젝트에서는 서버 측 에러 페이지 **404.tsx**와 공통 서버 에러 페이지 **\_error.tsx**로 구분되어 관리되고 있다.
+
+![](/images/tech/introduction-errorboundary/2.png)
+
+<div className="bg-my-gray py-1 px-2 rounded-xl dark:text-white dark:bg-gray-800">
+  ❗ 그러나 클라이언트 측 에러는 별도로 관리되고 있지 않아, 다음과 같은 문제가 발생한다.
+</div>
+<br />
+
+### 발생 가능한 문제 시나리오
+
+![](/images/tech/introduction-errorboundary/3.png)
+
+글 상세페이지에서는 총 2개의 API 호출된다.
+
+- 글 상세 정보를 조회하는 **post, id**
+- 해당 글에 달린 댓글 정보를 가져오는 **AllComments, id**
+
+현재는 API가 제대로 동작하여 글 상세 페이지가 잘 보여지지만, 어느 한 곳이라도 에러가 발생한다면?
+
+> MSW를 이용하여 글 상세 데이터를 가져오는 API에 임의로 에러를 발생시켜보자.
+
+```tsx
+export const postHandlers = [
+  /* ----- 글 상세 데이터 가져오기 api ----- */
+  http.get(`https://joo-api.store/posts/25`, () => {
+    return HttpResponse.json('Not found', {
+      status: 400,
+    });
+  }),
+];
+```
+
+![](/images/tech/introduction-errorboundary/4.png)
+
+<div className="bg-my-gray py-1 px-2 rounded-xl dark:text-white dark:bg-gray-800">
+  ❗ 댓글은 정상적으로 가져오고 있지만, 글 상세 데이터를 가져오는 중 에러가 발생해 화면이 아예
+  터져버렸다. 따로 에러 처리를 하지 않아, 빈 화면이 출력되고 있는데, 유저 입장에서는 로딩중인지,
+  에러가 발생한건지, 화면이 넘어가긴 한건지 알 수 없어, 매우 큰 불편함이 생길것이다.
+</div>
+<br />
+
+<br />
+
+## Error **Boundary 도입**
+
+<div className="bg-my-gray py-1 px-2 rounded-xl dark:text-white dark:bg-gray-800">
+  💡 React에서 제공하는 Error Boundary 라는 개념을 이용하여 위에서 발생한 문제를 내용을 해결할 수
+  있다. Error Boundary는 렌더링 중 hasError 상태를 추적하여 하위 트리 에서 발생하는 에러를 잡아내어
+  처리 할 수 있도록 도와준다.
+</div>
+
+[Configuring: Error Handling](https://nextjs.org/docs/pages/building-your-application/configuring/error-handling)
+
+![](/images/tech/introduction-errorboundary/5.png)
+
+공식문서에서 제공하는 사용법은 매우 간단하다. 단순히 해당 코드를 붙여넣기하여 ErrorBoundary.tsx 컴포넌트를 만들고, 사용하는곳에서 감싸주기만 하면 된다. 단순히 ErrorBoundary를 감싸주는것만으로도 전체 클라이언트 에러를 감지 할 수 있게 되는것이다. 다만 해당 코드는 type이 적용된 버전인데, Next에서 제공되는 코드는 type이 적용되지 않아 관련 자료를 찾아보는데 애를 좀 먹었다.<br /><br />
+
+**\_app.tsx**
+
+```tsx
+<QueryClientProvider client={queryClient}>
+  <Hydrate state={pageProps.dehydratedState}>
+    <ErrorBoundary>
+      {loading && <LoadingSpinner />}
+      <Component {...pageProps} />
+    </ErrorBoundary>
+  </Hydrate>
+</QueryClientProvider>
+```
+
+<br />
+
+> 결과
+
+![](/images/tech/introduction-errorboundary/6.png)
+
+> `ErrorBoundary`로 앱을 감싸주고 확인해보면, 이전과 달리 빈 화면이 아닌, "에러 발생"이라는 문구가 표시되면서 사용자에게 에러가 발생했음을 확실히 인지 시킬 수 있다.
+
+하지만, 해당 방식은 댓글은 정상적으로 가져오고 있지만 글 상세 데이터에서 에러가 발생했다고 해서 전체 페이지를 사용할 수 없게 되는 문제가 발생한다. 이는 매우 좋지 않은 사용자 경험이라고 판단하여, 에러의 범위를 좁히는 방식으로 해결하고자 했다. 글 상세 API에서 에러가 발생하면 해당 부분만 에러 처리하고, 댓글은 정상적으로 작동하는것이다.
+
+<br />
+
+```tsx
+const PostDetail = () => {
+...
+  return (
+    ...
+  );
+};
+
+export default WrapErrorBoundary;
+
+function WrapErrorBoundary() {
+  return (
+    <ErrorBoundary>
+      <PostDetail />
+    </ErrorBoundary>
+  );
+}
+```
+
+따라서 위 코드처럼 `ErrorBoundary` 를 에러 발생 컴포넌트인 `PostDetail` 를 감싸서 `export default` 해주었다. Error Boundary는 렌더링 중 hasError 상태를 추적하여 하위 트리 에서 발생하는 에러를 잡아내어 처리 할 수 있다라고 소개했는데, 이 동작을 이용해 하단에서 발생한 에러가 상위 트리까지 올라가는 과정을 차단하고, 미리 에러를 처리할 수 있도록 한것이다.
+
+<br />
+
+![](/images/tech/introduction-errorboundary/7.png)
+
+이제 다시 에러를 발생시켜보면, 전과 달리 댓글을 가져오는 API는 정상적으로 작동하여 화면에 잘 출력되고, 에러가 발생한 글 상세 API 부분만 에러 처리가 된 것을 볼 수 있다. 이를 통해 사용자는 앱이 완전히 멈춘 것이 아니라 특정 부분에서 오류가 발생했음을 인지하게 되어 안심 할 수 있게 된다.
+
+해당 `ErrorBoundary` 컴포넌트는 상세 글뿐만 아니라 전역적으로 에러가 발생할 때 동일한 방식으로 동작하는데, 이 때 글을 가져오는 중 에러가 발생할 때는 디자인을 다르게 적용할 수 있다. 즉, 특정 API에 대해서는 별도의 fallback 에러 컴포넌트를 사용할 수 있는 것이다.
+
+<br />
+
+```tsx
+interface Props {
+  children: React.ReactNode;
+  fallbackComponent?: React.ReactNode;
+}
+
+interface State {
+  hasError: boolean;
+}
+
+class ErrorBoundary extends React.Component<Props, State> {
+  constructor(props: Props) {
+    super(props);
+    this.state = { hasError: false };
+  }
+  static getDerivedStateFromError() {
+    return { hasError: true };
+  }
+  componentDidCatch(error: Error, errorInfo: ErrorInfo) {
+    console.log({ error, errorInfo });
+  }
+  render() {
+    if (this.state.hasError) {
+      if (this.props.fallbackComponent != null) {
+        return <>{this.props.fallbackComponent}</>;
+      }
+
+      return <div>문제가 발생했어요.</div>;
+    }
+    return this.props.children;
+  }
+}
+
+export default ErrorBoundary;
+
+// !--    PostDetail      --!
+function WrapErrorBoundary() {
+  return (
+    <ErrorBoundary
+      fallbackComponent={
+        <div className="mt-[100px] mb-[170px]">
+          <div className="flex flex-col items-center justify-center">
+            <Image src="/error.png" width={100} height={100} alt="error" />
+            <div className="text-space-purple font-bold text-lg">
+              글을 가져오는 중 일시적인 오류가 발생했습니다.
+            </div>
+            <div className="text-gray-500 text-md font-semibold">잠시 후 다시 시도해주세요</div>
+          </div>
+        </div>
+      }
+    >
+      <PostDetail />
+    </ErrorBoundary>
+  );
+}
+```
+
+> `ErrorBoundary`에서 Props로 `fallbackComponent`를 받도록 해주면 되는데, `ErrorBoundary` 컴포넌트를 주입하게 되면?
+
+![](/images/tech/introduction-errorboundary/8.png)
+
+> 위 화면처럼 글을 가져올 때 에러가 발생할 시 `fallbackComponent`로 설정한 에러 화면이 표시된다.
+
+물론, API를 구분하여 일일이 `fallbackComponent`로 어디서 어떤 에러가 발생했는지 사용자에게 알려주면 좋겠지만, 이는 현실적으로 어려운 일 일것이다.
+
+<br />
+
+![](/images/tech/introduction-errorboundary/9.png)
+
+따라서 위 코드처럼, 인증 에러, 네트워크 에러 등 최대한 공통적으로 일어날 수 있는 케이스로 에러를 분류하고, 그에 따라 선언적으로 에러를 처리하면, 사용자는 상황에 따라 좀 더 다듬어진 에러를 파악 할 수 있을것이다.
