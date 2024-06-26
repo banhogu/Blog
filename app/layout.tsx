@@ -11,9 +11,12 @@ export const metadata = {
   description: 'banghojin.site',
   openGraph: {
     title: '호진방 블로그',
-    description: 'banghojin.site',
+    description: '안녕하세요, 방호진의 기술 블로그입니다.',
     url: 'https://banghojin.site',
     siteName: '호진방 블로그',
+    images: {
+      url: './OG_IMAG.png',
+    },
   },
   metadataBase: new URL('https://banghojin.site'),
 };
