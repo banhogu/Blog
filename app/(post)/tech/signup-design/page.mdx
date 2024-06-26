@@ -25,7 +25,7 @@ tag: tech
 
 <br />
 
-<div className="bg-my-gray py-1 px-2 rounded-xl dark:text-white dark:bg-gray-800">
+<div className="bg-my-gray py-1 px-5 text-base font-medium rounded-xl dark:text-white dark:bg-gray-800">
   ❗ 다만 이와 같은 형식은 단점이 존재하는데, 페이지들을 돌아다니면서 하나의 데이터를 완성시키는
   과정이 각 페이지에서 이뤄지기 때문에 어떤 데이터가 언제 변하는지 알기 위해서는 각 페이지들을
   돌아다니면서, 어떤 시점에 어떤 데이터를 바꿔야 하는지 찾아다녀야 한다. 또한 디버깅을 하고 싶어도
@@ -54,7 +54,7 @@ tag: tech
 
 ![](/images/tech/signup-design/5.png)
 
-<div className="bg-my-gray py-1 px-2 rounded-xl dark:text-white dark:bg-gray-800">
+<div className="bg-my-gray py-1 px-5 text-base font-medium rounded-xl dark:text-white dark:bg-gray-800">
  💡  내가 생각한 방식은 한 페이지 안에서 step 상태를 이용해 각 단계별 컴포넌트로 분기처리 하는 방식이다. 해당 방식은 하나의 회원가입 페이지가 존재하고, 모든 회원가입에 필요한 데이터는 회원가입 페이지에서만 관리된다.
 
 각 데이터는 step에 따라서 분기가 되는데, 예를들어 step1 휴대폰 인증에 관한 코드는 회원가입 페이지 하위 휴대폰 인증 컴포넌트에서 실행되고, 해당 데이터가 정상적으로 수집됐다면, 부모 컴포넌트인 회원가입 페이지의 step을 증가시켜 다음 단계인 이메일 인증에 필요한 데이터를 받게 된다.
@@ -173,7 +173,7 @@ setApplyValues((prev) => ({
 }));
 ```
 
-<div className="bg-my-gray py-1 px-2 rounded-xl dark:text-white dark:bg-gray-800">
+<div className="bg-my-gray py-1 px-5 text-base font-medium rounded-xl dark:text-white dark:bg-gray-800">
  ❗ 상태가 복잡해질수록, 여러 개의 `useState` 호출을 사용하는 것보다 하나의 객체로 상태를 관리하는 것이 더 효율적이고, 훨씬 체계적으로 상태를 관리할 수 있다. 또한 여러 상태 값을 개별적으로 관리하면, 서로 관련된 상태 값들 간의 동기화 문제가 발생할 수 있다. 하나의 객체로 상태를 관리하면, 한 번의 `setApplyValues` 호출로 여러 값을 동시에 업데이트할 수 있어 일관성을 유지하기가 쉬워진다.
 
 </div>
@@ -216,7 +216,7 @@ export interface ApplyValues extends ISignUp {
 
 ![](/images/tech/signup-design/6.png)
 
-<div className="bg-my-gray py-1 px-2 rounded-xl dark:text-white dark:bg-gray-800">
+<div className="bg-my-gray py-1 px-5 text-base font-medium rounded-xl dark:text-white dark:bg-gray-800">
  ❗ 따라서 UI/UX 팀에게 해당 문제를 제기하고, 회원가입 중 유저가 어느정도 진행됐는지 확인 할 수 있는 디자인을 요청했고, 프로젝트에 적용 시켜 혹시 모를 회원가입 유저 이탈을 방지 할 수 있도록 했다.
 
 </div>

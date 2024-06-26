@@ -19,7 +19,7 @@ tag: tech
 
 페이지네이션과 무한스크롤 중 어떤 쪽을 사용할지는 웹사이트의 목적, 콘텐츠의 유형 그리고 의도된 UX에 따라 달라진다. 페이지네이션은 사용자가 특정한 콘텐츠를 찾고 있는 웹사이트에 가장 적합하고, 무한 스크롤은 사용자가 무언가 흥미로운 콘텐츠를 보기 위해 목적 없이 검색하는 상황에서 더 적절하다. 또한, 모바일 기기에도 매우 효과적이다.
 
-<div className="bg-my-gray py-1 px-2 rounded-xl dark:text-white dark:bg-gray-800">
+<div className="bg-my-gray py-1 px-5 text-base font-medium rounded-xl dark:text-white dark:bg-gray-800">
   ❗ 이번 프로젝트에서는 모바일 기기 환경을 최우선으로 염두해두고 기획된 프로젝트이고, 커뮤니티
   페이지 특성 상 사용자가 일일이 페이지1, 페이지2로 버튼을 누르는 행위 자체가 답답한 작업으로 취급
   될 수 있기 때문에 버튼을 누른다는 행위를 최소화하면서 커뮤니티 글을 조회 할 수 있는 사용자
@@ -68,7 +68,7 @@ React Query가 설치된 프로젝트에서, 위 코드와 같이 React Query를
 
 `queryFn`: 쿼리가 데이터를 요청하는 데 사용할 함수
 
-<div className="bg-my-gray py-1 px-2 rounded-xl dark:text-white dark:bg-gray-800">
+<div className="bg-my-gray py-1 px-5 text-base font-medium rounded-xl dark:text-white dark:bg-gray-800">
   ❗ 단, 주의 사항으로 가져온 데이터는 useQuery 형식과 다르게 pages 배열안에 담겨져 있으므로, 해당
   데이터를 이용하려면 pages 배열안에 아이템을 빼오는 작업이 필요하다.
 </div>
@@ -286,7 +286,7 @@ useEffect(() => {
 
 ## 예상치 못한 문제 발생
 
-<div className="bg-my-gray py-1 px-2 rounded-xl dark:text-white dark:bg-gray-800">
+<div className="bg-my-gray py-1 px-5 text-base font-medium rounded-xl dark:text-white dark:bg-gray-800">
   ❗ 무한 스크롤 사용 시 유저가 글 상세 페이지를 이동했다가 뒤로가기를 누르면 클릭 이전 위치로
   돌아올 수 없다는 문제가 발생했다. React Query 덕분에 데이터는 전부 유지되고 있지만, 스크롤이
   최상단으로 복구되어 이전까지 탐색하던 위치를 유지하지 못하는것이다. 사용자는 해당 글이 있던
@@ -410,7 +410,7 @@ useEffect(() => {
 
 ## 또 문제 발생..
 
-<div className="bg-my-gray py-1 px-2 rounded-xl dark:text-white dark:bg-gray-800">
+<div className="bg-my-gray py-1 px-5 text-base font-medium rounded-xl dark:text-white dark:bg-gray-800">
   ❗ PostItem을 클릭하고 session storage에 데이터가 저장된 상태에서, footer 메뉴바를 클릭해 다른
   페이지로 이동했다가, 다시 커뮤니티 페이지로 이동했을 때 세션 스토리지에는 글 전체 데이터와 스크롤
   Y값이 남아 있게 된다. 즉 뒤로가기 동작이 아니여도 세션 스토리지에 저장된 값의 영향을 받게 되어,
@@ -423,7 +423,7 @@ useEffect(() => {
 
 ## 해결 아이디어2
 
-<div className="bg-my-gray py-1 px-2 rounded-xl dark:text-white dark:bg-gray-800">
+<div className="bg-my-gray py-1 px-5 text-base font-medium rounded-xl dark:text-white dark:bg-gray-800">
   💡 커뮤니티 메인 페이지로 이동 되는 경우가 언제인지 알아야, 우리가 원하는 동작인 글 상세페이지에서
   뒤로 가기했을 때만 스크롤이 이동될 수 있도록 할 수 있을것이다.
 </div>

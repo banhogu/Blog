@@ -12,7 +12,7 @@ export function H2({ children }) {
   return (
     <h2
       id={parsedId}
-      className=" flex items-center group font-bold text-xl my-8 relative text-[24px] bg-my-strong-gray py-2 dark:text-white dark:bg-gray-800"
+      className="pl-2 flex items-center group font-bold my-8 relative text-[24px] bg-my-strong-gray py-2 dark:text-white dark:bg-gray-800"
     >
       {withHeadingId(children)}
     </h2>

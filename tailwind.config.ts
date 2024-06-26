@@ -8,7 +8,7 @@ module.exports = {
     extend: {
       colors: {
         'my-gray': 'rgb(241, 241, 239)',
-        'my-strong-gray': 'rgb(234, 234, 232)',
+        'my-strong-gray': 'rgb(236, 236, 234)',
       },
     },
   },
