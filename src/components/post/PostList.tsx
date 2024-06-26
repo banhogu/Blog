@@ -36,7 +36,7 @@ const PostList = ({ posts, divide }: PostListType) => {
          ${!isFirst ? 'border-t-0' : ''}
          ${isLast ? 'border-b-0' : ''}`}
               >
-                <div className="w-12">
+                <div className="w-12 flex items-center justify-center mr-4 font-semibold">
                   {isFirstOfTag && divide[1] == '전체' && getTag(post.tag)}
                 </div>
                 <div className="flex-1 dark:text-gray-100">{post.title}</div>
