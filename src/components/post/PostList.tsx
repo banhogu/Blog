@@ -15,9 +15,16 @@ const PostList = ({ posts, divide }: PostListType) => {
     return tag === '전체' ? posts : posts.filter((post) => getTag(post.tag) === tag);
   }, [posts, divide]);
 
+  const seenTags = new Set();
+
   return (
     <ul>
       {dividedPosts.map((post: Post, i: number) => {
+        const isFirstOfTag = !seenTags.has(post.tag);
+        if (isFirstOfTag) {
+          seenTags.add(post.tag);
+        }
+
         const isFirst = i === 0;
         const isLast = i === dividedPosts.length - 1;
 
@@ -29,7 +36,9 @@ const PostList = ({ posts, divide }: PostListType) => {
          ${!isFirst ? 'border-t-0' : ''}
          ${isLast ? 'border-b-0' : ''}`}
               >
-                <div className="w-12"></div>
+                <div className="w-12">
+                  {isFirstOfTag && divide[1] == '전체' && getTag(post.tag)}
+                </div>
                 <div className="flex-1 dark:text-gray-100">{post.title}</div>
               </div>
             </Link>
