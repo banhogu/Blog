@@ -5,6 +5,8 @@ import { useSelectedLayoutSegments } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import ToTop from '../ToTop';
 import Progressbar from '../Progressbar';
+import { parseContent } from '@/utils/parseContent';
+import Sidebar from './Sidebar';
 
 interface PostHeaderType {
   posts: Post[];
@@ -16,6 +18,8 @@ export function PostHeader({ posts }: PostHeaderType) {
   const post = posts.find((post) => post.id === segments[segments.length - 1]); //해당 글 가져오기 받은 post는 배열이라서 find씀
 
   if (post == null) return <></>;
+
+  const parsedContent = parseContent(post.content);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -42,6 +46,7 @@ export function PostHeader({ posts }: PostHeaderType) {
         <h1 className=" text-2xl font-bold dark:text-gray-100">{post.title}</h1>
       </div>
       {showToTop && <ToTop />}
+      <Sidebar parsedContent={parsedContent} />
       <Progressbar />
     </>
   );
