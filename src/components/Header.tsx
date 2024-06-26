@@ -22,7 +22,7 @@ const Header = () => {
           href="/guestbook"
           className="inline-flex hover:bg-gray-200 dark:hover:bg-[#313131] active:bg-gray-300 dark:active:bg-[#242424] items-center p-2 rounded-sm transition-[background-color] whitespace-nowrap -mr-2"
         >
-          <span className="hidden md:inline">Guest Book</span>
+          <span>Guest Book</span>
         </Link>
       </nav>
     </header>
