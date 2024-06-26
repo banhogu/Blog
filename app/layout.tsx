@@ -8,14 +8,14 @@ const inter = Inter({ subsets: ['latin'] });
 
 export const metadata = {
   title: '호진방 블로그',
-  description: 'hojinbang.com', //todo 변경해라
+  description: 'banghojin.site',
   openGraph: {
     title: '호진방 블로그',
-    description: 'hojinbang.com', //todo 변경해라
-    url: 'https://hojinbang.com', //todo 변경해라
+    description: 'banghojin.site',
+    url: 'https://banghojin.site',
     siteName: '호진방 블로그',
   },
-  metadataBase: new URL('https://hojinbang.com'), //todo 변경해라
+  metadataBase: new URL('https://banghojin.site'),
 };
 
 export const viewport = {
