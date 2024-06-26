@@ -28,7 +28,7 @@ export default withMDX({
     const posts = postsData.posts;
     const redirectPosts = posts.map((post) => ({
       source: `/${post.id}`, // "id": "test1",
-      destination: `/${post.date.split('.')[0]}/${post.id}`, //"2024.03.07",
+      destination: `/${post.tag.split('.')[0]}/${post.id}`, // "tag": "study",
       permanent: true,
     }));
 

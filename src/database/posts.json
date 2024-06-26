@@ -1,14 +1,64 @@
 {
   "posts": [
     {
-      "id": "test1",
-      "date": "2024.03.07",
-      "title": "test글 1입니다"
+      "id": "coupling-cohesion",
+      "tag": "study",
+      "title": "응집도와 결합도 이야기"
     },
     {
-      "id": "test2",
-      "date": "2024.05.13",
-      "title": "test글 2입니다"
+      "id": "what-is-architecture",
+      "tag": "study",
+      "title": "그래서 아키텍처가 뭔데?"
+    },
+    {
+      "id": "abstract-axios",
+      "tag": "tech",
+      "title": "API 공통 사항 관리를 위한, Axios 추상화 구현"
+    },
+    {
+      "id": "implement-focuszone",
+      "tag": "tech",
+      "title": "눈물을 흘리며 개발한 1인석 좌석 배치도 구현기"
+    },
+    {
+      "id": "introduction-errorboundary",
+      "tag": "tech",
+      "title": "Error Boundary를 이용하여 똑똑하게 에러처리해보기"
+    },
+    {
+      "id": "introduction-infinitescroll",
+      "tag": "tech",
+      "title": "글, 댓글 조회시 무한스크롤을 구현하겠습니다, 근데 이제 에러핸들링까지 곁들인"
+    },
+    {
+      "id": "introduction-msw",
+      "tag": "tech",
+      "title": "API 언제나와요? 아 네… API로부터 독립된 컴포넌트 생성하기 + MSW 도입기"
+    },
+    {
+      "id": "introduction-reactmarkdown",
+      "tag": "tech",
+      "title": "React-markdown을 도입하여 생산성 높이기"
+    },
+    {
+      "id": "offispace-optimization",
+      "tag": "tech",
+      "title": "Offispace 프로젝트 최적화 해보기"
+    },
+    {
+      "id": "signup-design",
+      "tag": "tech",
+      "title": "응집도와 결합도를 고려한 회원가입 설계와 유저가 지치지 않는 UI"
+    },
+    {
+      "id": "why-i-use-next",
+      "tag": "think",
+      "title": "나는 Next를 왜 쓰는가, 취업 할 때 유리해서? 기술 스택 하나 더 채우려고?"
+    },
+    {
+      "id": "bestpractice-meaning",
+      "tag": "think",
+      "title": "내가 생각한 Best Pratice의 의미"
     }
   ]
 }
