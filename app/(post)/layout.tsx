@@ -1,3 +1,4 @@
+import Giscus from '@/components/post/Giscus';
 import { PostHeader } from '@/components/post/PostHeader';
 import { getPosts } from '@/utils/getPosts';
 
