@@ -18,6 +18,7 @@ import { P as p } from '@/components/ui/p';
 import { Snippet } from '@/components/ui/snippet';
 import { UL as ul } from '@/components/ui/ul';
 import { YouTube } from '@/components/ui/youtube';
+import { Strong as strong } from '@/components/ui/strong';
 
 export function useMDXComponents(components: MDXComponents) {
   return {
@@ -44,5 +45,6 @@ export function useMDXComponents(components: MDXComponents) {
     Ref,
     FootNotes,
     FootNote,
+    strong,
   };
 }
