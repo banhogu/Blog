@@ -2,17 +2,17 @@
 import { Post } from '@/models/post';
 import { Suspense, useMemo, useState } from 'react';
 import PostList from './PostList';
-import { DivideOption } from '@/models/divideOption';
 import { getTag } from '@/utils/getTag';
+import { Option } from '@/models/options';
 
 interface PostListLayoutType {
   posts: Post[];
 }
 
 const PostListLayout = ({ posts }: PostListLayoutType) => {
-  const [divide, setDivide] = useState<DivideOption>(['tag', '전체']);
+  const [divide, setDivide] = useState<Option>(['tag', '전체']);
 
-  const divideOptions: DivideOption[1][] = ['전체', '학습', '기술', '생각', '경험'];
+  const divideOptions: Option[1][] = ['전체', '학습', '기술', '생각', '경험'];
 
   const clickBtn = () => {
     setDivide((prevDivide) => {

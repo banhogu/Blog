@@ -1,4 +1,4 @@
-import { DivideOption } from '@/models/divideOption';
+import { Option } from '@/models/options';
 import { Post } from '@/models/post';
 import { getTag } from '@/utils/getTag';
 import Link from 'next/link';
@@ -6,7 +6,7 @@ import React, { useMemo } from 'react';
 
 type PostListType = {
   posts: Post[];
-  divide: DivideOption;
+  divide: Option;
 };
 
 const PostList = ({ posts, divide }: PostListType) => {
