@@ -1,10 +1,7 @@
-import { Inter } from 'next/font/google';
 import '@/styles/globals.css';
 import { themeEffect } from '@/utils/themeEffect';
 import Footer from '@/components/Footer';
 import Header from '@/components/Header';
-
-const inter = Inter({ subsets: ['latin'] });
 
 export const metadata = {
   title: '호진방 블로그',
@@ -28,7 +25,7 @@ export const viewport = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     //  하이드레이션 오류 안나오게
-    <html lang="ko" className={`${inter.className} antialiased`} suppressHydrationWarning={true}>
+    <html lang="ko" suppressHydrationWarning={true}>
       <head>
         <script
           dangerouslySetInnerHTML={{

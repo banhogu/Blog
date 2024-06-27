@@ -10,6 +10,11 @@ module.exports = {
         'my-gray': 'rgb(241, 241, 239)',
         'my-strong-gray': 'rgb(236, 236, 234)',
       },
+      fontFamily: {
+        naverBold: ['naverBold'],
+        naverNormal: ['naverNormal'],
+        naverSemi: ['naverSemi'],
+      },
     },
   },
   plugins: [

@@ -6,7 +6,7 @@ export const getTag = (tag: string) => {
     },
     {
       tag: 'study',
-      korean: '공부',
+      korean: '학습',
     },
     {
       tag: 'tech',

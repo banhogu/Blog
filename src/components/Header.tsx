@@ -9,7 +9,7 @@ const Header = () => {
     <header className="flex mt-2 mb-5 md:mb-10 items-center">
       <Logo />
 
-      <nav className="font-mono text-xs grow justify-end items-center flex gap-1 md:gap-3">
+      <nav className="font-naverSemi text-xs grow justify-end items-center flex gap-1 md:gap-3">
         <ToggleTheme />
 
         <Link

@@ -1,7 +1,7 @@
 'use client';
-import { withHeadingId } from './utils';
 
 export function H2({ children }) {
+  //##에 대해 id추가 하기, sidebar에서 바로 갈 수 있어야함
   const parsedId = children
     .replace('# ', '')
     .replace('#', '')
@@ -12,9 +12,9 @@ export function H2({ children }) {
   return (
     <h2
       id={parsedId}
-      className="pl-2 flex items-center group font-bold my-8 relative text-[24px] bg-my-strong-gray py-2 dark:text-white dark:bg-gray-800"
+      className="font-naverBold pl-2 flex items-center group my-8 relative text-[24px] bg-my-strong-gray py-2 dark:text-white dark:bg-gray-800"
     >
-      {withHeadingId(children)}
+      {children}
     </h2>
   );
 }

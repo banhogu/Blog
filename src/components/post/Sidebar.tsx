@@ -18,7 +18,9 @@ const Sidebar = ({ parsedContent }: SidebarType) => {
     <>
       <div className="text-xs fixed ml-[700px] -mt-6">
         <div className="border-l border-gray-300 flex flex-col gap-1 py-4 px-4">
-          <div className="font-bold text-lg text-gray-700 dark:text-gray-300">On This Page</div>
+          <div className="font-naverBold text-lg text-gray-700 dark:text-gray-300">
+            On This Page
+          </div>
           <ul>
             {parsedContent.map((item, i) => {
               return (
@@ -27,10 +29,10 @@ const Sidebar = ({ parsedContent }: SidebarType) => {
                   className={`
                   ${
                     activeHeading[0] == item.link
-                      ? 'text-pink-600'
-                      : 'text-gray-500 dark:text-gray-300'
+                      ? 'text-pink-600 font-naverBold'
+                      : 'text-gray-500 dark:text-gray-300 font-naverSemi'
                   }
-                  mt-2 text-xs font-semibold  `}
+                  mt-2 text-xs  `}
                 >
                   <Link href={item.link}>{item.text}</Link>
                 </li>

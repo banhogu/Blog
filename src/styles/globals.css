@@ -4,7 +4,6 @@
 
 @layer base {
   :root {
-    font-family: 'Inter', sans-serif;
     -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
     -webkit-tap-highlight-color: transparent;
     color-scheme: light;
@@ -19,12 +18,21 @@
   :root.pause-transitions * {
     transition-duration: 0ms !important;
   }
+}
 
-  @supports (font-variation-settings: normal) {
-    :root {
-      font-family: 'Inter var', sans-serif;
-    }
-  }
+@font-face {
+  font-family: 'naverNormal';
+  src: url('../asset/fonts/naverNormal.woff');
+}
+
+@font-face {
+  font-family: 'naverBold';
+  src: url('../asset/fonts/naverBold.woff');
+}
+
+@font-face {
+  font-family: 'naverSemi';
+  src: url('../asset/fonts/naverSemi.woff');
 }
 
 /* <pre> 태그로 감싸진 코드 블록의 가로 스크롤바를 숨기기 */
