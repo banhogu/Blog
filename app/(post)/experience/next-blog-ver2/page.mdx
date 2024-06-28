@@ -1,0 +1,296 @@
+---
+title: Next.js 블로그 만들기 Ver.2
+tag: experience
+---
+
+import { Callout } from '@/components/ui/callout';
+
+<div className='flex justify-between'>
+[이전 글](https://www.banghojin.site/experience/next-blog-ver1)
+
+[다음 글](https://www.banghojin.site/experience/next-blog-ver3)
+
+</div>
+
+## 남은 기능 구현해보기
+
+이전 시간 기본적인 글 생성 및 글 조회까지 구현해봤다. App Router를 통해 폴더 구조의 도메인을 입력하면 해당 글로 이동 할 수 있지만, 당연히 모두가 원하는 동작은 아닐것이다.
+
+이번 시간에는 메인 페이지에서 태그와 제목을 포함한 글 리스트들을 보여주고, 해당 글을 클릭할 시, 글 상세페이지로 이동하는 동작을 구현해볼것이다. <br/><br/>
+
+![](/images/experience/next-blog-ver2/1.png)
+
+> 추가로 현재 글 상세페이지에서는 MDX 파일을 렌더링한 HTML 컴포넌트만 나오고 있어, 매우 심심한? 모습의 글 상세페이지 모습이다.
+
+<br />
+
+![](/images/experience/next-blog-ver2/2.png)
+
+> 노션 페이지처럼 글 상세페이지 상단에 PostHeader를 추가해서, 글 제목, 글 태그를 보여준다면 글을 읽는 독자에게 더 상세한 글 정보를 제공해줄 수 있을것이다.
+
+<br />
+
+![](/images/experience/next-blog-ver2/3.png)
+
+> 또한 노션은 헤딩으로 이동할 수 있는 사이드바(목차)를 제공한다. 긴 글이나 문서에서 독자의 편의성을 높이고 탐색 경험을 개선하기 위해 해당 사이드바 또한 구현해볼것이다.
+
+<br />
+
+<Callout>
+  ❗ 이밖에도 유저의 사용자 경험을 개선하는 컴포넌트인 **ToTop 버튼**과, **프로그레스바** 또한
+  추가해볼것이다.
+</Callout>
+
+### ToTop 버튼
+
+- ToTop 버튼(맨 위로 이동 버튼)은 웹 페이지에서 사용자가 현재 위치에서 페이지의 맨 위로 빠르게 이동할 수 있도록 돕는 UI 요소이다.
+- 긴 페이지를 스크롤한 후 다시 위로 올라가는 것을 쉽게 만들어, 사용자가 불편함을 느끼지 않도록 한다.
+- 특히 모바일 기기나 터치스크린 기기에서, 긴 페이지를 손가락으로 여러 번 스와이프하지 않고도 맨 위로 쉽게 이동할 수 있어 접근성을 높인다. <br /><br />
+
+### 프로그레스바
+
+- 현재 글 스크롤 상태를 시각적으로 표시하여 사용자가 글 위치를 대략적으로 알 수 있게 해준다.
+- 일반적으로 가로 막대 형태로 표시되며, 진행 정도에 따라 막대의 길이가 증가한다. 색상 변화, 애니메이션, 숫자(백분율) 등의 다양한 형태로 제공될 수 있다.
+
+<br />
+
+## 메인페이지 - 글 리스트
+
+대부분의 게시판 형식 프로젝트에서는 API 요청을 통해 데이터베이스에서 글을 가져오지만, 이번 블로그 프로젝트에서는 데이터베이스를 사용하지 않고 파일 트리에 직접 글을 추가하는 방식을 사용한다. 따라서 직접 파일 시스템에 접근하여 MDX 파일을 읽어오는 작업이 필요하다.
+
+이 작업은 `getPosts` 함수에서 이루어진다. 이 함수는 사실상 이번 블로그 프로젝트의 A부터 Z까지 모든 기능을 담당하는 핵심 함수이므로, **정확한 동작과 이해**가 필요하다.
+
+### getPosts
+
+```tsx
+import { Post } from '@/models/post';
+import fs from 'fs';
+import matter from 'gray-matter';
+import { join } from 'path';
+
+const postRoot = join(process.cwd(), 'app/(post)'); // Users/banghojin/Desktop/blog/blog/app/(post) 형식으로 변환
+
+export const getPostBySlug = (slug: string): Post => {
+  const [tag, id] = slug.split('/'); //[ 'think/why-i-use-next' ] 형태로 받은 데이터를 태그, id로 가져와서
+  const fullPath = join(postRoot, `${slug}/page.mdx`); // '/Users/banghojin/Desktop/blog/blog/app/(post)/think/why-i-use-next/page.mdx' 형태로 변환
+  const fileContents = fs.readFileSync(fullPath, 'utf8'); // 해당 파일을 읽고
+  const { data, content } = matter(fileContents); //data = --- --- 안에 있는 데이터들, content는 md 코드
+
+  return {
+    id,
+    tag,
+    slug,
+    content,
+    title: data.title,
+    postTag: data.tag,
+  };
+};
+
+export const getPosts = () => {
+  const dirs = fs.readdirSync(postRoot, { recursive: true }); // postRoot안에 있는 모든 루트 파일트리를 가져와서 ['etc',study,layout.tsx ...]
+  const paths = dirs.map((path) => path);
+  const slugs = paths.filter((path) => path.split('/').length === 2); //[ 'think/why-i-use-next' ] 해당 형태로 변환
+  const posts = slugs.map(getPostBySlug);
+
+  return posts;
+};
+```
+
+> 중요하니 동작 과정을 처음부터 천천히 살펴보자
+
+<br />
+
+**동작 1 : MDX 파일을 가져올 루트 디렉토리의 절대 경로 가져오기.**
+
+`const postRoot = join(process.cwd(), 'app/(post)')`
+
+process.cwd()를 통해 Users/banghojin/Desktop/blog/blog/ 형태로 가져온 경로에 app/(post)를 붙여 base가 될 Root 경로를 생성한다.
+
+<br />
+
+**동작 2 : MDX 파일들이 저장된 디렉토리의 절대 경로 가져오기.**
+
+`const dirs = fs.readdirSync(postRoot, { recursive: true });`  
+`const paths = dirs.map((path) => path);`
+`const slugs = paths.filter((path) => path.split('/').length === 2)`
+
+dirs : 'think/why-i-use-next/page.mdx’…
+
+paths : 'think/why-i-use-next/page.mdx’…
+
+slug : 'think/why-i-use-next’…
+
+<br />
+**동작 3 : getPostBySlug 뽑아낸 디렉토리 절대 경로에서 MDX 파일을 읽어 데이터 뽑아오기 (주석참고)**
+
+```tsx
+{
+    id: 'test-post',
+    tag: 'test',
+    slug: 'test/test-post',
+    content: '\n' +
+      ##test',
+    title: '테스트 글입니다',
+    postTag: 'test'
+}
+```
+
+<br />
+**동작 4 : 뽑아온 데이터들 전부 return**
+
+여기까지 `getPosts` 함수의 동작이다. 함수가 종료 될 때 app/(post)의 모든 MDX 순회하여 데이터를 배열 형태로 저장하고 있다.
+
+```tsx
+import PostListLayout from '@/components/post/PostListLayout';
+import { getPosts } from '@/utils/getPosts';
+import React from 'react';
+
+const HomePage = () => {
+  const posts = getPosts();
+
+  return (
+    <div>
+      <PostListLayout posts={posts} />
+    </div>
+  );
+};
+
+export default HomePage;
+```
+
+이를 Main Page에서 호출 하여 `PostListLayout`으로 모든 글 데이터를 넘겨준다.
+
+<br />
+```tsx
+const PostListLayout = ({ posts }: PostListLayoutType) => {
+  const [divide, setDivide] = useState<Option>(['tag', '전체']);
+  const divideOptions: Option[1][] = ['전체', '학습', '기술', '생각', '경험'];
+  const clickBtn = () => {
+    setDivide((prevDivide) => {
+      const currentIndex = divideOptions.indexOf(prevDivide[1]);
+      const nextIndex = (currentIndex + 1) % divideOptions.length;
+      return ['tag', divideOptions[nextIndex]];
+    });
+  };
+  const dividedPosts = useMemo(() => {
+    const [_, tag] = divide;
+    return tag === '전체' ? posts : posts.filter((post) => getTag(post.tag) === tag);
+  }, [posts, divide]);
+
+return (
+
+<Suspense fallback={null}>
+<main className="max-w-2xl m-auto mb-10 text-sm ">
+<header className="flex justify-between text-sm text-gray-600 dark:text-gray-300">
+<div className="flex items-center">
+<button
+onClick={clickBtn}
+className={`font-naverBold flex mr-2 items-center justify-center w-12 h-9 text-left text-gray-800 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-[#242424] active:bg-gray-200 dark:active:bg-[#222]`} >
+{divide[1] === '전체' ? 'tag' : `${divide[1]}`}
+</button>
+<span className="pl-2 grow font-naverBold">title</span>
+</div>
+<div className="text-sm flex items-center font-naverBold">
+{dividedPosts?.length} posts
+</div>
+</header>
+
+        <PostList posts={posts} divide={divide} />
+      </main>
+    </Suspense>
+
+);
+};
+
+````
+
+모든 글 데이터를 받은 `PostListLayout`은 글 데이터에 저장된 태그별로 글을 분류하고, 각 Link마다 글 ID를 href 속성으로 넘겨주어 글 아이템이 클릭 될 시 해당 글 상세페이지로 이동한다.<br /><br />
+### 결과
+
+![](/images/experience/next-blog-ver2/4.png)
+<br />
+## PostHeader
+
+글 상세페이지에서 글 제목과, 글 태그를 표시해주는 **PostHeader**를 구현하기 위한 아이디어는 다음과 같다.
+
+- `getPosts`를 이용하여 전체 글 데이터를 가져온다
+- 전체 글 데이터 중 ID 즉, 파일 경로와 현재 호출된 PostHeader 경로와 같은 데이터를 찾는다.
+- 찾은 데이터에서 글 제목과, 태그를 표시한다.
+<br />
+**app > (post) > Layout.tsx**
+
+```tsx
+export default async function Layout({ children }) {
+  const posts = getPosts();
+
+  return (
+    <article className="mb-10 text-gray-800 dark:text-gray-300">
+      <PostHeader posts={posts} />
+      {children}
+    </article>
+  );
+}
+````
+
+**PostHeader.tsx**
+
+```tsx
+export function PostHeader({ posts }: PostHeaderType) {
+  // think/why-i-use-next 으로 왔을 때 ["think" , "why-i-use-next"] 형식
+  const segments = useSelectedLayoutSegments();
+
+  const post = posts.find((post) => post.id === segments[segments.length - 1]);
+
+  if (post == null) return <></>;
+
+  return (
+    <>
+      <div className="pt-3 pb-8">
+        <div
+          className="max-w-max flex items-center py-1 px-2 bg-gray-200 font-naverBold rounded-md mb-2 dark:text-white dark:bg-gray-800"
+          suppressHydrationWarning={true}
+        >
+          {getTag(post.tag)}
+        </div>
+        <h1 className=" text-2xl font-naverBold dark:text-gray-100">{post.title}</h1>
+      </div>
+    </>
+  );
+}
+```
+
+`useSelectedLayoutSegments` 는 호출된 레이아웃보다 아래 있는 모든 segment를 배열로 반환한다.
+
+예를 들어 아래와 같은 파일 구조일 때
+
+**app > (post) > Layout.tsx**
+
+**app > (post) > tag > test-post > page.mdx**
+
+localhost:3000/tag/test-post에 접속한다면, ["tag" , "test-post"]를 반환한다.
+
+```markdown
+{
+id: 'test-post',
+tag: 'test',
+slug: 'test/test-post',
+content: '\n' +
+##test',
+title: '테스트 글입니다',
+postTag: 'test'
+}
+```
+
+전체 글 데이터 중 `post.id` 즉 파일 경로와,
+
+반환한 배열 ["tag" , "test-post"]의 마지막값 즉 글 경로를 찾고
+
+전체 글 데이터에서 해당 아이템을찾아 title과 tag를 추출하여 화면에 표시한다.
+
+<br />
+
+### 결과
+
+![](/images/experience/next-blog-ver2/5.png)
+
+---

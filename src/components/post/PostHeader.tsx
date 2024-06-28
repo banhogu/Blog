@@ -15,6 +15,7 @@ interface PostHeaderType {
 export function PostHeader({ posts }: PostHeaderType) {
   const [showToTop, setShowToTop] = useState(false);
   const segments = useSelectedLayoutSegments(); // think/why-i-use-next 으로 왔을 때 ["think" , "why-i-use-next"] 형식
+  console.log(segments);
   const post = posts.find((post) => post.id === segments[segments.length - 1]); //해당 글 가져오기 받은 post는 배열이라서 find씀
 
   if (post == null) return <></>;
