@@ -1,7 +1,6 @@
 'use client';
-export const Callout = ({ emoji = null, text = null, children }) => (
-  <div className="bg-gray-200 dark:bg-[#333] dark:text-gray-300 flex items-start p-3 my-6 text-base">
-    <span className="block w-6 text-center mr-2 scale-[1.2]">{emoji}</span>
-    <span className="block grow">{text ?? children}</span>
+export const Callout = ({ children }) => (
+  <div className="bg-my-gray py-1 px-5 text-base font-medium rounded-xl dark:text-white dark:bg-gray-800">
+    {children}
   </div>
 );
