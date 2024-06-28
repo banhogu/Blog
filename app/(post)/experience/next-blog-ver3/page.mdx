@@ -2,3 +2,357 @@
 title: Next.js 블로그 만들기 Ver.3
 tag: experience
 ---
+
+[이전 글](https://www.banghojin.site/experience/next-blog-ver2)
+
+## 사이드바 구현
+
+글 상세 페이지에서 목차를 표시하고, 목차를 클릭하면 해당 헤딩으로 이동하는 사이드바를 구현하는 아이디어는 다음과 같다.
+
+- 가져온 글 상세 데이터 중 마크다운 형태의 Contents에서 ##에 매칭되는 코드를 찾는다.
+- 매칭된 코드에서 ##을 제거하여 text를 추출하고, #을 붙여 링크를 생성한다.
+- `intersectionobserver` 를 이용하여 헤딩이 현재 위치의 화면에 들어오면, 시각적으로 표시한다. <br/><br/>
+
+![](/images/experience/next-blog-ver3/1.png)
+
+> 기존의 `PostHeader`에서는 모든 글 데이터 중 현재 주소에 매칭되는 글 상세 데이터를 가져온다. 이 데이터에는 `content` 속성이 포함되어 있으며, 이 속성에는 HTML로 파싱되기 이전의 순수한 마크다운 코드가 들어 있다. 이 마크다운 코드를 `parseContent` 함수를 이용하여, `##`이 포함된 헤딩 컴포넌트를 찾아내어, 텍스트를 추출하고, `#`을 추가하여 링크를 생성한다.
+
+<br />
+
+```tsx
+export function PostHeader({ posts }: PostHeaderType) {
+  const segments = useSelectedLayoutSegments(); // think/why-i-use-next 으로 왔을 때 ["think" , "why-i-use-next"] 형식
+  const post = posts.find((post) => post.id === segments[segments.length - 1]); //해당 글 가져오기 받은 post는 배열이라서 find씀
+  console.log(post.content);
+  if (post == null) return <></>;
+
+  const parsedContent = parseContent(post.content);
+
+  return (
+    <>
+      <div className="pt-3 pb-8">
+        <div
+          className="max-w-max flex items-center py-1 px-2 bg-gray-200 font-naverBold rounded-md mb-2 dark:text-white dark:bg-gray-800"
+          suppressHydrationWarning={true}
+        >
+          {getTag(post.tag)}
+        </div>
+        <h1 className=" text-2xl font-naverBold dark:text-gray-100">{post.title}</h1>
+      </div>
+      <Sidebar parsedContent={parsedContent} />
+    </>
+  );
+}
+```
+
+```tsx
+export const parseContent = (content: string): ParsedPost[] => {
+  const regex = /^(##) (.*$)/gim;
+  const headingList = content.match(regex);
+  return (
+    headingList?.map((heading: string) => ({
+      text: heading.replace('##', ''),
+      link:
+        '#' +
+        heading
+          .replace('# ', '')
+          .replace('#', '')
+          .replace(/[\[\]:!@#$/%^&*()+=,.]/g, '')
+          .replace(/ /g, '-')
+          .toLowerCase()
+          .replace('?', ''),
+    })) || []
+  );
+};
+```
+
+해당 함수로 작성할 수 있는데, URL에는 특수 문자를 포함할 수 없기 때문에, `link`에서 특수 문자를 제거하거나 공백을 `-`로 대체하여 URL 형식으로 변환한다.
+
+<br />
+
+**변환된 ## 헤딩 코드**
+
+```tsx
+[
+  {
+    text: ' 남은 기능 구현해보기',
+    link: '#남은-기능-구현해보기',
+  },
+  {
+    text: ' 메인페이지 - 글 리스트',
+    link: '#메인페이지---글-리스트',
+  },
+  {
+    text: ' PostHeader',
+    link: '#postheader',
+  },
+];
+```
+
+반환된 `link` 데이터를 `Link`의 `href` 속성에 넣어주면 된다. 그러나 HTML에는 해당 링크와 매칭되는 ID를 지정하지 않았기 때문에, 링크가 제대로 생성되더라도 HTML에 ID를 넣지 않으면 해당 헤딩 위치로 이동하지 않는다. 따라서 HTML로 렌더링될 때, 위 `link` 데이터 형식과 동일한 ID를 `h2` 태그에 추가해야 한다.
+
+<br />
+
+```tsx
+export function H2({ children }) {
+  //##에 대해 id추가 하기, sidebar에서 바로 갈 수 있어야함
+  const parsedId = children
+    .replace('# ', '')
+    .replace('#', '')
+    .replace(/[\[\]:!@#$/%^&*()+=,.]/g, '')
+    .replace(/ /g, '-')
+    .toLowerCase()
+    .replace('?', '');
+  return (
+    <h2
+      id={parsedId}
+      className="font-naverBold pl-2 flex items-center group my-8 relative text-[24px] bg-my-strong-gray py-2 dark:text-white dark:bg-gray-800"
+    >
+      {children}
+    </h2>
+  );
+}
+```
+
+`parsedContent` 함수와 동일한 방식으로 `H2` 컴포넌트에 id를 추가해준다.
+
+<br />
+
+![](/images/experience/next-blog-ver3/2.png)
+
+> 이제 렌더링된 h2태그에는 id가 들어온다.
+
+<br />
+
+```tsx
+const Sidebar = ({ parsedContent }: SidebarType) => {
+
+  const activeHeading = useHeadingsObserver('h2');
+
+  return (
+    <>
+      <div className="text-xs fixed ml-[700px] -mt-6">
+        <div className="border-l border-gray-300 flex flex-col gap-1 py-4 px-4">
+          <div className="font-naverBold text-lg text-gray-700 dark:text-gray-300">
+            On This Page
+          </div>
+          <ul>
+            {parsedContent.map((item, i) => {
+              return (
+                <li
+                  key={i}
+                  className={`
+                  ${
+                    activeHeading[0] == item.link
+                      ? 'text-pink-600 font-naverBold'
+                      : 'text-gray-500 dark:text-gray-300 font-naverSemi'
+                  }
+                  mt-2 text-xs  `}
+                >
+                  <Link href={item.link}>{item.text}</Link>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+    </>
+  );
+};
+```
+
+`Sidebar`에서는 `text`와 `link`로 변환된 데이터를 이용하여 화면을 렌더링한다. `useHeadingsObserver` 훅을 사용하여 `IntersectionObserver`로 `h2` 태그를 감지하며, 화면에 현재 활성화된 헤딩과 링크가 같다면, 텍스트를 빨간색으로 표시하여 유저에게 현재 읽고 있는 단락을 시각적으로 구분할 수 있도록 편의성을 제공한다.
+
+[IntersectionObserver ?](https://banghojin.site/tech/introduction-infinitescroll#intersection-observer)
+
+<br />
+
+### 결과
+
+![](/images/experience/next-blog-ver3/3.png)<br />
+
+## ToTop Button 구현
+
+### ToTop 버튼?
+
+- ToTop 버튼(맨 위로 이동 버튼)은 웹 페이지에서 사용자가 현재 위치에서 페이지의 맨 위로 빠르게 이동할 수 있도록 돕는 UI 요소이다.
+- 긴 페이지를 스크롤한 후 다시 위로 올라가는 것을 쉽게 만들어, 사용자가 불편함을 느끼지 않도록 한다.
+- 특히 모바일 기기나 터치스크린 기기에서, 긴 페이지를 손가락으로 여러 번 스와이프하지 않고도 맨 위로 쉽게 이동할 수 있어 접근성을 높인다.<br /><br />
+
+**구현 아이디어**
+
+- 윈도우에 `addEventListener` 스크롤 이벤트를 지정하여 `pageYOffset` 이 지정한 값을 넘어가게 되면 `setShowToTop` state를 true로 지정하여 ToTop 버튼을 표시한다
+- ToTop 버튼을 클릭 할 시 `window.scrollTo` 을 이용하여 최상단으로 이동한다.<br /><br />
+
+```tsx
+export function PostHeader({ posts }: PostHeaderType) {
+  const [showToTop, setShowToTop] = useState(false);
+  const segments = useSelectedLayoutSegments(); // think/why-i-use-next 으로 왔을 때 ["think" , "why-i-use-next"] 형식
+  const post = posts.find((post) => post.id === segments[segments.length - 1]); //해당 글 가져오기 받은 post는 배열이라서 find씀
+
+  if (post == null) return <></>;
+
+  const parsedContent = parseContent(post.content);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.pageYOffset > 1500) {
+        setShowToTop(true);
+      } else {
+        setShowToTop(false);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  return (
+    <>
+      <div className="pt-3 pb-8">
+        <div
+          className="max-w-max flex items-center py-1 px-2 bg-gray-200 font-naverBold rounded-md mb-2 dark:text-white dark:bg-gray-800"
+          suppressHydrationWarning={true}
+        >
+          {getTag(post.tag)}
+        </div>
+        <h1 className=" text-2xl font-naverBold dark:text-gray-100">{post.title}</h1>
+      </div>
+      {showToTop && <ToTop />}
+      <Sidebar parsedContent={parsedContent} />
+    </>
+  );
+}
+```
+
+`useEffect`로 `PostHeader` 마운트 될 시 스크롤 이벤트를 지정하여 `pageYOffset` Y좌표가 1500이 넘을시 `setShowToTop`을 true로 변경하고, 1500 이하 일 때는 false로 변경한다. 해당 `setShowToTop` 상태에 따라 `ToTop` 컴포넌트의 렌더링을 결정한다.
+
+다만 위와 같은 방식은 스크롤 이벤트 핸들러가 너무 자주 호출되어 성능에 영향을 미칠 수 있다. 실제로 콘솔로 해당 이벤트가 발생 될 때를 콘솔로 출력해보면 스크롤을 아주 조금만 이동해도 2-30번 실행되기 때문에 최적화 과정이 필요하다.
+
+이를 해결하기 위해 `debounce` 함수를 적용할 수 있다. 디바운스 함수는 연이어 호출되는 함수들을 일정 시간 간격으로 호출하도록 만들어준다.
+
+<br />
+
+```tsx
+const debounce = (func, wait) => {
+  let timeout;
+  return function (...args) {
+    clearTimeout(timeout);
+    timeout = setTimeout(() => {
+      func.apply(this, args);
+    }, wait);
+  };
+};
+```
+
+- `let timeout`: timeout 변수는 디바운스 함수의 내부에서 유지되며, `setTimeout` 핸들을 저장한다
+- `return function (...args) { ... }`: 실제 디바운스된 함수를 반환한다다. 이 함수는 클로저(closure)를 통해 외부의 `func`와 `wait` 값을 기억한다.
+- `clearTimeout(timeout);`: 새로운 호출이 발생할 때 이전에 설정된 타임아웃을 제거하여 새로운 타이머가 시작된다.
+- `timeout = setTimeout(() => { func.apply(this, args); }, wait);`: 새로운 타임아웃을 설정하는데, `wait` 시간이 지난 후 `func` 함수를 호출합니다.
+
+<br />
+
+```tsx
+useEffect(() => {
+  const handleScroll = debounce(() => {
+    if (window.pageYOffset > 1500) {
+      setShowToTop(true);
+    } else {
+      setShowToTop(false);
+    }
+  }, 200); // 200ms 간격으로 스크롤 이벤트를 실행
+
+  window.addEventListener('scroll', handleScroll);
+  return () => window.removeEventListener('scroll', handleScroll);
+}, []);
+```
+
+> 디바운스 함수를 적용한 코드
+
+<br />
+
+```tsx
+const ToTop = () => {
+  const handleClick = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+  return (
+    <div
+      className="sm:hidden ml-[310px] text-sm font-bold cursor-pointer fixed bottom-[30px] z-50 flex items-center justify-center w-10 h-10 rounded-full bg-white text-black shadow-2xl"
+      onClick={handleClick}
+      style={{ boxShadow: '0 0 1px 1px #b9b9b9' }}
+    >
+      <BiSolidToTop size={22} color="#4d4d4d" />
+    </div>
+  );
+};
+```
+
+`setShowToTop` 상태에 따라 렌더링된 `ToTop` 컴포넌트 클릭 시 `window.scrollTo` 으로 화면 최상단으로 이동한다.
+
+<br />
+
+## 프로그레스바 구현
+
+### 프로그레스바?
+
+- 현재 글 스크롤 상태를 시각적으로 표시하여 사용자가 글 위치를 대략적으로 알 수 있게 해준다.
+- 일반적으로 가로 막대 형태로 표시되며, 진행 정도에 따라 막대의 길이가 증가한다. 색상 변화, 애니메이션, 숫자(백분율) 등의 다양한 형태로 제공될 수 있다. <br /><br />
+
+**구현 아이디어**
+
+```tsx
+const Progressbar = () => {
+  const [progress, setProgress] = useState(0);
+  const rafRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    const scroll = () => {
+      const scrollTop = document.documentElement.scrollTop;
+      const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+
+      if (rafRef.current) {
+        cancelAnimationFrame(rafRef.current);
+      }
+
+      rafRef.current = requestAnimationFrame(() => {
+        setProgress(scrollTop / height);
+      });
+    };
+
+    window.addEventListener('scroll', scroll);
+
+    return () => {
+      if (rafRef.current) {
+        cancelAnimationFrame(rafRef.current);
+      }
+
+      window.removeEventListener('scroll', scroll);
+    };
+  }, []);
+  return (
+    <div
+      className="fixed top-0 left-0 right-0 h-[3px] rounded-lg bg-gray-600 dark:bg-gray-300"
+      style={{ width: `${progress * 100}%` }}
+    ></div>
+  );
+};
+```
+
+**useState, useRef**
+
+`const [progress, setProgress] = useState(0);`: `progress` 상태 변수는 현재 스크롤 위치에 따른 진행 상태를 저장한다. 초기값은 0
+`const rafRef = useRef<number | null>(null)`: requestAnimationFrame의 핸들을 저장하는 useRef <br /><br />
+
+**scroll 함수**:
+
+`const scrollTop = document.documentElement.scrollTop;`: 현재 스크롤 위치를 가져온다.
+`const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;`: 페이지의 총 높이에서 브라우저 창의 높이를 뺀 값을 가져와서 페이지의 전체 스크롤 가능 높이를 계산한다.
+`cancelAnimationFrame(rafRef.current);`: 현재 진행 중인 requestAnimationFrame 콜백을 취소한다
+`rafRef.current = requestAnimationFrame(() => { ... });`: requestAnimationFrame을 사용하여 스크롤 이벤트가 끝난 후에 UI를 업데이트하는데, requestAnimationFrame은 자체적으로 성능 최적화를 제공하여 디바운스 함수를 적용하지 않아도 된다.<br /><br />
+
+**이벤트 리스너 등록 및 해제**:
+
+`window.addEventListener('scroll', scroll);`: 스크롤 이벤트가 발생할 때마다 `scroll` 함수를 호출하여 진행 상태를 업데이트 한다.
+`return () => { ... }`: 진행 중인 requestAnimationFrame을 취소 <br /><br />
+
+---
