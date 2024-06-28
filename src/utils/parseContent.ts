@@ -15,7 +15,6 @@ export const parseContent = (content: string): ParsedPost[] => {
           .replace(/ /g, '-')
           .toLowerCase()
           .replace('?', ''),
-      indent: (heading.match(/#/g)?.length || 2) - 2,
     })) || []
   );
 };

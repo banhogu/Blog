@@ -12,10 +12,19 @@ interface PostHeaderType {
   posts: Post[];
 }
 
+const debounce = (func, wait) => {
+  let timeout;
+  return function (...args) {
+    clearTimeout(timeout);
+    timeout = setTimeout(() => {
+      func.apply(this, args);
+    }, wait);
+  };
+};
+
 export function PostHeader({ posts }: PostHeaderType) {
   const [showToTop, setShowToTop] = useState(false);
   const segments = useSelectedLayoutSegments(); // think/why-i-use-next 으로 왔을 때 ["think" , "why-i-use-next"] 형식
-  console.log(segments);
   const post = posts.find((post) => post.id === segments[segments.length - 1]); //해당 글 가져오기 받은 post는 배열이라서 find씀
 
   if (post == null) return <></>;
@@ -23,13 +32,13 @@ export function PostHeader({ posts }: PostHeaderType) {
   const parsedContent = parseContent(post.content);
 
   useEffect(() => {
-    const handleScroll = () => {
+    const handleScroll = debounce(() => {
       if (window.pageYOffset > 1500) {
         setShowToTop(true);
       } else {
         setShowToTop(false);
       }
-    };
+    }, 200); // 200ms 간격으로 스크롤 이벤트를 실행
 
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);

@@ -79,6 +79,11 @@
       "id": "next-blog-2",
       "tag": "experience",
       "title": "Next.js 블로그 만들기 ver2"
+    },
+    {
+      "id": "next-blog-3",
+      "tag": "experience",
+      "title": "Next.js 블로그 만들기 ver3"
     }
   ]
 }
