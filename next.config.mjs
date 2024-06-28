@@ -8,6 +8,10 @@ import postsData from './src/database/posts.json' assert { type: 'json' };
 
 //MDX 설정 및 라이브러리 연결
 const withMDX = createMDX({
+  //remarkGfm: GitHub Markdown을 지원
+  //remarkFrontmatter: Frontmatter 구문을 파싱
+  //remarkMdxFrontmatter: Frontmatter 데이터를 MDX 컴포넌트의 메타데이터로 사용
+  //rehypePrettyCode: 코드 블럭을 예쁘게 렌더링
   options: {
     remarkPlugins: [remarkGfm, remarkFrontmatter, [remarkMdxFrontmatter, { name: 'metadata' }]],
     rehypePlugins: [rehypePrettyCode],
@@ -15,8 +19,9 @@ const withMDX = createMDX({
 });
 
 export default withMDX({
+  //mdx -> html 변환
   pageExtensions: ['ts', 'tsx', 'js', 'jsx', 'md', 'mdx'],
-  swcMinify: true,
+  swcMinify: true, //swcMinify: SWC를 사용한 코드 압축 활성화.
   reactStrictMode: true,
   poweredByHeader: false,
   eslint: {

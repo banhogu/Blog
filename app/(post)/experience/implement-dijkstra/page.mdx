@@ -1,0 +1,150 @@
+---
+title: 자바스크립트를 이용하여 다익스트라 알고리즘 구현해보기
+tag: experience
+---
+
+## 구현목적
+
+학부 자료구조 강의 과제 및 다 익스트라 알고리즘 이해
+
+## 설계 요구사항
+
+![](/images/experience/implement-dijkstra/1.png)
+
+## 사용할 그래프
+
+![](/images/experience/implement-dijkstra/2.png)
+
+## 다익스트라 알고리즘을 사용하여 직접 손으로 풀어본 최소거리
+
+![](/images/experience/implement-dijkstra/3.jpeg)
+
+## 소스코드
+
+```
+class Graph  {
+  constructor() { //그래프 구조체 정의
+    this.vertices = {};
+  }
+  addNode(vertex) {  //노드를 그래프에 추가
+    this.vertices[vertex] = {};
+  }
+  addCost(source, destination, weight) { //각 정점 사이 간선의 코스트 값을 추가
+    this.vertices[source][destination] = weight;
+    this.vertices[destination][source] = weight;
+  }
+  getCost(source, destination) { //노드 사이 코스트값 반환
+    return this.vertices[source][destination];
+  }
+  getNeighbors(vertex) {
+    return Object.keys(this.vertices[vertex]);
+  }
+}
+
+// Dijkstra의 최단 경로 알고리즘 함수
+function dijkstra(graph, start, end) {
+  const distances = {};
+  const previous = {};
+  const queue = [];
+
+  // 모든 정점의 초기 거리를 무한대로 설정
+  for (let vertex in graph.vertices) {
+    distances[vertex] = Infinity;
+    previous[vertex] = null;
+  }
+
+  distances[start] = 0;
+  queue.push(start);
+
+  while (queue.length > 0) {
+    // 현재 큐에서 가장 거리가 작은 정점 선택
+    const currentVertex = queue.shift();
+
+    // 목표 정점에 도달하면 최단 경로를 찾았으므로 종료
+    if (currentVertex === end) {
+      break;
+    }
+
+    // 현재 정점과 인접한 정점들을 확인
+    const neighbors = graph.getNeighbors(currentVertex);
+    for (let neighbor of neighbors) {
+      // 현재 정점에서 인접 정점까지의 거리
+      const weight = graph.getCost(currentVertex, neighbor);
+      const distance = distances[currentVertex] + weight;
+
+      // 더 짧은 경로를 찾은 경우 거리와 이전 정점 업데이트
+      if (distance < distances[neighbor]) {
+        distances[neighbor] = distance;
+        previous[neighbor] = currentVertex;
+        queue.push(neighbor);
+      }
+    }
+  }
+
+  // 최단 경로의 길이와 경로 자체를 반환
+  const shortestPath = [end];
+  let currentVertex = end;
+
+  while (currentVertex !== start) {
+    const prevVertex = previous[currentVertex];
+    shortestPath.unshift(prevVertex);
+    currentVertex = prevVertex;
+  }
+
+  return {
+    distance: distances[end],
+    path: shortestPath
+  };
+}
+
+// 그래프 생성 및 초기화
+const graph = new Graph();
+graph.addNode('1');
+graph.addNode('2');
+graph.addNode('3');
+graph.addNode('4');
+graph.addNode('5');
+graph.addNode('6');
+graph.addNode('7');
+graph.addCost('1', '2', 20);
+graph.addCost('1', '3', 25);
+graph.addCost('1', '7', 50);
+graph.addCost('2', '1', 20);
+graph.addCost('2', '3', 15);
+graph.addCost('2', '4', 45);
+graph.addCost('3', '1', 25);
+graph.addCost('3', '2', 15);
+graph.addCost('3', '7', 10);
+graph.addCost('3', '6', 60);
+graph.addCost('3', '4', 40);
+graph.addCost('4', '2', 45);
+graph.addCost('4', '5', 30);
+graph.addCost('4', '6', 25);
+graph.addCost('4', '3', 40);
+graph.addCost('5', '4', 30);
+graph.addCost('5', '6', 75);
+graph.addCost('6', '7', 35);
+graph.addCost('6', '3', 60);
+graph.addCost('6', '4', 25);
+graph.addCost('6', '4', 75);
+graph.addCost('7', '1', 50);
+graph.addCost('7', '3', 10);
+graph.addCost('7', '6', 35);
+
+// 최단 경로 찾기 시작은 1로 고정해서 각 주변 노드 거리를 구한다.
+const startVertex = '1';
+const endVertex = '7';
+const result = dijkstra(graph, startVertex, endVertex);
+
+// 결과 출력
+console.log(`${startVertex} 에서 ${endVertex} 까지의 최단 길이와, 최단경로`);
+console.log('최단 길이:', result.distance);
+console.log('최단 경로:', result.path.join(' -> '));
+
+```
+
+## 결과
+
+![](/images/experience/implement-dijkstra/4.png)
+
+---

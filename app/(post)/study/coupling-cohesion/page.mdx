@@ -61,7 +61,7 @@ DIP (Dependency Inversion Principle) : 의존 역전 원칙
 
 ### 클린 아키텍처?
 
-[그래서 아키텍처가 뭔데? ](https://www.notion.so/3b2e7129cff14c558c0b98e8f56fdd86?pvs=21)
+[그래서 아키텍처가 뭔데? ](https://www.banghojin.site/study/what-is-architecture)
 
 단일 책임 원칙은 하나의 모듈은 하나의 역할만을 책임질 수 있도록 설계하는 것을 의미한다. 즉, 모든 클래스는 하나의 책임만을 가지며 클래스는 그 책임을 완전히 캡슐화(데이터와 데이터를 처리하는 행위를 묶어 외부에는 행위를 보여주지 않는 것) 해야 함을 말해준다.
 
@@ -238,3 +238,5 @@ UserService.sendWelcomeEmailToUser(1);
 ```
 
 `UserModule`과 `EmailModule`이 직접적으로 결합되지 않고, `UserService`가 대신 두 모듈을 사용하여 사용자에게 환영 이메일을 보낸다. 해당 코드에서는 각 모듈이 독립적으로 변경될 수 있다.
+
+---

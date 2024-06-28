@@ -31,7 +31,7 @@ const Progressbar = () => {
   }, []);
   return (
     <div
-      className="fixed top-0 left-0 right-0 h-[3px] rounded-lg bg-gray-500 dark:bg-gray-300"
+      className="fixed top-0 left-0 right-0 h-[3px] rounded-lg bg-gray-600 dark:bg-gray-300"
       style={{ width: `${progress * 100}%` }}
     ></div>
   );

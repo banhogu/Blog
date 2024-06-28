@@ -29,7 +29,7 @@ const PostListLayout = ({ posts }: PostListLayoutType) => {
 
   return (
     <Suspense fallback={null}>
-      <main className="max-w-2xl m-auto mb-10 text-sm">
+      <main className="max-w-2xl m-auto mb-10 text-sm ">
         <header className="flex justify-between text-sm text-gray-600 dark:text-gray-300">
           <div className="flex items-center">
             <button

@@ -59,6 +59,16 @@
       "id": "bestpractice-meaning",
       "tag": "think",
       "title": "내가 생각한 Best Pratice의 의미"
+    },
+    {
+      "id": "retrospect-likelion",
+      "tag": "experience",
+      "title": "멋쟁이사자처럼 10기 회고록"
+    },
+    {
+      "id": "implement-dijkstra",
+      "tag": "experience",
+      "title": "자바스크립트를 이용하여 다익스트라 알고리즘 구현해보기"
     }
   ]
 }
