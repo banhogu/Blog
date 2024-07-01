@@ -13,7 +13,7 @@ export const useHeadingsObserver = (query: string) => {
         const targetId = `#${entry.target.id}`;
         if (entry.isIntersecting) {
           setActiveIdList((prev) => [...prev, targetId]);
-          setTempId(() => '');
+          setTempId('');
         } else {
           setActiveIdList((prev) => {
             if (prev.length === 1) setTempId(targetId);
@@ -28,7 +28,12 @@ export const useHeadingsObserver = (query: string) => {
     const elements = document.querySelectorAll(query);
     elements.forEach((elem) => observer.current?.observe(elem));
 
-    return () => observer.current?.disconnect();
+    // Cleanup function to disconnect observer on component unmount
+    return () => {
+      if (observer.current) {
+        observer.current.disconnect();
+      }
+    };
   }, [query]);
 
   return [...activeIdList, tempId];
