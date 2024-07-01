@@ -2,13 +2,13 @@
 
 import { useEffect, useRef } from 'react';
 import { useTheme } from 'next-themes';
+import { themeEffect } from '@/utils/themeEffect';
 
 export default function Giscus() {
   const ref = useRef<HTMLDivElement>(null);
-  const { resolvedTheme } = useTheme();
 
   // https://github.com/giscus/giscus/tree/main/styles/themes
-  const theme = resolvedTheme === 'dark' ? 'dark' : 'light';
+  const theme = themeEffect() === 'dark' ? 'dark' : 'light';
 
   useEffect(() => {
     if (!ref.current || ref.current.hasChildNodes()) return;
@@ -27,7 +27,7 @@ export default function Giscus() {
     scriptElem.setAttribute('data-reactions-enabled', '1');
     scriptElem.setAttribute('data-emit-metadata', '0');
     scriptElem.setAttribute('data-input-position', 'bottom');
-    scriptElem.setAttribute('data-theme', 'preferred_color_scheme');
+    scriptElem.setAttribute('data-theme', theme);
     scriptElem.setAttribute('data-lang', 'ko');
 
     ref.current.appendChild(scriptElem);

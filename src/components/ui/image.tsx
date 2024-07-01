@@ -68,6 +68,7 @@ export async function Image({
           alt={alt ?? ''}
           src={src}
           className="rounded-lg"
+          priority
         />
 
         {alt && <Caption>{alt}</Caption>}
