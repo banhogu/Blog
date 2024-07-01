@@ -2,6 +2,7 @@ import '@/styles/globals.css';
 import { themeEffect } from '@/utils/themeEffect';
 import Footer from '@/components/Footer';
 import Header from '@/components/Header';
+import GoogleAnalytics from './GoogleAnalytics';
 
 export const metadata = {
   title: '호진방 블로그',
@@ -36,6 +37,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className="dark:text-gray-100 max-w-2xl m-auto">
         <main className="p-4 pt-3 md:pt-6 min-h-screen">
           <Header />
+          <GoogleAnalytics />
           {children}
         </main>
 

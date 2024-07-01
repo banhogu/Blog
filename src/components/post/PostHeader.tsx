@@ -55,7 +55,7 @@ export function PostHeader({ posts }: PostHeaderType) {
         </div>
         <h1 className=" text-2xl font-naverBold dark:text-gray-100">{post.title}</h1>
       </div>
-      {showToTop && <ToTop />}
+      {showToTop && <ToTop postId={post.id} />}
       <Sidebar parsedContent={parsedContent} />
       <Progressbar />
     </>

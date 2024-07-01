@@ -1,8 +1,15 @@
+import { event } from '@/utils/gtag';
 import React from 'react';
 import { BiSolidToTop } from 'react-icons/bi';
 
-const ToTop = () => {
+const ToTop = ({ postId }: { postId: string }) => {
   const handleClick = () => {
+    event({
+      action: 'click_toTop',
+      category: 'toTop',
+      label: 'isClicked_toTop',
+      value: postId,
+    });
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
   return (
