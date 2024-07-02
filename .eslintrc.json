@@ -1,5 +1,12 @@
 {
-  "extends": ["next/core-web-vitals", "plugin:prettier/recommended", "plugin:cypress/recommended"],
-  "plugins": ["simple-import-sort"],
+  "extends": [
+    "next/core-web-vitals",
+    "plugin:prettier/recommended",
+    "plugin:cypress/recommended",
+    "plugin:storybook/recommended"
+  ],
+  "plugins": [
+    "simple-import-sort"
+  ],
   "rules": {}
 }

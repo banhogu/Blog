@@ -3,6 +3,7 @@ import { themeEffect } from '@/utils/themeEffect';
 import Footer from '@/components/Footer';
 import Header from '@/components/Header';
 import GoogleAnalytics from './GoogleAnalytics';
+import { Suspense } from 'react';
 
 export const metadata = {
   title: '호진방 블로그',
