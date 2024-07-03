@@ -1,36 +1,31 @@
-import type { Meta, StoryObj } from '@storybook/react';
-import Text from './index';
+import type { Meta, StoryObj } from '@storybook/react'
+
+import Text from '.'
 
 const meta = {
   title: 'Text',
   component: Text,
   tags: ['autodocs'],
   args: {
-    children: 'Hello World',
+    children: 'Hello World!',
   },
-} satisfies Meta<typeof Text>;
+} satisfies Meta<typeof Text>
 
-export default meta;
-type Story = StoryObj<typeof meta>;
+export default meta
+type Story = StoryObj<typeof meta>
 
 export const DefaultText: Story = {
   args: {},
-};
+}
 
 export const SizedText: Story = {
-  args: {
-    size: '2xl',
-  },
-};
+  args: { size: '4xl' },
+}
 
 export const ColoredText: Story = {
-  args: {
-    color: 'red',
-  },
-};
+  args: { color: 'red' },
+}
 
-export const WeightText: Story = {
-  args: {
-    weight: 'bold',
-  },
-};
+export const WeightedText: Story = {
+  args: { weight: 'bold' },
+}
