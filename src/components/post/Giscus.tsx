@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
-import { useTheme } from 'next-themes';
 import { themeEffect } from '@/utils/themeEffect';
 
 export default function Giscus() {
