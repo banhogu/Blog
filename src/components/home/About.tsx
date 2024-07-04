@@ -13,17 +13,17 @@ const About = () => {
       </div>
       <div className="flex flex-col gap-2">
         <div className="flex flex-col">
-          <div className="font-bold text-gray-800 text-lg">HJ Bang</div>
-          <div className="font-naverSemi text-gray-600 text-[13px]">
+          <div className="font-bold text-gray-800 text-lg dark:text-gray-300">HJ Bang</div>
+          <div className="font-naverSemi text-gray-600 text-[13px] dark:text-gray-300">
             안녕하세요 배움을 나누며 함께 전진하는 신입 개발자 방호진입니다.
           </div>
         </div>
         <div className="flex gap-2">
           <Link href={'https://github.com/banghogu'} target="_blank" title="github">
-            <FaGithub size={26} className="text-gray-800" />
+            <FaGithub size={26} className="text-gray-800 dark:text-gray-300" />
           </Link>
           <Link href={'mailto: devbang5674@gmail.com'} target="_blank">
-            <IoMdMail size={26} className="text-gray-800" />
+            <IoMdMail size={26} className="text-gray-800 dark:text-gray-300" />
           </Link>
         </div>
       </div>

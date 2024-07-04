@@ -3,7 +3,7 @@ import { themeEffect } from '@/utils/themeEffect';
 import Footer from '@/components/Footer';
 import Header from '@/components/Header';
 import GoogleAnalytics from './GoogleAnalytics';
-import { Suspense } from 'react';
+import { getPosts } from '@/utils/getPosts';
 
 export const metadata = {
   title: '호진방 블로그',
@@ -25,6 +25,7 @@ export const viewport = {
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
+  const posts = getPosts();
   return (
     //  하이드레이션 오류 안나오게
     <html lang="ko" suppressHydrationWarning={true}>
@@ -37,7 +38,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body className="dark:text-gray-100 max-w-2xl m-auto">
         <main className="p-4 pt-3 md:pt-6 min-h-screen">
-          <Header />
+          <Header posts={posts} />
           <GoogleAnalytics />
           {children}
         </main>

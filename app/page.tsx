@@ -5,7 +5,6 @@ import React from 'react';
 
 const HomePage = () => {
   const posts = getPosts();
-  console.log(posts);
 
   return (
     <div>
