@@ -3,6 +3,7 @@ import { ParsedPost } from '@/models/parsedPost';
 import Link from 'next/link';
 import React from 'react';
 import { BiArrowToTop } from 'react-icons/bi';
+import SideTheme from './SideTheme';
 
 interface SidebarType {
   parsedContent: ParsedPost[];
@@ -40,12 +41,17 @@ const Sidebar = ({ parsedContent }: SidebarType) => {
             })}
           </ul>
         </div>
-        <div
-          onClick={handleClick}
-          style={{ boxShadow: '0 0 1px 1px #b9b9b9' }}
-          className=" mt-3 w-7 h-7 rounded-md cursor-pointer flex items-center justify-center "
-        >
-          <BiArrowToTop size={18} color="#989898" />
+        <div className="flex gap-[8px]">
+          <div
+            onClick={handleClick}
+            style={{ boxShadow: '0 0 1px 1px #b9b9b9' }}
+            className=" mt-3 w-7 h-7 rounded-md cursor-pointer flex items-center justify-center "
+          >
+            <BiArrowToTop size={18} color="#989898" />
+          </div>
+          <div>
+            <SideTheme />
+          </div>
         </div>
       </div>
     </>

@@ -42,6 +42,7 @@ const PostListLayout = ({ posts }: PostListLayoutType) => {
           </div>
           <div className="text-sm flex items-center font-naverBold">
             {dividedPosts?.length} posts
+            <span className="pl-3">4 tags</span>
           </div>
         </header>
 
