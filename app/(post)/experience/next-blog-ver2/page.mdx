@@ -5,6 +5,7 @@ description: Next.js와 MDX를 이용하여 개발 블로그를 만들어보았�
 ---
 
 import { Callout } from '@/components/ui/callout';
+import { FileName } from '@/components/ui/FileName';
 
 <div className='flex justify-between'>
 [이전 글](https://www.banghojin.site/experience/next-blog-ver1)
@@ -61,7 +62,7 @@ import { Callout } from '@/components/ui/callout';
 
 이 작업은 `getPosts` 함수에서 이루어진다. 이 함수는 사실상 이번 블로그 프로젝트의 A부터 Z까지 모든 기능을 담당하는 핵심 함수이므로, **정확한 동작과 이해**가 필요하다.
 
-### getPosts
+<FileName>getPosts</FileName>
 
 ```tsx
 import { Post } from '@/models/post';
@@ -141,9 +142,8 @@ slug : 'think/why-i-use-next’…
 
 여기까지 `getPosts` 함수의 동작이다. 함수가 종료 될 때 app/(post)의 모든 MDX 순회하여 데이터를 배열 형태로 저장하고 있다.
 
-```tsx
-import PostListLayout from '@/components/post/PostListLayout';
-import { getPosts } from '@/utils/getPosts';
+```tsx import PostListLayout from '@/components/post/PostListLayout'; import {getPosts} from
+'@/utils/getPosts';
 import React from 'react';
 
 const HomePage = () => {
@@ -162,6 +162,9 @@ export default HomePage;
 이를 Main Page에서 호출 하여 `PostListLayout`으로 모든 글 데이터를 넘겨준다.
 
 <br />
+
+<FileName>PostListLayout.tsx</FileName>
+
 ```tsx
 const PostListLayout = ({ posts }: PostListLayoutType) => {
   const [divide, setDivide] = useState<Option>(['tag', '전체']);
@@ -178,37 +181,37 @@ const PostListLayout = ({ posts }: PostListLayoutType) => {
     return tag === '전체' ? posts : posts.filter((post) => getTag(post.tag) === tag);
   }, [posts, divide]);
 
-return (
-
-<Suspense fallback={null}>
-<main className="max-w-2xl m-auto mb-10 text-sm ">
-<header className="flex justify-between text-sm text-gray-600 dark:text-gray-300">
-<div className="flex items-center">
-<button
-onClick={clickBtn}
-className={`font-naverBold flex mr-2 items-center justify-center w-12 h-9 text-left text-gray-800 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-[#242424] active:bg-gray-200 dark:active:bg-[#222]`} >
-{divide[1] === '전체' ? 'tag' : `${divide[1]}`}
-</button>
-<span className="pl-2 grow font-naverBold">title</span>
-</div>
-<div className="text-sm flex items-center font-naverBold">
-{dividedPosts?.length} posts
-</div>
-</header>
+  return (
+    <Suspense fallback={null}>
+      <main className="max-w-2xl m-auto mb-10 text-sm ">
+        <header className="flex justify-between text-sm text-gray-600 dark:text-gray-300">
+          <div className="flex items-center">
+            <button
+              onClick={clickBtn}
+              className={`font-naverBold flex mr-2 items-center justify-center w-12 h-9 text-left text-gray-800 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-[#242424] active:bg-gray-200 dark:active:bg-[#222]`}
+            >
+              {divide[1] === '전체' ? 'tag' : `${divide[1]}`}
+            </button>
+            <span className="pl-2 grow font-naverBold">title</span>
+          </div>
+          <div className="text-sm flex items-center font-naverBold">
+            {dividedPosts?.length} posts
+          </div>
+        </header>
 
         <PostList posts={posts} divide={divide} />
       </main>
     </Suspense>
-
-);
+  );
 };
-
-````
+```
 
 모든 글 데이터를 받은 `PostListLayout`은 글 데이터에 저장된 태그별로 글을 분류하고, 각 Link마다 글 ID를 href 속성으로 넘겨주어 글 아이템이 클릭 될 시 해당 글 상세페이지로 이동한다.<br /><br />
+
 ### 결과
 
 ![](/images/experience/next-blog-ver2/4.png)
+
 <br />
 ## PostHeader
 
@@ -217,8 +220,9 @@ className={`font-naverBold flex mr-2 items-center justify-center w-12 h-9 text-l
 - `getPosts`를 이용하여 전체 글 데이터를 가져온다
 - 전체 글 데이터 중 ID 즉, 파일 경로와 현재 호출된 PostHeader 경로와 같은 데이터를 찾는다.
 - 찾은 데이터에서 글 제목과, 태그를 표시한다.
-<br />
-**app > (post) > Layout.tsx**
+  <br />
+
+<FileName>app > (post) > Layout.tsx</FileName>
 
 ```tsx
 export default async function Layout({ children }) {
@@ -231,9 +235,11 @@ export default async function Layout({ children }) {
     </article>
   );
 }
-````
+```
 
-**PostHeader.tsx**
+<br />
+
+<FileName>PostHeader.tsx</FileName>
 
 ```tsx
 export function PostHeader({ posts }: PostHeaderType) {

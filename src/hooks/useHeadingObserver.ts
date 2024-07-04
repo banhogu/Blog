@@ -6,7 +6,7 @@ export const useHeadingsObserver = (query: string) => {
   const [tempId, setTempId] = useState('');
 
   useEffect(() => {
-    const scrollMarginOption = { rootMargin: '-32px 0px -80px 0px' };
+    const scrollMarginOption = { rootMargin: '-32px' };
 
     const handleObserver: IntersectionObserverCallback = (entries) => {
       entries.forEach((entry) => {

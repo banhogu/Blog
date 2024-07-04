@@ -174,10 +174,15 @@ setApplyValues((prev) => ({
 }));
 ```
 
+<br />
+
 <div className="bg-my-gray py-1 px-5 text-base font-medium rounded-xl dark:text-white dark:bg-gray-800">
  ❗ 상태가 복잡해질수록, 여러 개의 `useState` 호출을 사용하는 것보다 하나의 객체로 상태를 관리하는 것이 더 효율적이고, 훨씬 체계적으로 상태를 관리할 수 있다. 또한 여러 상태 값을 개별적으로 관리하면, 서로 관련된 상태 값들 간의 동기화 문제가 발생할 수 있다. 하나의 객체로 상태를 관리하면, 한 번의 `setApplyValues` 호출로 여러 값을 동시에 업데이트할 수 있어 일관성을 유지하기가 쉬워진다.
 
 </div>
+
+<br />
+
 ```tsx
 export interface ISignIn {
   email: string;

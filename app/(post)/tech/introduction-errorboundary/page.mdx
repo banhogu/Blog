@@ -4,6 +4,8 @@ tag: tech
 description: Error Boundary를 이용하여 똑똑하게 에러처리해봅시다
 ---
 
+import { FileName } from '@/components/ui/FileName';
+
 ## 도입 배경
 
 ![](/images/tech/introduction-errorboundary/1.png)
@@ -66,7 +68,7 @@ export const postHandlers = [
 
 공식문서에서 제공하는 사용법은 매우 간단하다. 단순히 해당 코드를 붙여넣기하여 ErrorBoundary.tsx 컴포넌트를 만들고, 사용하는곳에서 감싸주기만 하면 된다. 단순히 ErrorBoundary를 감싸주는것만으로도 전체 클라이언트 에러를 감지 할 수 있게 되는것이다. 다만 해당 코드는 type이 적용된 버전인데, Next에서 제공되는 코드는 type이 적용되지 않아 관련 자료를 찾아보는데 애를 좀 먹었다.<br /><br />
 
-**\_app.tsx**
+<FileName>_app.tsx</FileName>
 
 ```tsx
 <QueryClientProvider client={queryClient}>
@@ -90,6 +92,8 @@ export const postHandlers = [
 하지만, 해당 방식은 댓글은 정상적으로 가져오고 있지만 글 상세 데이터에서 에러가 발생했다고 해서 전체 페이지를 사용할 수 없게 되는 문제가 발생한다. 이는 매우 좋지 않은 사용자 경험이라고 판단하여, 에러의 범위를 좁히는 방식으로 해결하고자 했다. 글 상세 API에서 에러가 발생하면 해당 부분만 에러 처리하고, 댓글은 정상적으로 작동하는것이다.
 
 <br />
+
+<FileName>PostDetail.tsx</FileName>
 
 ```tsx
 const PostDetail = () => {

@@ -2,12 +2,13 @@
 import { Caption } from './caption';
 
 export const Snippet = ({ children, scroll = true, caption = null }) => (
-  <div className="my-6">
+  <div className="rounded-b-md">
     <pre
       className={`
+      rounded-b-md
       p-4
       text-sm
-      bg-gray-800 text-white
+      bg-gray-900 text-white
       dark:bg-[#222] dark:text-gray-300
 
       ${scroll ? 'overflow-scroll' : 'whitespace-pre-wrap break-all overflow-hidden'}

@@ -4,6 +4,8 @@ tag: study
 description: 응집도와 결합도에 알아봅시다.
 ---
 
+import { FileName } from '@/components/ui/FileName';
+
 ## 개요
 
 프로그래밍이란 문제를 정의하고 하나씩 해결해나가는 과정을 말한다.
@@ -68,8 +70,9 @@ DIP (Dependency Inversion Principle) : 의존 역전 원칙
 
 ### 코드를 예시로 살펴보자
 
+<FileName>높은 응집도</FileName>
+
 ```tsx
-//높은 응집도
 const UserProfile = {
   user: {
     name: 'Alice',
@@ -100,8 +103,9 @@ UserProfile.displayUserInfo();
 
 이 예제에서 `UserProfile` 모듈은 사용자 프로필과 관련된 모든 기능을 포함하고 있는데, 사용자의 정보를 가져오고(`getUserInfo`), 업데이트하고(`updateUserInfo`), 출력하는(`displayUserInfo`) 모든 기능이 하나의 모듈에 집중되어 있다.<br /><br />
 
+<FileName>낮은 응집도</FileName>
+
 ```tsx
-//낮은 응집도
 const user = {
   name: 'Alice',
   age: 25,
@@ -185,8 +189,9 @@ DIP (Dependency Inversion Principle) : 의존 역전 원칙
 
 ### 코드를 예시로 살펴보자
 
+<FileName>높은 결합도</FileName>
+
 ```tsx
-//높은 결합도
 const UserModule = {
   getUser: function (userId) {
     return {
@@ -210,8 +215,9 @@ EmailModule.sendWelcomeEmail(1);
 
 여기서 `EmailModule`은 `UserModule`에 강하게 결합되어 있다. `UserModule`이 변경되면 `EmailModule`도 영향을 받게된다.
 
+<FileName>낮은 결합도</FileName>
+
 ```tsx
-//낮은 결합도
 const UserModule = {
   getUser: function (userId) {
     return {

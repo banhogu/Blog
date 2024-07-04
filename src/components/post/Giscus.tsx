@@ -1,13 +1,16 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
-import { themeEffect } from '@/utils/themeEffect';
+import { useCurrentTalkStore } from '@/store/useTheme.store';
 
 export default function Giscus() {
+  const { currentTheme } = useCurrentTalkStore();
   const ref = useRef<HTMLDivElement>(null);
 
   // https://github.com/giscus/giscus/tree/main/styles/themes
-  const theme = themeEffect() === 'dark' ? 'dark' : 'light';
+  const theme = currentTheme === 'dark' ? 'dark' : 'light';
+
+  console.log(theme);
 
   useEffect(() => {
     if (!ref.current || ref.current.hasChildNodes()) return;
@@ -30,13 +33,13 @@ export default function Giscus() {
     scriptElem.setAttribute('data-lang', 'ko');
 
     ref.current.appendChild(scriptElem);
-  }, [theme]);
+  }, [currentTheme]);
 
   // https://github.com/giscus/giscus/blob/main/ADVANCED-USAGE.md#isetconfigmessage
   useEffect(() => {
     const iframe = document.querySelector<HTMLIFrameElement>('iframe.giscus-frame');
     iframe?.contentWindow?.postMessage({ giscus: { setConfig: { theme } } }, 'https://giscus.app');
-  }, [theme]);
+  }, [currentTheme]);
 
   return <section ref={ref} />;
 }

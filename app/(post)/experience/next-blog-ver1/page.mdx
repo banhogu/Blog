@@ -4,6 +4,8 @@ tag: experience
 description: Next.js와 MDX를 이용하여 개발 블로그를 만들어보았습니다.
 ---
 
+import { FileName } from '@/components/ui/FileName';
+
 <div className="flex justify-end">
   [다음 글](https://www.banghojin.site/experience/next-blog-ver2)
 </div>
@@ -82,10 +84,11 @@ MDX 파일을 HTML로 변환하고 화면에 컴포넌트에 맞게 적용한 �
 
 `npm install @next/mdx @mdx-js/loader @mdx-js/react`
 
-NextJS의 기본적인 MDX 플러그인들을 설치 후 MDX 공식 문서에서 제공하는 Next 연결작업과 구글을 통해 자료조사 한 코드를 참조하여 작성했다. mdx 확장자는 별도의 export문 없이도 하나의 mdx컴포넌트로 default export된다. 아래 next.config.js 설정을 통해 간단하게 MDX파일을 HTML 컴포넌로로 변환 가능해진다.
+NextJS의 기본적인 MDX 플러그인들을 설치 후 MDX 공식 문서에서 제공하는 Next 연결작업과 구글을 통해 자료조사 한 코드를 참조하여 작성했다. mdx 확장자는 별도의 export문 없이도 하나의 mdx컴포넌트로 default export된다. 아래 next.config.js 설정을 통해 간단하게 MDX파일을 HTML 컴포넌로로 변환 가능해진다. <br/><br/>
+
+<FileName>next.config.js</FileName>
 
 ```jsx
-// next.config.js
 //MDX 설정 및 라이브러리 연결
 const withMDX = createMDX({
   //remarkGfm: GitHub Markdown을 지원
@@ -138,6 +141,8 @@ export default withMDX({
 
 ### 스타일링
 
+<FileName>mdx-components</FileName>
+
 ```tsx
 import type { MDXComponents } from 'mdx/types';
 
@@ -162,6 +167,8 @@ export function useMDXComponents(components: MDXComponents) {
 ```
 
 HTML 요소로 변환된 MDX 파일의 컴포넌트들을 `MDXComponents` 형태로 가져와서 직접 정의한 UI 컴포넌트를 사용하는 설정이다. 즉 MDX 파일에서 기본 HTML 태그 대신 사용자 정의 컴포넌트를 사용하도록 설정하는것이다. 예를 들어, MDX 파일에서 `<p>` 태그로 렌더링되면 자동으로 `@/components/ui/p`에 정의된 `P` 컴포넌트로 렌더링된다. <br/><br/>
+
+<FileName>P.tsx</FileName>
 
 ```tsx
 'use client';
@@ -203,12 +210,9 @@ HTML 변환, 스타일링까지 완료했다면 MDX 파일을 생성하고, 글 
 
 `App/(post)/tag/postId/page.mdx` 파일을 생성하고 아래와 같이 테스트 글 코드를 적어준다.
 
-```markdown
----
-title: 테스트 글입니다
-tag: experience
----
+<FileName>Page.mdx</FileName>
 
+```markdown --- title: 테스트 글입니다 tag: experience ---
 import { Callout } from '@/components/ui/callout';
 
 //## 테스트글입니다

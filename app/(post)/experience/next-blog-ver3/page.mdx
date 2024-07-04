@@ -4,6 +4,8 @@ tag: experience
 description: Next.js와 MDX를 이용하여 개발 블로그를 만들어보았습니다.
 ---
 
+import { FileName } from '@/components/ui/FileName';
+
 [이전 글](https://www.banghojin.site/experience/next-blog-ver2)
 
 ## 사이드바 구현
@@ -19,6 +21,8 @@ description: Next.js와 MDX를 이용하여 개발 블로그를 만들어보았�
 > 기존의 `PostHeader`에서는 모든 글 데이터 중 현재 주소에 매칭되는 글 상세 데이터를 가져온다. 이 데이터에는 `content` 속성이 포함되어 있으며, 이 속성에는 HTML로 파싱되기 이전의 순수한 마크다운 코드가 들어 있다. 이 마크다운 코드를 `parseContent` 함수를 이용하여, `##`이 포함된 헤딩 컴포넌트를 찾아내어, 텍스트를 추출하고, `#`을 추가하여 링크를 생성한다.
 
 <br />
+
+<FileName>PostHeader.tsx</FileName>
 
 ```tsx
 export function PostHeader({ posts }: PostHeaderType) {
@@ -71,7 +75,7 @@ export const parseContent = (content: string): ParsedPost[] => {
 
 <br />
 
-**변환된 ## 헤딩 코드**
+<FileName>변환된 ## 헤딩 코드</FileName>
 
 ```tsx
 [
@@ -93,6 +97,8 @@ export const parseContent = (content: string): ParsedPost[] => {
 반환된 `link` 데이터를 `Link`의 `href` 속성에 넣어주면 된다. 그러나 HTML에는 해당 링크와 매칭되는 ID를 지정하지 않았기 때문에, 링크가 제대로 생성되더라도 HTML에 ID를 넣지 않으면 해당 헤딩 위치로 이동하지 않는다. 따라서 HTML로 렌더링될 때, 위 `link` 데이터 형식과 동일한 ID를 `h2` 태그에 추가해야 한다.
 
 <br />
+
+<FileName>H2.tsx</FileName>
 
 ```tsx
 export function H2({ children }) {
@@ -124,6 +130,8 @@ export function H2({ children }) {
 > 이제 렌더링된 h2태그에는 id가 들어온다.
 
 <br />
+
+<FileName>Sidebar.tsx</FileName>
 
 ```tsx
 const Sidebar = ({ parsedContent }: SidebarType) => {
@@ -183,6 +191,8 @@ const Sidebar = ({ parsedContent }: SidebarType) => {
 
 - 윈도우에 `addEventListener` 스크롤 이벤트를 지정하여 `pageYOffset` 이 지정한 값을 넘어가게 되면 `setShowToTop` state를 true로 지정하여 ToTop 버튼을 표시한다
 - ToTop 버튼을 클릭 할 시 `window.scrollTo` 을 이용하여 최상단으로 이동한다.<br /><br />
+
+<FileName>PostHeader.tsx</FileName>
 
 ```tsx
 export function PostHeader({ posts }: PostHeaderType) {
@@ -271,6 +281,8 @@ useEffect(() => {
 
 <br />
 
+<FileName>ToTop.tsx</FileName>
+
 ```tsx
 const ToTop = () => {
   const handleClick = () => {
@@ -300,6 +312,8 @@ const ToTop = () => {
 - 일반적으로 가로 막대 형태로 표시되며, 진행 정도에 따라 막대의 길이가 증가한다. 색상 변화, 애니메이션, 숫자(백분율) 등의 다양한 형태로 제공될 수 있다. <br /><br />
 
 **구현 아이디어**
+
+<FileName>Progressbar.tsx</FileName>
 
 ```tsx
 const Progressbar = () => {

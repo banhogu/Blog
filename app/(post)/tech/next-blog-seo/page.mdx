@@ -4,11 +4,13 @@ tag: tech
 description: Google Search Console, Sitemap, Robots, 구글 애널리틱스를 이용하여 SEO를 개선해봅시다.
 ---
 
+import { FileName } from '@/components/ui/FileName';
+
 ## 개선 이전 SEO 전략
 
 현재 사용되고 있는 SEO 전략은 메인 페이지와 글 상세 페이지로 나뉘는데, 메인 페이지에서는 Layout에서 설정한 기본 메타데이터를 사용하고, 글 상세 페이지에서는 `remark-frontmatter`를 이용하여 Frontmatter 구문을 파싱한 후, 이를 `remark-mdx-frontmatter`로 넘겨주어 메타데이터를 생성한다.<br/><br/>
 
-**메인페이지 Layout.tsx**
+<FileName>Layout.tsx</FileName>
 
 ```tsx
 export const metadata = {
