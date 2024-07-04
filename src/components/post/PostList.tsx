@@ -39,7 +39,10 @@ const PostList = ({ posts, divide }: PostListType) => {
                 <div className="w-12 flex items-center justify-center mr-4 font-naverBold">
                   {isFirstOfTag && divide[1] == '전체' && getTag(post.tag)}
                 </div>
-                <div className="flex-1 dark:text-gray-100">{post.title}</div>
+                <div className="flex-1 dark:text-gray-100 flex flex-col">
+                  <div className="text-[14.5px] font-naverSemi">{post.title}</div>
+                  <div className="text-xs">{post.subTitle}</div>
+                </div>
               </div>
             </Link>
           </li>

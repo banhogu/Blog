@@ -6,7 +6,7 @@ import { usePathname } from 'next/navigation';
 export function Logo() {
   const pathname = usePathname();
   return (
-    <span className="text-md md:text-lg whitespace-nowrap font-bold">
+    <span className="text-md md:text-[18.5px] whitespace-nowrap font-bold">
       {pathname === '/' ? (
         <span className="font-naverBold cursor-default pr-2">호진방 블로그</span>
       ) : (

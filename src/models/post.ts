@@ -6,4 +6,5 @@ export interface Post {
   description: string;
   content: string;
   postTag: string;
+  subTitle: string;
 }
