@@ -7,7 +7,7 @@ interface currentThemeType {
   setCurentTheme: (payload: string) => void;
 }
 
-export const useCurrentTalkStore = create(
+export const useCurrentThemeStore = create(
   persist<currentThemeType>(
     (set) => ({
       currentTheme: typeof window !== 'undefined' ? localStorage.getItem('theme') || '' : '',

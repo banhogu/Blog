@@ -3,10 +3,10 @@ import { themeEffect } from '@/utils/themeEffect';
 import { MdOutlineWbSunny } from 'react-icons/md';
 import { LuMoon } from 'react-icons/lu';
 import { useCallback, useEffect, useState } from 'react';
-import { useCurrentTalkStore } from '@/store/useTheme.store';
+import { useCurrentThemeStore } from '@/store/useTheme.store';
 
 const SideTheme = () => {
-  const { setCurentTheme } = useCurrentTalkStore();
+  const { setCurentTheme } = useCurrentThemeStore();
   const [preference, setPreference] = useState<undefined | null | string>(undefined); //사용자의 테마 설정을 저장하는 상태
   const [currentTheme, setCurrentTheme] = useState<null | string>(null); //현재 적용된 테마
 

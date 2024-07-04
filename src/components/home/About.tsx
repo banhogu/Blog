@@ -14,7 +14,7 @@ const About = () => {
       <div className="flex flex-col gap-2">
         <div className="flex flex-col">
           <div className="font-bold text-gray-800 text-lg">HJ Bang</div>
-          <div className="font-normal text-gray-600 text-sm">
+          <div className="font-naverSemi text-gray-600 text-[13px]">
             안녕하세요 배움을 나누며 함께 전진하는 신입 개발자 방호진입니다.
           </div>
         </div>
