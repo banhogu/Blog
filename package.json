@@ -19,6 +19,7 @@
     "@types/gtag.js": "^0.0.20",
     "classnames": "^2.3.2",
     "date-fns": "^2.29.3",
+    "framer-motion": "^11.2.13",
     "gray-matter": "^4.0.3",
     "image-size": "^1.0.2",
     "next": "^14.2.1",
@@ -35,6 +36,7 @@
     "remark-frontmatter": "^5.0.0",
     "remark-gfm": "^4.0.0",
     "remark-mdx-frontmatter": "^4.0.0",
+    "scroll-lock": "^2.1.5",
     "zustand": "^4.5.4"
   },
   "devDependencies": {
@@ -49,6 +51,7 @@
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
+    "@types/scroll-lock": "^2.1.3",
     "cypress": "^13.13.0",
     "eslint": "^8",
     "eslint-config-next": "14.2.4",

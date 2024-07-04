@@ -1,11 +1,12 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Logo } from './Logo';
 import ToggleTheme from './ToggleTheme';
 import Link from 'next/link';
 import { IoIosSearch } from 'react-icons/io';
 import SearchModal from './modal/SearchModal';
 import { Post } from '@/models/post';
+import { disablePageScroll, enablePageScroll } from 'scroll-lock';
 
 interface HeaderType {
   posts: Post[];
@@ -13,6 +14,15 @@ interface HeaderType {
 
 const Header = ({ posts }: HeaderType) => {
   const [searchModalOpen, setSearchModalOpen] = useState(false);
+
+  useEffect(() => {
+    if (searchModalOpen) {
+      disablePageScroll();
+    } else {
+      enablePageScroll();
+    }
+  }, [searchModalOpen]);
+
   return (
     <>
       <header className="flex mt-2 mb-5 md:mb-10 items-center relative">
