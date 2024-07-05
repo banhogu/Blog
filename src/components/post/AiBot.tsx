@@ -9,7 +9,7 @@ interface AiBot {
 }
 
 const AiBot = ({ post }) => {
-  const { setContent, setOpen } = useAiModalStore();
+  const { setContent, setOpen, setModalType } = useAiModalStore();
   const [isHover, setIsHover] = useState(false);
 
   return (
@@ -18,6 +18,7 @@ const AiBot = ({ post }) => {
         onClick={() => {
           setOpen(true);
           setContent(post.content);
+          setModalType('chatbot');
         }}
         onMouseEnter={() => setIsHover(true)}
         onMouseLeave={() => {

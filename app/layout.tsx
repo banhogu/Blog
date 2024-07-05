@@ -4,6 +4,9 @@ import Footer from '@/components/Footer';
 import Header from '@/components/Header';
 import GoogleAnalytics from './GoogleAnalytics';
 import { getPosts } from '@/utils/getPosts';
+import dynamic from 'next/dynamic';
+
+const ModalProvider = dynamic(() => import('@/components/provider/ModalProvider'), { ssr: false });
 
 export const metadata = {
   title: '호진방 블로그',
@@ -37,6 +40,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         />
       </head>
       <body className="dark:text-gray-100 max-w-2xl m-auto">
+        <ModalProvider />
         <main className="p-4 pt-3 md:pt-6 min-h-screen">
           <Header posts={posts} />
           <GoogleAnalytics />
@@ -44,6 +48,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         </main>
 
         <Footer />
+        <div id="root-portal"></div>
       </body>
     </html>
   );
