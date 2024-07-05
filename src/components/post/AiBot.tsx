@@ -1,23 +1,32 @@
 'use client';
 import { Post } from '@/models/post';
 import { useAiModalStore } from '@/store/useAiModal.store';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { LiaRobotSolid } from 'react-icons/lia';
+import { disablePageScroll, enablePageScroll } from 'scroll-lock';
 
 interface AiBot {
   post: Post;
 }
 
 const AiBot = ({ post }) => {
-  const { setContent, setOpen, setModalType } = useAiModalStore();
+  const { setContent, setOpen, setModalType, open } = useAiModalStore();
   const [isHover, setIsHover] = useState(false);
+
+  useEffect(() => {
+    if (open) {
+      disablePageScroll();
+    } else {
+      enablePageScroll();
+    }
+  }, [open]);
 
   return (
     <>
       <div
         onClick={() => {
           setOpen(true);
-          setContent(post.content);
+          setContent(post);
           setModalType('chatbot');
         }}
         onMouseEnter={() => setIsHover(true)}

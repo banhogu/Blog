@@ -1,11 +1,12 @@
+import { Post } from '@/models/post';
 import { create } from 'zustand';
 
 interface useAiModalStoreType {
   open: boolean;
   /* eslint-disable no-unused-vars */
   setOpen: (payload: boolean) => void;
-  content?: string;
-  setContent: (payload: string) => void;
+  content?: Post;
+  setContent: (payload: Post) => void;
 
   modalType: string;
   setModalType: (payload: string) => void;
@@ -19,7 +20,7 @@ export const useAiModalStore = create<useAiModalStoreType>((set) => ({
     set(() => ({
       open: payload,
     })),
-  setContent: (payload: string) =>
+  setContent: (payload: Post) =>
     set(() => ({
       content: payload,
     })),
