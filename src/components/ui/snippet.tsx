@@ -8,7 +8,7 @@ export const Snippet = ({ children, scroll = true, caption = null }) => (
       rounded-b-md
       p-4
       text-sm
-      bg-gray-900 text-white
+      bg-[#222] text-white
       dark:bg-[#222] dark:text-gray-300
 
       ${scroll ? 'overflow-scroll' : 'whitespace-pre-wrap break-all overflow-hidden'}

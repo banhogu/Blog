@@ -1,0 +1,389 @@
+---
+title: Next.js 블로그 모달 관리 개선하기
+tag: experience
+description: Next.js 블로그의 모달은 어떻게 관리되고 있을까요?
+subTitle: Next.js 블로그의 모달은 어떻게 관리되고 있을까요?
+---
+
+import { FileName } from '@/components/ui/FileName';
+import { Callout } from '@/components/ui/callout';
+
+## 현재 블로그 프로젝트에서의 모달 관리와 문제점
+
+대부분의 프로젝트에서 모달은 보통 `useState`를 통해 열림 상태를 관리하며, 오픈 여부가 결정된다.
+
+현재 나의 블로그 프로젝트에서는 글 검색 모달과 AI 챗봇 모달이 사용되고 있으며, 두 모달 역시 상태(state)로 관리되고 있다.<br/><br/>
+
+<FileName>글 검색 모달</FileName>
+
+```tsx
+const Header = ({ posts }: HeaderType) => {
+  const [searchModalOpen, setSearchModalOpen] = useState(false);
+
+  return (
+    <>
+      <header className="flex mt-2 mb-5 md:mb-10 items-center relative">
+        <Logo />
+        <nav className="font-naverSemi text-xs grow justify-end items-center flex gap-1 md:gap-3">
+          <ToggleTheme />
+          <div
+            onClick={() => setSearchModalOpen(true)} //돋보기 아이콘 클릭시 모달 오픈 여부 넘기기
+            className="cursor-pointer hover:bg-gray-200 dark:hover:bg-[#313131] p-2"
+          >
+            <IoIosSearch size={22} />
+          </div>
+          <Link
+            id="aboutLink"
+            href="/about"
+            className="text-sm inline-flex hover:bg-gray-200 dark:hover:bg-[#313131] active:bg-gray-300 dark:active:bg-[#242424] rounded-sm p-2 transition-[background-color]"
+          >
+            About
+          </Link>
+        </nav>
+      </header>
+      {searchModalOpen && <SearchModal posts={posts} setSearchModalOpen={setSearchModalOpen} />}
+    </>
+  );
+};
+```
+
+> `IoIosSearch` (돋보기 아이콘) 클릭 시 `setSearchModalOpen`을 호출하여 모달의 오픈 상태를 변경한다. `searchModalOpen`이 `true`로 변경될 시 이를 감지하여 `SearchModal`이 렌더링된다.
+
+<br />
+
+### AI 챗봇 모달
+
+```tsx
+const Sidebar = ({ parsedContent, post }: SidebarType) => {
+  const [aiModalOpen, setAiModalOpen] = useState(false)
+
+  return (
+    <>
+      <div className="text-xs fixed ml-[700px] -mt-6">
+        <div className="border-l border-gray-300 flex flex-col gap-1 py-4 px-4">
+          <div className="font-naverBold text-lg text-gray-700 dark:text-gray-300">
+            On This Page
+          </div>
+         ...
+        <div className="flex gap-[8px]">
+          <ToTop />
+          <AiBot post={post} setAiModalOpen={setAiModalOpen}/>
+          <SideTheme />
+        </div>
+      </div>
+      {aiModalOpen && (<AiModal setAiModalOpen={setAiModalOpen}/>)}
+    </>
+  );
+};
+```
+
+> `AiBot` 클릭 시 `setAiModalOpen`을 호출하여 모달의 오픈 상태를 변경한다. `aiModalOpen`이 `true`로 변경될 시 이를 감지하여 `AiModal`이 렌더링된다.
+
+<br />
+
+### 문제점 1
+
+위의 두 방식을 보면 공통된 패턴이 있다. 특정 요소를 클릭 시 `setter`를 호출하여 모달의 오픈 상태를 변경하고, 상태가 `true`로 변경될 시 모달 컴포넌트를 렌더링한다. 현재는 두 개의 모달만 사용하고 있어 큰 불편함을 느끼지 않지만, 모달이 추가될 때마다 각 모달을 사용하는 파일에서 동일한 코드를 반복 작성해야 할 것이다.<br/><br/>
+
+### 문제점 2
+
+글 검색 모달에서 `Header` 컴포넌트는 GNB(Global Navigation Bar)로 단순히 네비게이션 역할을 수행하는 컴포넌트이다. 하지만 하위 컴포넌트로 검색 모달을 갖고 있어, 글 검색 모달의 오픈 여부를 관리하는 책임이 늘어났다. 이는 GNB의 역할로서 적절하지 않은 기능이므로 기능의 응집도가 떨어지고, 글 검색 모달 오픈 여부를 GNB에서 담당하고, 모달 컴포넌트에서 `props` 로 받아온 `setter` 함수로 인해 모달 컴포넌트 또한 `Header` 컴포넌트 상태에 영향을 주기 때문에 이 두 컴포넌트의 결합도가 쓸데없이 높아졌다.<br/><br/>
+
+유사하게 AI챗봇 모달에서 `Sidebar` 컴포넌트 또한 `AiBot`을 하위 컴포넌트로 가지고 있어, 글 상세 페이지에서 네비게이션을 담당하는 역할에 AI 모달 상태까지 관리하는 책임이 늘어난 모습이다.<br/><br/>
+
+### 문제점 3
+
+![](/images/experience/next-blog-manage-modal/1.png)
+
+글 검색 모달과 AI 챗봇 모달 모두 위 화면처럼 `fixed` `z-index`를 가진채로 화면 위에 떠 있는 모습으로 렌더링된다. 즉 부모 컴포넌트의 스타일에 영향을 받지 않는 독립적인 스타일을 가진 컴포넌트라고 할 수 있다.<br/><br/>
+
+<FileName>글 검색 모달</FileName>
+
+```tsx
+<>
+      <div className="text-xs fixed ml-[700px] -mt-6">
+        <div className="border-l border-gray-300 flex flex-col gap-1 py-4 px-4">
+          <div className="font-naverBold text-lg text-gray-700 dark:text-gray-300">
+            On This Page
+          </div>
+         ...
+        <div className="flex gap-[8px]">
+          <ToTop />
+          <AiBot post={post} setAiModalOpen={setAiModalOpen}/>
+          <SideTheme />
+        </div>
+      </div>
+      {aiModalOpen && (<AiModal/>)}
+</>
+```
+
+<br />
+<br />
+
+<FileName>AI 챗봇 모달</FileName>
+
+```tsx
+<>
+      <div className="text-xs fixed ml-[700px] -mt-6">
+        <div className="border-l border-gray-300 flex flex-col gap-1 py-4 px-4">
+          <div className="font-naverBold text-lg text-gray-700 dark:text-gray-300">
+            On This Page
+          </div>
+         ...
+        <div className="flex gap-[8px]">
+          <ToTop />
+          <AiBot post={post} setAiModalOpen={setAiModalOpen}/>
+          <SideTheme />
+        </div>
+      </div>
+      {aiModalOpen && (<AiModal/>)}
+</>
+```
+
+<br />
+
+> 하지만, 두 모달 모두 부모 컴포넌트의 `modal open state` 상태에 따라 렌더링되기 때문에, 기존 화면과 전혀 관련이 없음에도 불구하고, 부모 컴포넌트 최하단 위치에 위치하고 있는 모습이다.
+
+<br />
+
+### 즉, 요약하자면
+
+- **코드 중복**: 각 모달을 사용할 때마다 동일한 상태 관리 코드를 반복 작성해야 한다. 모달이 추가될수록 중복되는 코드가 늘어난다.
+- **역할 분리 부족**: `Header`와 `Sidebar` 컴포넌트가 각각 검색 모달과 AI 모달의 상태를 관리하고 있어, 본래의 역할인 네비게이션 및 페이지 구성에서 벗어나 불필요한 책임이 추가되었다.
+- **렌더링 위치의 의존성**: 두 모달 모두 `fixed`와 `z-index`를 사용해 독립적인 스타일을 갖고 있지만, 부모 컴포넌트의 상태에 따라 렌더링되기 때문에 위치가 부적절하다.
+
+<br />
+
+## 해결 방법 1 - 모달 open 상태를 전역으로 관리
+
+각각의 모달 상태를 부모 컴포넌트에서 따로따로 관리하는 대신, `zustand`로 `useModalStore`를 생성하여 전역 store에서 상태를 관리할 수 있다.
+
+다음과 같이 전역 store를 생성한다.
+
+<br />
+
+<FileName>useModalStore</FileName>
+
+```tsx
+interface useModalStoreType {
+  open: boolean;
+  /* eslint-disable no-unused-vars */
+  setOpen: (payload: boolean) => void;
+  content?: string;
+  setContent: (payload: string) => void;
+
+  modalType: string;
+  setModalType: (payload: string) => void;
+}
+
+export const useModalStore = create<useAiModalStoreType>((set) => ({
+  open: false,
+  content: null,
+  modalType: '',
+  setOpen: (payload: boolean) =>
+    set(() => ({
+      open: payload,
+    })),
+  setContent: (payload: string) =>
+    set(() => ({
+      content: payload,
+    })),
+  setModalType: (payload: string) =>
+    set(() => ({
+      modalType: payload,
+    })),
+}));
+```
+
+> 모달의 open 여부에만 관심이 있는 store를 생성하고, 이를 모달 open을 변경하는 컴포넌트에서 직접 사용하여 부모 컴포넌트의 모달 open 상태 변경 의존성을 제거할 수 있게 된다.
+
+<br />
+
+```tsx
+const AiBot = ({ post }) => {
+  const { setContent, setOpen } = useAiModalStore();
+  ...
+
+  return (
+    <>
+      <div
+        onClick={() => {
+          setOpen(true);
+          setContent(post.content);
+        }}
+        ...
+      >
+        <LiaRobotSolid size={22} className="text-gray-600 dark:text-white" />
+      </div>
+      ...
+    </>
+  );
+};
+```
+
+<br />
+
+이렇게 하면, 사용처에서는 기존에 props로 받던 `setter` 함수를 더 이상 사용하지 않고, 전역적으로 관리되는 `useAiModalStore`의 open 여부를 직접 변경할 수 있게 된다.<br /><br />
+
+이렇게 모달 상태를 전역적으로 관리함으로써, 모달과는 아무런 상관없는 `Header`와 `Sidebar` 컴포넌트에서 모달에 관한 책임을 제거하고, 모달 상태를 변경하는 컴포넌트에서 직접적인 상태 변경이 가능해진다.<br /><br />
+
+<Callout>
+  ❗ 하지만 해당 방식에도 문제점이 발생할 수 있다. 기존에는 부모 컴포넌트에서 모달을 관리했기
+  때문에, 코드 위치를 부모 컴포넌트 코드의 최하단에서 open 상태에 따라 모달을 렌더링했다. 그러나
+  이제는 전역적으로 open 상태를 관리하게 되면서, 이 open 상태를 어디에서 사용하고, 어디에 코드를
+  작성해야 하는지에 대한 궁금증이 생긴다. 모달과 연관된 컴포넌트에서 해당 open 상태를 받아 띄울
+  것인지? 그렇다면 어떤 컴포넌트가 가장 연관되어 있는지, 우선순위를 따져야 하는건지
+  혼란스러워질것이다.
+</Callout>
+
+<br />
+
+## 해결방법 2 - modal Provider 생성
+
+해당 문제점은 `modal Provider`로 해결이 가능하다. 해결 아이디어는 간단하다. 어차피 전역으로 모달 open 상태가 관리되고 있으니, 모달 상태를 중앙에서 관리하고, 필요한 곳에서 쉽게 접근할 수 있도록 한다.<br/><br/>
+
+<FileName>Modal Context 생성</FileName>
+
+```tsx
+interface ModalContextProps {
+  isOpen: boolean;
+  openModal: () => void;
+  closeModal: () => void;
+}
+
+const ModalContext = createContext<ModalContextProps | undefined>(undefined);
+
+export const useModalContext = () => {
+  const context = useContext(ModalContext);
+  return context;
+};
+```
+
+> Context API를 사용하여 `ModalContext`를 생성한다
+
+<br />
+
+<FileName> Modal Provider 컴포넌트 생성</FileName>
+
+```tsx
+export const ModalProvider = ({ children }: ModalProviderProps) => {
+  const { isOpen, openModal, closeModal } = useModalStore();
+
+  return (
+    <ModalContext.Provider value={{ isOpen, openModal, closeModal }}>
+      {children}
+      {isOpen && <AiChatbotModal />}
+    </ModalContext.Provider>
+  );
+};
+```
+
+> ModalProvider 생성 후 root Layout에서 감싸준다.
+
+<br />
+
+<FileName>모달 상태 사용</FileName>
+
+```tsx
+const AiBot = ({ post }) => {
+  const { openModal } = useModalContext();
+
+  return (
+    <div
+      onClick={() => {
+        openModal();
+      }}
+      ...
+    >
+      <LiaRobotSolid size={22} className="text-gray-600 dark:text-white" />
+    </div>
+  );
+};
+```
+
+<br />
+<br />
+
+<Callout>
+  ❗ `ModalProvider`를 사용하여 모달 상태를 중앙에서 관리하고, 모달 컴포넌트를 최상위에
+  렌더링함으로써, 모달 상태와 렌더링 위치를 분리할 수 있게 되었지만, context API를 따로 작성하고,
+  이를 root Layout의 Provider 컴포넌트에 추가 해야 하는 불편함이 발생한다. 또한 모달이 렌더링되는
+  위치가 모달 전용의 위치가 아닌 단순히 DOM 트리의 하단에 쌓이는 방식이라 일관성이 없다고 느껴졌다.
+  이는 여러 모달이 중첩되거나 다른 컴포넌트와 겹칠 때 문제를 일으킬 수 있을것이다.
+</Callout>
+
+<br />
+
+## 해결방법 3 - createPortal 사용
+
+이러한 문제점을 해결하기 위해 `createPortal`을 사용하여 모달을 전용 포탈 위치에 렌더링하는 방법을 선택했다. 이를 위해 `root Layout` 파일의 `body` 최하단에 `root-portal`을 생성하고, 기존의 Provider에서 `value` 값으로 `open` 상태를 전달하는 대신, `ModalProvider`에서 직접 전역 `open` 상태를 가져와 이를 관리한다. `open` 상태가 `true`일 때, `root-portal`을 찾아 해당 위치에 모달을 렌더링한다. 이로써 불필요한 Context 함수 작성과, Provider로 전체 코드를 감싸야 하는 불편함을 해소하고, 모달 컴포넌트 위치의 일관성을 유지할 수 있게 된다.<br/><br/>
+
+<FileName>RootLayout에 root-portal 생성 및 Provider 분리</FileName>
+
+```tsx
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  const posts = getPosts();
+  return (
+    <html lang="ko" suppressHydrationWarning={true}>
+      <head>
+      ...
+      </head>
+      <body className="dark:text-gray-100 max-w-2xl m-auto">
+        <main className="p-4 pt-3 md:pt-6 min-h-screen">
+          ...
+
+          <ModalProvider />
+
+        <div id="root-portal"></div>
+      </body>
+    </html>
+  );
+}
+
+```
+
+<br />
+<br />
+
+<FileName>ModalProvider 다시 작성</FileName>
+
+```tsx
+'use client';
+
+const ModalProvider = () => {
+  const { open, modalType } = useAiModalStore();
+  const $portalRoot = typeof window !== 'undefined' ? document.getElementById('root-portal') : null;
+
+  if ($portalRoot == null) {
+    return null;
+  }
+  return createPortal(
+    <div>
+      {open && modalType === 'chatbot' && <AiModal />}
+      {open && modalType === 'search' && <SearchModal />}
+    </div>,
+    $portalRoot
+  );
+};
+```
+
+> 전역 모달 open 상태가 true가 되면 이를 감지하고 $portalRoot을 찾아 해당 위치로 모달이 생성된다.
+
+<br />
+
+![](/images/experience/next-blog-manage-modal/2.png)
+
+<br />
+
+## 정리
+
+**모달 관리** : 전역 상태로 모달을 관리함으로써, 각 컴포넌트에서 모달의 상태를 직접 관리할 필요가 없어졌다. 이는 코드의 중복을 줄이고, 모달 상태를 일관되게 관리할 수 있게 해준다.
+
+**모달 렌더링**: `createPortal`을 사용하여 모달을 특정 포탈 위치에 렌더링하는 것은 모달 렌더링의 책임을 분명히 하여, 모달이 DOM 구조 내에서 일관된 위치에 렌더링되도록 한다. 이로 인해 모달이 다른 컴포넌트에 영향을 주지 않고 독립적으로 작동할 수 있다.
+
+**모달 관련 코드 응집도 향상**: `useAiModalStore`와 같은 전역 상태 관리 Hook을 사용하여 모달의 상태와 관련된 모든 로직을 한 곳에서 관리
+
+**모달과 관련 없는 컴포넌트 결합도 감소**: 모달 관련 기능들이 전역으로 관리되기 때문에, 모달과 관련 없는 컴포넌트들의 결합도가 줄어든다. 예를 들어, `Header`나 `Sidebar`와 같은 컴포넌트는 모달의 상태 변경과 관련된 코드를 갖지 않아도 되므로, 이들 컴포넌트의 기능이 좀 더 명확해진다.
+
+---
