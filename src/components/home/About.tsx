@@ -1,13 +1,16 @@
 'use client';
 import Image from 'next/image';
 import Link from 'next/link';
-import React from 'react';
+import React, { useState } from 'react';
 import { FaGithub } from 'react-icons/fa';
 import { IoMdMail } from 'react-icons/io';
 
 const About = () => {
+  const [isGithubHover, setIsGithubHover] = useState(false);
+  const [isMailHover, setIsMailHover] = useState(false);
+
   return (
-    <div className="flex gap-5 items-center my-12 pt-6">
+    <div className="flex gap-5 items-center my-12 py-6">
       <div>
         <Image width={80} height={80} src="/images/me.jpeg" alt="me" className="rounded-full" />
       </div>
@@ -19,11 +22,38 @@ const About = () => {
           </div>
         </div>
         <div className="flex gap-2">
-          <Link href={'https://github.com/banghogu'} target="_blank" title="github">
+          <Link
+            onMouseEnter={() => setIsGithubHover(true)}
+            onMouseLeave={() => {
+              setIsGithubHover(false);
+            }}
+            className="relative transition duration-100 hover:bg-zinc-400 px-1 py-1 rounded-lg"
+            href={'https://github.com/banghogu'}
+            target="_blank"
+          >
             <FaGithub size={26} className="text-gray-800 dark:text-gray-300" />
+            {isGithubHover && (
+              <div className="px-[6px] py-1 bg-white font-naverSemi text-[13px] shadow-lg absolute -bottom-9 -left-2">
+                Github
+              </div>
+            )}
           </Link>
-          <Link href={'mailto: devbang5674@gmail.com'} target="_blank">
+
+          <Link
+            onMouseEnter={() => setIsMailHover(true)}
+            onMouseLeave={() => {
+              setIsMailHover(false);
+            }}
+            className="relative transition duration-100 hover:bg-zinc-400 px-1 py-1 rounded-lg"
+            href={'mailto: devbang5674@gmail.com'}
+            target="_blank"
+          >
             <IoMdMail size={26} className="text-gray-800 dark:text-gray-300" />
+            {isMailHover && (
+              <div className="px-[6px] py-1 bg-white font-naverSemi text-[13px] shadow-lg absolute -bottom-9 -left-2">
+                Gmail
+              </div>
+            )}
           </Link>
         </div>
       </div>

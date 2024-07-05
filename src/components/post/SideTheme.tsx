@@ -6,6 +6,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { useCurrentThemeStore } from '@/store/useTheme.store';
 
 const SideTheme = () => {
+  const [isHover, setIsHover] = useState(false);
   const { setCurentTheme } = useCurrentThemeStore();
   const [preference, setPreference] = useState<undefined | null | string>(undefined); //사용자의 테마 설정을 저장하는 상태
   const [currentTheme, setCurrentTheme] = useState<null | string>(null); //현재 적용된 테마
@@ -43,12 +44,17 @@ const SideTheme = () => {
   return (
     <>
       <button
+        onMouseEnter={() => setIsHover(true)}
+        onMouseLeave={() => {
+          setIsHover(false);
+        }}
         aria-label="Toggle theme"
         style={{ boxShadow: '0 0 1px 1px #b9b9b9' }}
-        className={`mt-3 w-7 h-7 rounded-md cursor-pointer flex items-center justify-center transition-[background-color] p-2 
+        className={`relative duration-100  hover:bg-gray-200 mt-3 w-8 h-8 rounded-md cursor-pointer flex items-center justify-center transition-[background-color] p-2 
         [&_.sun-icon]:hidden
         dark:[&_.moon-icon]:hidden
         dark:[&_.sun-icon]:inline
+        ${isHover ? 'bg-gray-200 dark:bg-gray-700' : ''}
       }`}
         onClick={(ev) => {
           ev.preventDefault();
@@ -68,12 +74,21 @@ const SideTheme = () => {
         }}
       >
         <span className="sun-icon">
-          <MdOutlineWbSunny size={18} color="#989898" />
+          <MdOutlineWbSunny size={18} />
         </span>
         <span className="moon-icon">
-          <LuMoon size={18} color="#989898" />
+          <LuMoon size={18} />
         </span>
       </button>
+      {isHover && (
+        <div
+          className={`text-zinc-600 font-naverBold  py-2 px-3 flex items-center justify-center rounded-lg  absolute -bottom-8
+          ${preference === null ? 'left-[66px]' : 'left-[70px]'}
+          `}
+        >
+          {preference === null ? 'System' : preference === 'dark' ? 'Dark' : 'Light'}
+        </div>
+      )}
     </>
   );
 };

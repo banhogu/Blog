@@ -4,15 +4,14 @@ import Link from 'next/link';
 import React from 'react';
 import { BiArrowToTop } from 'react-icons/bi';
 import SideTheme from './SideTheme';
+import AiBot from './AiBot';
+import ToTop from './ToTop';
 
 interface SidebarType {
   parsedContent: ParsedPost[];
 }
 
 const Sidebar = ({ parsedContent }: SidebarType) => {
-  const handleClick = () => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
   const activeHeading = useHeadingsObserver('h2');
 
   return (
@@ -42,16 +41,11 @@ const Sidebar = ({ parsedContent }: SidebarType) => {
           </ul>
         </div>
         <div className="flex gap-[8px]">
-          <div
-            onClick={handleClick}
-            style={{ boxShadow: '0 0 1px 1px #b9b9b9' }}
-            className=" mt-3 w-7 h-7 rounded-md cursor-pointer flex items-center justify-center "
-          >
-            <BiArrowToTop size={18} color="#989898" />
-          </div>
-          <div>
-            <SideTheme />
-          </div>
+          <ToTop />
+
+          <AiBot />
+
+          <SideTheme />
         </div>
       </div>
     </>
