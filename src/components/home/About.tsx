@@ -50,7 +50,7 @@ const About = () => {
           >
             <IoMdMail size={26} className="text-gray-800 dark:text-gray-300" />
             {isMailHover && (
-              <div className="px-[6px] py-1 bg-white font-naverSemi text-[13px] shadow-lg absolute -bottom-9 -left-2">
+              <div className="px-[6px] py-1 bg-white font-naverSemi text-[13px] shadow-lg absolute -bottom-9 -left-[6px]">
                 Gmail
               </div>
             )}

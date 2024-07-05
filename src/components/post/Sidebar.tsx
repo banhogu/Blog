@@ -2,16 +2,17 @@ import { useHeadingsObserver } from '@/hooks/useHeadingObserver';
 import { ParsedPost } from '@/models/parsedPost';
 import Link from 'next/link';
 import React from 'react';
-import { BiArrowToTop } from 'react-icons/bi';
 import SideTheme from './SideTheme';
 import AiBot from './AiBot';
 import ToTop from './ToTop';
+import { Post } from '@/models/post';
 
 interface SidebarType {
   parsedContent: ParsedPost[];
+  post: Post;
 }
 
-const Sidebar = ({ parsedContent }: SidebarType) => {
+const Sidebar = ({ parsedContent, post }: SidebarType) => {
   const activeHeading = useHeadingsObserver('h2');
 
   return (
@@ -43,7 +44,7 @@ const Sidebar = ({ parsedContent }: SidebarType) => {
         <div className="flex gap-[8px]">
           <ToTop />
 
-          <AiBot />
+          <AiBot post={post} />
 
           <SideTheme />
         </div>

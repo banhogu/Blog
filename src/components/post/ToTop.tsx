@@ -23,7 +23,7 @@ const ToTop = () => {
         <BiArrowToTop size={18} className="text-gray-600 dark:text-white" />
       </div>
       {isHover && (
-        <div className="text-zinc-600 font-naverBold  py-2 px-3 flex items-center justify-center rounded-lg  absolute -bottom-8 -left-[14px]">
+        <div className="text-zinc-600 font-naverBold  py-2 px-3 flex items-center justify-center rounded-lg  absolute -bottom-10 -left-[14px] shadow-lg bg-white dark:bg-gray-600 dark:text-white">
           To Top
         </div>
       )}

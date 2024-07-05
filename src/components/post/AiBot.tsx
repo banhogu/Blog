@@ -1,12 +1,24 @@
 'use client';
+import { Post } from '@/models/post';
+import { useAiModalStore } from '@/store/useAiModal.store';
 import React, { useState } from 'react';
 import { LiaRobotSolid } from 'react-icons/lia';
 
-const AiBot = () => {
+interface AiBot {
+  post: Post;
+}
+
+const AiBot = ({ post }) => {
+  const { setContent, setOpen } = useAiModalStore();
   const [isHover, setIsHover] = useState(false);
+
   return (
     <>
       <div
+        onClick={() => {
+          setOpen(true);
+          setContent(post.content);
+        }}
         onMouseEnter={() => setIsHover(true)}
         onMouseLeave={() => {
           setIsHover(false);
@@ -19,7 +31,7 @@ const AiBot = () => {
         <LiaRobotSolid size={22} className="text-gray-600 dark:text-white" />
       </div>
       {isHover && (
-        <div className="text-zinc-600 font-naverBold  py-2 px-3 flex items-center justify-center rounded-lg  absolute -bottom-8 left-[26px]">
+        <div className="bg-white text-zinc-600 font-naverBold  py-2 px-3 flex items-center justify-center rounded-lg  absolute -bottom-10 shadow-lg left-[26px] dark:bg-gray-600 dark:text-white">
           AI 요약
         </div>
       )}
