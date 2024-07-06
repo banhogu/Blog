@@ -19,7 +19,10 @@ const Message = ({ content, role }: MessageType) => {
     <div className="mx-6 mt-5 items-start flex flex-col gap-2">
       <div className="flex items-center">
         <div className="flex items-center gap-1">
-          <LiaRobotSolid size={40} color="black" />
+          <div className="shadow-lg bg-gray-50 rounded-full flex items-center justify-center p-1">
+            <LiaRobotSolid size={40} color="black" />
+          </div>
+
           <div className="font-semibold text-sm text-zinc-800">호진봇</div>
         </div>
       </div>
