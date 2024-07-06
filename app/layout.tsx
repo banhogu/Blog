@@ -32,7 +32,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   const posts = getPosts();
   return (
     //  하이드레이션 오류 안나오게
-    <html lang="ko" suppressHydrationWarning={true}>
+    <html lang="ko" suppressHydrationWarning={true} className="custom-scrollbar">
       <head>
         <script
           dangerouslySetInnerHTML={{
