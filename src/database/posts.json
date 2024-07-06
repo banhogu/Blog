@@ -89,6 +89,16 @@
       "id": "next-blog-seo",
       "tag": "tech",
       "title": "Next.js 블로그 SEO 개선해보기"
+    },
+    {
+      "id": "next-blog-manage-modal",
+      "tag": "experience",
+      "title": "Next.js 블로그 모달 관리 개선하기"
+    },
+    {
+      "id": "development-tools",
+      "tag": "study",
+      "title": "다양한 개발 환경 툴에 대해 알아보자."
     }
   ]
 }

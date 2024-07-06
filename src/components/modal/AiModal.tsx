@@ -100,8 +100,8 @@ const AiModal = () => {
           <div className="mx-6 mt-5 items-start flex flex-col gap-2">
             <div className="flex items-center">
               <div className="flex items-center gap-1">
-                <LiaRobotSolid size={40} />
-                <div className="font-bold text-sm">호진봇</div>
+                <LiaRobotSolid size={40} color="black" />
+                <div className="text-zinc-800 font-bold text-sm">호진봇</div>
               </div>
             </div>
             <div className="font-naverSemi ml-3 text-zinc-800  text-sm rounded-r-3xl bg-gray-100 p-4 rounded-bl-3xl shadow-lg">

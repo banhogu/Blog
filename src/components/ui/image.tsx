@@ -68,6 +68,8 @@ export async function Image({
           alt={alt ?? ''}
           src={src}
           className="rounded-lg"
+          placeholder="blur"
+          blurDataURL="data:image/gif;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAFklEQVR42mN8//HLfwYiAOOoQvoqBAB  bWyZJf74GZgAAAABJRU5ErkJggg=="
           priority
         />
 
