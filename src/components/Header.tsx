@@ -31,6 +31,7 @@ const Header = ({ posts }: HeaderType) => {
         <nav className="font-naverSemi text-xs grow justify-end items-center flex gap-1 md:gap-3">
           <ToggleTheme />
           <div
+            data-cy="search-icon"
             onClick={() => setSearchModalOpen(true)}
             className="cursor-pointer hover:bg-gray-200 dark:hover:bg-[#313131] p-2"
           >

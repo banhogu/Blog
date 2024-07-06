@@ -10,6 +10,7 @@ const ToTop = () => {
   return (
     <>
       <div
+        data-cy="ToTop-Btn"
         onMouseEnter={() => setIsHover(true)}
         onMouseLeave={() => {
           setIsHover(false);

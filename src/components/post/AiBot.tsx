@@ -24,6 +24,7 @@ const AiBot = ({ post }) => {
   return (
     <>
       <div
+        data-cy="AiBot-Btn"
         onClick={() => {
           setOpen(true);
           setContent(post);

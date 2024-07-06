@@ -87,8 +87,6 @@ const SearchModal = ({ setSearchModalOpen, posts }: SearchModalType) => {
               const isFirst = i === 0;
               const isLast = i === filteredPosts.length - 1;
 
-              console.log(post.slug);
-
               return (
                 <li key={post.slug}>
                   <Link href={`https://banghojin.site/${post.slug}`}>
@@ -102,7 +100,12 @@ const SearchModal = ({ setSearchModalOpen, posts }: SearchModalType) => {
                         {isFirstOfTag && getTag(post.tag)}
                       </div>
                       <div className="flex-1 text-gray-800  dark:text-gray-100 flex flex-col">
-                        <div className="text-sm font-naverSemi text-gray-800">{post.title}</div>
+                        <div
+                          data-cy={`${post.title}`}
+                          className="text-sm font-naverSemi text-gray-800"
+                        >
+                          {post.title}
+                        </div>
                       </div>
                     </div>
                   </Link>

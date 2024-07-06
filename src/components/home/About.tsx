@@ -23,6 +23,7 @@ const About = () => {
         </div>
         <div className="flex gap-2">
           <Link
+            data-cy="github-icon"
             onMouseEnter={() => setIsGithubHover(true)}
             onMouseLeave={() => {
               setIsGithubHover(false);
