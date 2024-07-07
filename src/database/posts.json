@@ -99,6 +99,11 @@
       "id": "development-tools",
       "tag": "study",
       "title": "다양한 개발 환경 툴에 대해 알아보자."
+    },
+    {
+      "id": "next-blog-test1",
+      "tag": "study",
+      "title": "Next.js 블로그에 Cypress를 통한 E2E 테스트 적용해보기 Ver.1"
     }
   ]
 }
