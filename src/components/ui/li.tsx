@@ -14,6 +14,7 @@ export function LI({ children }) {
     [ul_&]:before:absolute
     [ul_&]:before:-ml-4
     font-naverNormal
+    text-[17px]
   `}
     >
       {children}

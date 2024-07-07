@@ -96,13 +96,13 @@ const SearchModal = ({ setSearchModalOpen, posts }: SearchModalType) => {
                ${!isFirst ? 'border-t-0' : ''}
                ${isLast ? 'border-b-0' : ''}`}
                     >
-                      <div className="w-12 flex items-center justify-center mr-4 font-naverBold text-sm">
+                      <div className="w-12 flex items-center justify-center mr-4 font-naverBold text-[16px]">
                         {isFirstOfTag && getTag(post.tag)}
                       </div>
                       <div className="flex-1 text-gray-800  dark:text-gray-100 flex flex-col">
                         <div
                           data-cy={`${post.title}`}
-                          className="text-sm font-naverSemi text-gray-800"
+                          className="text-[16px] font-naverSemi text-gray-800"
                         >
                           {post.title}
                         </div>

@@ -16,8 +16,8 @@ const About = () => {
       </div>
       <div className="flex flex-col gap-2">
         <div className="flex flex-col">
-          <div className="font-bold text-gray-800 text-lg dark:text-gray-300">HJ Bang</div>
-          <div className="font-naverSemi text-gray-600 text-[13px] dark:text-gray-300">
+          <div className="font-naverBold text-gray-800 text-[20px] dark:text-gray-300">HJ Bang</div>
+          <div className="font-naverSemi text-gray-600 text-[14.5px] dark:text-gray-300">
             안녕하세요 배움을 나누며 함께 전진하는 신입 개발자 방호진입니다.
           </div>
         </div>
@@ -34,7 +34,7 @@ const About = () => {
           >
             <FaGithub size={26} className="text-gray-800 dark:text-gray-300" />
             {isGithubHover && (
-              <div className="px-[6px] py-1 bg-white font-naverSemi text-[13px] shadow-lg absolute -bottom-9 -left-2">
+              <div className="px-[6px] py-1 bg-white font-naverSemi text-[14px] shadow-lg absolute -bottom-9 -left-2">
                 Github
               </div>
             )}
@@ -51,7 +51,7 @@ const About = () => {
           >
             <IoMdMail size={26} className="text-gray-800 dark:text-gray-300" />
             {isMailHover && (
-              <div className="px-[6px] py-1 bg-white font-naverSemi text-[13px] shadow-lg absolute -bottom-9 -left-[6px]">
+              <div className="px-[6px] py-1 bg-white font-naverSemi text-[14px] shadow-lg absolute -bottom-9 -left-[6px]">
                 Gmail
               </div>
             )}

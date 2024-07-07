@@ -40,7 +40,7 @@ const AiModal = () => {
   useEffect(() => {
     const firstMessage = [
       {
-        content: `${content.content} 해당 글을 최대한 길고 자세하게 요약해줘. 해당 글은 내가 작성한거고, 나의 블로그에 방문한 독자에게 설명하는 식으로 ~입니다 말투로 설명해주면 돼. 요약 중에 참고할만한 내용이 있다면 해당 링크를 https://www.banghojin.site 뒤에 구체적인 경로를 포함해서 제공해줘. 만약 참고하지 않은 내용이라면 URL을 포함하지 말아줘.`,
+        content: `${content.content} 해당 글을 최대한 길고 자세하게 요약해줘. 해당 글은 내가 작성한거고, 나의 블로그에 방문한 독자에게 설명하는 식으로 ~입니다 말투로 설명해주면 돼. 요약 중에 참고할만한 내용이 있다면 해당 링크[https://www.banghojin.site]를 참고해서 뒤에 구체적인 경로를 포함해서 제공해줘. 만약 참고하지 않은 내용이라면 URL을 포함하지 말아줘.`,
         role: 'user' as const,
       },
     ];
@@ -71,7 +71,7 @@ const AiModal = () => {
       <div
         data-cy="AiModal"
         ref={ref}
-        className="border border-gray-500 absolute top-1/2 transform -translate-y-1/2 w-[720px] min-h-[500px] max-h-[600px] overflow-y-auto mx-auto bg-gray-50 pb-4 rounded-xl shadow-lg custom-scrollbar2"
+        className="border border-gray-500 absolute top-1/2 transform -translate-y-1/2 w-[720px] min-h-[600px] max-h-[700px] overflow-y-auto mx-auto bg-gray-50 pb-4 rounded-xl shadow-lg custom-scrollbar2"
       >
         <div className="w-full h-9 bg-gray-900 px-3 py-3 flex items-center gap-2">
           <div
@@ -85,13 +85,14 @@ const AiModal = () => {
           <div className="flex items-center">
             <Image
               src="/images/chatbot_me.jpeg"
-              width={50}
-              height={50}
+              width={55}
+              height={55}
               alt="me"
               className="rounded-full"
+              priority
             />
           </div>
-          <div className="mr-3 text-zinc-800 font-naverSemi text-sm rounded-l-3xl bg-gray-100 p-4 rounded-br-3xl shadow-lg">
+          <div className="mr-3 text-zinc-800 font-naverSemi text-[15px] rounded-l-3xl bg-gray-100 p-4 rounded-br-3xl shadow-lg">
             <p>안녕하세요. 방호진 블로그에 오신것을 환영합니다. 글이 많이 길었죠? </p>
             <p>금방 요약해서 보여드릴게요 잠시만 기다려주세요~</p>
           </div>
@@ -102,16 +103,16 @@ const AiModal = () => {
             <div className="flex items-center">
               <div className="flex items-center gap-1">
                 <LiaRobotSolid size={40} color="black" />
-                <div className="text-zinc-800 font-bold text-sm">호진봇</div>
+                <div className="text-zinc-800 font-bold text-[15px]">호진봇</div>
               </div>
             </div>
-            <div className="font-naverSemi ml-3 text-zinc-800  text-sm rounded-r-3xl bg-gray-100 p-4 rounded-bl-3xl shadow-lg">
+            <div className="font-naverSemi ml-3 text-zinc-800  text-[15px] rounded-r-3xl bg-gray-100 p-4 rounded-bl-3xl shadow-lg">
               {`요약중 ${' . '.repeat(dotCount)}`}
             </div>
           </div>
         )}
 
-        <div className=" max-h-[500px] mx-4">
+        <div className=" max-h-[600px] mx-4">
           {messageProps.map((props, i) => (
             <Message {...props} key={i} />
           ))}

@@ -29,18 +29,18 @@ const PostListLayout = ({ posts }: PostListLayoutType) => {
 
   return (
     <Suspense fallback={null}>
-      <main className="max-w-2xl m-auto mb-10 text-sm ">
+      <main className="max-w-2xl m-auto mb-10  ">
         <header className="flex justify-between text-[16px] text-gray-600 dark:text-gray-300">
-          <div className="flex items-center">
+          <div className="flex items-center text-[16.5px]">
             <button
               onClick={clickBtn}
-              className={`font-naverBold flex mr-2 items-center justify-center w-12 h-9 text-left  dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-[#242424] active:bg-gray-200 dark:active:bg-[#222]`}
+              className={` font-naverBold flex mr-2 items-center justify-center w-12 h-9 text-left  dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-[#242424] active:bg-gray-200 dark:active:bg-[#222]`}
             >
               {divide[1] === '전체' ? 'tag' : `${divide[1]}`}
             </button>
-            <span className="pl-2 grow font-naverBold">title</span>
+            <span className=" pl-2 grow font-naverBold">title</span>
           </div>
-          <div className="text-sm flex items-center font-naverBold">
+          <div className="text-[15.5px] flex items-center font-naverBold">
             {dividedPosts?.length} posts
             <span className="pl-3">{divide[1] === '전체' ? '4 tags' : ``}</span>
           </div>

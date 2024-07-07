@@ -1,7 +1,7 @@
 'use client';
 export function P({ children }) {
   return (
-    <p className="text-[16px] font-naverNormal my-5 [blockquote_&]:font-naverSemi [blockquote_&]:my-2 [blockquote_&]:text-[16px] [div_&]:font-naverSemi [div_&]:text-[16px]">
+    <p className="leading-7  text-[17px] font-naverNormal my-5 [blockquote_&]:font-naverSemi [blockquote_&]:my-2 [blockquote_&]:text-[17px] [div_&]:font-naverSemi [div_&]:text-[17px] [div_&]:leading-7  ">
       {children}
     </p>
   );

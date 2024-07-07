@@ -3,9 +3,9 @@ export const Code = ({ children }) => {
     <code
       className={`
       [p_&]:text-red-500
-        [p_&]:text-sm
+        [p_&]:text-[15px]
         [p_&]:px-1
-        [p_&]:py-0.5
+        [p_&]:py-[1.5px]
         [p_&]:rounded-sm
         [p_&]:bg-gray-200
         dark:[p_&]:bg-[#333]

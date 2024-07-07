@@ -17,9 +17,9 @@ const Sidebar = ({ parsedContent, post }: SidebarType) => {
 
   return (
     <>
-      <div className="text-xs fixed ml-[700px] -mt-6">
+      <div className="text-xs fixed ml-[740px] -mt-12">
         <div className="border-l border-gray-300 flex flex-col gap-1 py-4 px-4">
-          <div className="font-naverBold text-lg text-gray-700 dark:text-gray-300">
+          <div className="font-naverBold text-[19px] text-gray-700 dark:text-gray-300">
             On This Page
           </div>
           <ul>
@@ -33,7 +33,7 @@ const Sidebar = ({ parsedContent, post }: SidebarType) => {
                       ? 'text-pink-600 font-naverBold'
                       : 'text-gray-500 dark:text-gray-300 font-naverSemi'
                   }
-                  mt-2 text-xs  `}
+                  mt-4 text-[13.5px]  `}
                 >
                   <Link href={item.link}>{item.text}</Link>
                 </li>
