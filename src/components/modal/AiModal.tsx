@@ -69,6 +69,7 @@ const AiModal = () => {
   return (
     <div className="fixed inset-0 bg-gray-400 bg-opacity-30 z-50 flex justify-center items-start">
       <div
+        data-cy="AiModal"
         ref={ref}
         className="border border-gray-500 absolute top-1/2 transform -translate-y-1/2 w-[720px] min-h-[500px] max-h-[600px] overflow-y-auto mx-auto bg-gray-50 pb-4 rounded-xl shadow-lg custom-scrollbar2"
       >
