@@ -114,6 +114,11 @@
       "id": "next-blog-test3",
       "tag": "experience",
       "title": "Next.js 블로그에 Cypress를 통한 E2E 테스트 적용해보기 Ver.3"
+    },
+    {
+      "id": "what-is-open-ai-api",
+      "tag": "study",
+      "title": "OpenAI API 이해하기"
     }
   ]
 }
