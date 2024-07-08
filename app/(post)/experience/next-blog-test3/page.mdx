@@ -1,0 +1,157 @@
+---
+title: Next.js 블로그에 Cypress를 통한 E2E 테스트 적용해보기 Ver.3
+tag: experience
+description: 작성된 테스트 코드를 Github Actions를 이용하여 자동화 해봅시다.
+subTitle: 작성된 테스트 코드를 Github Actions를 이용하여 자동화 해봅시다.
+---
+
+import { FileName } from '@/components/ui/FileName';
+import { Callout } from '@/components/ui/callout';
+
+[이전 글](https://www.banghojin.site/experience/next-blog-test2)
+
+## Github Actions를 이용한 E2E 테스트 자동화의 필요성
+
+Cypress를 통한 E2E 테스트 코드를 작성하고 테스트를 진행하면서 이런 궁금증이 생겼다
+
+> 매번 `npm run build` → `npm run start` → `cypress:open` 순서로 테스트를 해야만 하는 걸까?
+
+다행히도 Cypress에서는 Github Actions를 통해 E2E 테스트 자동화를 지원한다. 배포 시 실제 사이트와 유사한 동작을 테스트하는 E2E 테스트의 특성상, Github 배포 과정에서 자동으로 테스트를 진행하고, 테스트가 통과할 시에만 정상적으로 배포되도록 설정할 수 있다. 이는 개발 및 배포 과정의 테스트를 추가함으로써 안정성을 높일 수 있을것이다.<br/><br/>
+
+![](/images/experience/next-blog-test3/1.png)
+
+<Callout>
+❗ 또한 현재 Next.js 블로그 프로젝트는 main 브랜치에서 개발과 배포가 전부 이루어지고 있다. 개인 프로젝트라서 브랜치 관리의 필요성을 느끼지 못했지만, 이번에 Github Actions를 이용한 E2E 테스트 자동화를 진행하면서 브랜치 구조를 정비하기로 했다. develop 브랜치에서 주로 개발과 테스트(**CI**)가 이루어지고, main 브랜치는 배포(**CD/Vercel**)를 담당하도록 하여 각 브랜치의 책임과 역할을 확실하게 분리할 계획이다. 이를 통해 더 안정적이고 효율적인 배포 프로세스를 구축할 수 있을 것이다.
+
+</Callout>
+
+<br />
+
+## Workflow 적용
+
+### 1. 브랜치 정책 설정
+
+먼저 `main` 브랜치에 직접적으로 커밋하지 않고, 항상 Pull Request를 통해 병합하도록 설정한다. 이로써 코드 리뷰와 테스트를 거친 안정된 코드만이 `main` 브랜치에 병합되도록 할 수 있다.
+
+![](/images/experience/next-blog-test3/2.png)
+
+![](/images/experience/next-blog-test3/3.png)
+
+### GitHub에서 브랜치 정책 설정
+
+1. GitHub 저장소로 이동
+2. `Settings` 탭을 클릭
+3. 왼쪽 사이드바에서 `Branches`를 클릭
+4. `Branch protection rules`에서 `Add rule`을 클릭
+5. 다음과 같이 입력하고 설정
+   - `Branch name pattern`: `main`
+   - `Require pull request reviews before merging` 활성화
+   - `Require status checks to pass before merging` 활성화
+
+<br />
+
+### 2. GitHub Actions 사용하여 E2E 테스트 설정
+
+이제 End-to-end 테스트를 자동화하기 위해 GitHub Actions를 설정한다. 이를 통해 PR이 생성될 때마다 자동으로 테스트가 실행된다
+
+다음과 같은 내용으로 `.github/workflows/e2e-test.yml` 파일을 생성
+
+<FileName>e2e-test.yml</FileName>
+
+```yaml
+name: End-to-end tests
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  cypress-run:
+    runs-on: ubuntu-22.04
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Cypress run
+        uses: cypress-io/github-action@v6
+        with:
+          build: npm run build
+          start: npm run start
+          wait-on: '<http://localhost:3000>'
+        env:
+          OPEN_AI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+```
+
+위 설정 파일은 `main` 브랜치로의 Pull Request가 만들어질 때마다 E2E 테스트를 실행한다. 또한 `OPEN_AI_API_KEY` 를 추가하여 환경변수를 설정함과 동시에 API Key 보안을 관리해줬다.
+
+<br />
+
+### 3. 새로운 develop 브랜치 생성과 PR 생성
+
+이제 `develop` 브랜치를 생성하고, 기능을 개발이 완료되면 `main` 브랜치로 Pull Request를 요청한다.
+
+### 새로운 브랜치 생성
+
+```bash
+git checkout -b develop
+# 기능 개발 후 커밋
+git commit -m "Add new feature"
+git push origin develop
+
+```
+
+![](/images/experience/next-blog-test3/4.png)
+
+**Pull Request 생성**
+
+GitHub 저장소로 이동하여 `develop` 브랜치로 접근한다. `main` 브랜치로의 Pull Request를 생성한다. PR이 생성되면 자동으로 설정된 Vercel 배포와 E2E 테스트가 실행된다
+
+<br />
+
+### 4. 테스트 및 배포 확인 후 병합
+
+Pull Request에 대한 모든 테스트와 Vercel 배포가 완료되었음을 확인한 후, PR을 `main` 브랜치에 병합할 수 있다.
+
+![](/images/experience/next-blog-test3/5.png)
+
+위 단계를 통해 GitHub Actions를 사용하여 E2E 테스트와 Vercel 배포를 연동하고, 이를 통해 안정된 코드를 `main` 브랜치에 병합하는 과정을 자동화할 수 있다.
+
+<br />
+
+## Cypress를 통한 E2E 테스트를 적용해보며 느낀점
+
+### **프론트엔드 테스트에 대한 이해도 확장**
+
+- Cypress를 사용하면서 프론트엔드 테스트에 대한 전반적인 이해도를 높일 수 있었고, 특히 E2E 테스트를 직접 경험해봄으로써 내 프로젝트의 안정성을 확실히 높일 수 있었다. 사용자의 실제 행동을 시뮬레이션하는 과정을 통해 예상하지 못했던 여러 문제들을 발견하고 해결할 수 있었다. 이로 인해 사용자 경험이 개선되는 것을 직접 확인하면서 테스트의 중요성을 다시 한 번 깨달았다.<br /><br />
+
+### **브라우저 호환성 문제**
+
+- Cypress가 Safari와 같은 특정 브라우저를 지원하지 않는다는 점이 아쉬웠다. 다양한 브라우저에서의 호환성과 안정성을 보장해야 하는 상황에서, 특정 브라우저에서의 테스트가 힘들다는 점은 분명한 한계로 느껴졌다.<br /><br />
+
+### **비동기 작업 처리의 어려움**
+
+- 비동기 코드의 특정 상태를 명시적으로 제어하거나 기다리는 데는 어려움이 있었다. 예를 들어 AI 요약 모달에서 답변이 생성되길 기다리는 과정에서, `cy.wait()`를 사용해 1초 정도 강제적으로 기다리는 방법을 택했는데, 이는 대표적인 안티패턴이라고 한다. 이를 해결하기 위해서는 API 응답이나 특정 DOM 요소의 상태 변화를 명시적으로 확인하는 방식이 필요할 것으로 보였다.<br /><br />
+
+### **테스트 시나리오 작성의 어려움**
+
+- 철저한 테스팅은 불가능하다는 소프트웨어 테스트의 7원칙 중 하나를 실감하게 되었다. 모든 경우의 테스트 시나리오를 작성하는 데 많은 어려움이 있었고, 이는 결함 클러스터링 원칙에 따라 오류가 발생할 가능성이 높은 부분, 즉 복잡도가 높은 부분을 집중적으로 테스트하는 전략이 필요할 것 같다는 생각이 들었다.<br /><br />
+
+### **코드 변경에 따른 테스트 코드 관리의 어려움**
+
+- 요구사항과 코드 변경이 잦은 프론트엔드 개발에서는 개발 코드가 바뀜에 따라 테스트 코드도 함께 변경해야 하는 상황이 빈번하게 발생한다. 이런 변화에 맞춰 지속적이고 신속한 테스트를 진행하기 어려운 부분이 있을것이라고 생각된다.<br /><br />
+
+### **개발 코스트 증가**
+
+- 테스트할 때마다 API가 호출되면서 비용이 발생하는 점도 놓칠 수 없는 문제였다. 실제 서비스 환경과 동일한 조건에서 E2E 테스트를 진행하는 것은 중요하지만, OepnAI API 호출 시 매번 10원정도의 금액이 드는데, 테스트를 통해 발생하는 개발 코스트가 무시할 수 없었다. 이를 감소시키기 위해서 Mocking을 통해 API 호출을 대체하거나, 테스트 전용 환경을 따로 구축하는 등의 대안이 필요할 것으로 보였다.<br /><br />
+
+<Callout>
+  💡 이와 같은 경험들을 통해 E2E 테스트를 효율적으로 적용하기 위한 여러 가지 고민과 전략들을 세워야
+  한다는 것을 많이 느낄 수 있었다. Cypress는 분명 강력한 도구이지만, 이를 보다 효율적으로 사용하기
+  위한 다양한 방안과 대응이 함께 이루어져야만 그 효과를 극대화할 수 있을 것이다.
+</Callout>
+
+<br />
+
+---
