@@ -10,9 +10,12 @@ type PostListType = {
 };
 
 const PostList = ({ posts, divide }: PostListType) => {
+  const tagOrder = ['tech', 'experience', 'study', 'think'];
+
   const dividedPosts = useMemo(() => {
     const [_, tag] = divide;
-    return tag === '전체' ? posts : posts.filter((post) => getTag(post.tag) === tag);
+    const filteredPosts = tag === '전체' ? posts : posts.filter((post) => getTag(post.tag) === tag);
+    return filteredPosts.sort((a, b) => tagOrder.indexOf(a.tag) - tagOrder.indexOf(b.tag));
   }, [posts, divide]);
 
   const seenTags = new Set();

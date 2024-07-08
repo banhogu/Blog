@@ -17,7 +17,7 @@ const Sidebar = ({ parsedContent, post }: SidebarType) => {
 
   return (
     <>
-      <div className="text-xs fixed ml-[740px] -mt-[10%]">
+      <div className="text-xs fixed ml-[740px] -mt-[40px] lg:-mt-[20px]">
         <div className="border-l border-gray-300 flex flex-col gap-1 py-4 px-4">
           <div className="font-naverBold text-[19px] text-gray-700 dark:text-gray-300">
             On This Page

@@ -57,11 +57,11 @@ describe('메인 페이지', () => {
    */
   it('글 목록 테스트', () => {
     cy.contains('tag').click();
-    cy.contains('학습').click();
     cy.contains('기술').click();
-    cy.contains('생각').click();
     cy.contains('경험').click();
-    cy.contains('경험');
+    cy.contains('학습').click();
+    cy.contains('생각').click();
+    cy.contains('tag');
     cy.contains('Next.js 블로그 만들기 Ver.1').click();
     cy.url().should('eq', `${API_URL}/experience/next-blog-ver1`);
   });

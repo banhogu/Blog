@@ -1,6 +1,5 @@
 import useDebounce from '@/hooks/useDebounce';
 import useOnClickOutside from '@/hooks/useOnClickOutside';
-import { motion } from 'framer-motion';
 import { Post } from '@/models/post';
 
 import {

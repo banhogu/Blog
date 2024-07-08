@@ -62,12 +62,12 @@
     },
     {
       "id": "retrospect-likelion",
-      "tag": "experience",
+      "tag": "think",
       "title": "멋쟁이사자처럼 10기 회고록"
     },
     {
       "id": "implement-dijkstra",
-      "tag": "experience",
+      "tag": "study",
       "title": "자바스크립트를 이용하여 다익스트라 알고리즘 구현해보기"
     },
     {
@@ -114,6 +114,11 @@
       "id": "next-blog-test3",
       "tag": "experience",
       "title": "Next.js 블로그에 Cypress를 통한 E2E 테스트 적용해보기 Ver.3"
+    },
+    {
+      "id": "what-is-open-ai-api",
+      "tag": "study",
+      "title": "OpenAI API 이해하기"
     }
   ]
 }
