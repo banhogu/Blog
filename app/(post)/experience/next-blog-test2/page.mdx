@@ -1,0 +1,531 @@
+---
+title: Next.js 블로그에 Cypress를 통한 E2E 테스트 적용해보기 Ver.2
+tag: experience
+description: 테스트 시나리오를 작성해보고, 해당 시나리오를 통해 테스트 코드를 작성 및 실행해봅시다.
+subTitle: 테스트 시나리오를 작성해보고, 해당 시나리오를 통해 테스트 코드를 작성 및 실행해봅시다.
+---
+
+import { FileName } from '@/components/ui/FileName';
+import { Callout } from '@/components/ui/callout';
+
+[이전 글](https://www.banghojin.site/experience/next-blog-test1)
+
+## Cypress란 무엇인가
+
+![](/images/experience/next-blog-test2/1.png)
+
+Cypress는 JavaScript로 작성된 End-to-End(E2E) **테스트 프레임워크**로 다양한 기능을 제공하면서도 사용하기 편리하여 웹 애플리케이션의 전체 시스템을 테스트하고 검증하는데 도움을 준다. 특히 사용자 경험을 중시하는 테스트 환경을 구성하기에 최적화된 도구 중 하나다.<br/><br/>
+
+### Cypress의 주요 특징
+
+1. **실제 환경과 유사한 브라우저 테스트**: Cypress는 Chrome, Firefox, Edge와 같은 실제 브라우저에서 테스트를 수행한다. 이는 실제 사용자가 경험하는 환경과 동일한 조건에서 테스트를 진행할 수 있게 한다.<br/><br/>
+2. **강력한 디버깅 도구 & 실시간 리로딩**: 테스트 실행 중 발생한 문제를 시각적으로 식별하고 디버그할 수 있는 기능을 제공하며, 코드 변경 시 실시간으로 리로딩되어 빠른 피드백을 받을 수 있다.<br/><br/>
+3. **다양한 선택자 및 명령어**: Cypress는 CSS 선택자 등 다양한 선택자와 명령어를 제공합니다. 이를 통해 개발자는 더 편리하게 원하는 요소를 찾고 조작할 수 있다.<br/><br/>
+4. **실시간 시각화**: 애플리케이션의 상태를 실시간으로 시각화하여 디버깅을 용이하게 한다. 테스트가 실행되는 동안 각 단계에서 무엇이 일어나는지 명확하게 확인할 수 있다.<br/><br/>
+5. **병렬 실행 및 분산 테스트 지원**: 병렬 실행과 분산 테스트를 지원하여 여러 테스트를 동시에 실행하고 빠르게 결과를 얻을 수 있다.<br/><br/>
+6. **E2E, 단위 및 통합 테스트 지원**: Cypress는 단순히 E2E 테스트을 위한것이 아니며, 단위 테스트와 통합 테스트도 모두 지원한다.<br/><br/>
+
+## Cypress 기본 문법
+
+Cypress의 기본적인 문법은 `describe`와 `it`을 사용하여 테스트 케이스를 정의한다.
+
+- **describe**: 테스트 정의
+- **it**: 개별 테스트 케이스를 정의
+- **cy.visit**: 애플리케이션의 특정 URL을 방문
+- **cy.get**: DOM 요소를 선택하는 데 사용. 선택한 요소에 대해 chain을 통해 다양한 동작을 수행
+
+![](/images/experience/next-blog-test2/2.png)
+
+<FileName>예시 코드</FileName>
+
+```jsx
+describe('sign 테스트', () => {
+  it('로그인 페이지 방문 및 로그인 테스트', () => {
+    // Cypress 테스트 시작 - 로그인 페이지 방문
+    cy.visit('https://example.cypress.io/login');
+
+    // 'Login' 버튼이 있는지 확인하고 클릭
+    cy.contains('Login').click();
+
+    // 현재 URL에 '/login'이 포함되어 있는지 확인
+    cy.url().should('include', '/login');
+
+    // 이메일 입력 필드에 이메일 주소 입력
+    cy.get('#email').type('user@example.com').should('have.value', 'user@example.com');
+
+    // 비밀번호 입력 필드에 비밀번호 입력
+    cy.get('#password').type('password123').should('have.value', 'password123');
+
+    // 'Submit' 버튼 클릭
+    cy.get('button[type="submit"]').click();
+
+    // 로그인 성공 후 URL이 '/dashboard'로 변경되었는지 확인
+    cy.url().should('include', '/dashboard');
+  });
+});
+```
+
+<br />
+
+### Cypress Query
+
+> Cypress는 DOM 요소를 선택하는 다양한 메서드를 제공하며, 이를 통해 특정 요소를 찾고 조작할 수 있다.
+
+<FileName>예시 코드</FileName>
+
+```jsx
+cy.get('.list > li');
+cy.get('dropdown-menu').click();
+```
+
+<br />
+
+### as 메서드
+
+> 선택한 요소에 별칭을 부여하여 나중에 손쉽게 재사용할 수 있다.
+
+<FileName>예시 코드</FileName>
+
+```jsx
+cy.get('item').as('listItem');
+cy.get('@listItem').click();
+```
+
+<br />
+
+### Cypress Query 메서드
+
+| 메서드           | 설명                                                                                                    |
+| ---------------- | ------------------------------------------------------------------------------------------------------- |
+| closest          | 특정 조건에 가장 가까운 부모 요소를 찾는다. cy.get('.element').closest('.parent-container')             |
+| contains         | 특정 텍스트를 포함하는 요소를 찾는다.cy.contains('Submit').click()                                      |
+| eq               | 특정 인덱스에 있는 요소를 선택 cy.get('ul li').eq(2).should('have.text', 'Third item')                  |
+| find             | 특정 자식 요소를 찾는다.cy.get('.parent-element').find('.child-element')                                |
+| first, last      | 선택된 요소 집합에서 첫 번째/마지막 요소를 선택                                                         |
+| parent, children | 특정 요소의 부모/자식 요소를 선택                                                                       |
+| not              | 주어진 선택자와 일치하지 않는 요소를 선택 cy.get('ul li').not('.special-item').should('have.length', 2) |
+| next, prev       | 특정 요소의 다음/이전 형제 요소를 선택                                                                  |
+
+<br />
+
+### Cypress Assertion
+
+> Assertion은 테스트 중에 특정 조건이 만족되는지 확인하며, `and`와 `should` 메서드를 사용하여 다양한 조건을 확인할 수 있다.
+
+<FileName>예시 코드</FileName>
+
+```jsx
+cy.get('.err').should('be.empty').and('be.hidden');
+cy.contains('Login').should('be.visible');
+```
+
+<br />
+
+### Cypress Actions
+
+> Actions는 사용자 인터랙션을 시뮬레이션하는 메서드로, 실제 사용자의 행동을 모방하여 E2E 테스트를 작성하는 데 매우 유용하다.
+
+| 메서드  | 설명                                                                     |
+| ------- | ------------------------------------------------------------------------ |
+| check   | 체크박스나 라디오 버튼을 선택cy.get('#checkbox').check()                 |
+| clear   | 텍스트 입력 필드를 비움cy.get('input[name=username]').clear()            |
+| click   | 특정 요소를 클릭cy.get('#submitButton').click()                          |
+| trigger | DOM 이벤트를 강제로 발생cy.get('#targetElement').trigger('mouseover')    |
+| type    | 텍스트 입력 필드에 값을 입력cy.get('input[name=username]').type('hello') |
+
+<br />
+
+## E2E 테스트 시나리오 작성해보기
+
+본격적으로 테스트 코드를 작성하기 전에 테스트 시나리오를 작성해야 한다. 테스트 시나리오를 작성하면, 현재 Next.js 블로그 프로젝트의 로직을 점검할 수 있고, 더 정확하고 효과적인 테스트 코드를 작성하는 데 도움이 된다. 또한, 모든 가능한 경로와 예외 상황을 미리 계획하여 테스트의 완성도를 높일 수 있다.
+
+간단하게 현재 Next.js 블로그 트리를 그려봤다.
+
+![](/images/experience/next-blog-test2/3.png)
+
+![](/images/experience/next-blog-test2/4.png)
+
+> 위 트리를 바탕으로 상세 시나리오를 작성해본다면
+
+<br />
+
+## 메인 페이지 테스트 시나리오 플로우
+
+<FileName>기본 컴포넌트 노출 Test</FileName>
+
+```
+---------------------
+| 호진방 블로그    |
+| About             |
+| HJ Bang           |
+| 환영 메시지      |
+| ---------------- |
+| 검색 아이콘       |
+| ---------------- |
+| 태그 목록         |
+| 글 목록           |
+| ---------------- |
+| Footer            |
+---------------------
+
+```
+
+1. **시작 화면**
+   - 웹 애플리케이션 메인 페이지를 방문한다.
+   - 다양한 텍스트 요소가 화면에 표시된다: '호진방 블로그', 'About', 'HJ Bang', '환영 메시지' 등.
+2. **각 항목 확인**
+   - 각 텍스트 요소가 잘 렌더링 되나 확인
+
+<br />
+
+<FileName>Header Test</FileName>
+
+```
+[About 클릭 -> About 페이지]
+---------------------
+| About 페이지    |
+| 환영 메시지     |
+---------------------
+
+```
+
+**About 페이지 이동**
+
+- 'About' 링크를 클릭한다.
+- About 페이지로 이동한 후, 해당 페이지의 콘텐츠가 올바르게 표시되는지 확인한다.
+
+<br />
+
+<FileName>검색 기능 Test</FileName>
+
+```
+[검색 아이콘 클릭 -> 검색 모달 열림]
+---------------------
+| 검색 모달       |
+| [검색 입력창]   |
+| 'not found' 입력 |
+| 'No Posts found.' |
+| 'Next.js 블로그 ...' 입력 |
+| 검색 결과 클릭  |
+[검색 모달 닫음 -> 글 상세 페이지]
+---------------------
+
+```
+
+- 검색 아이콘을 클릭하여 검색 모달을 오픈한다.
+- 'not found'를 입력하고 'No Posts found.' 출력 확인.
+- 입력을 지우고 'Next.js 블로그 모달 관리 개선하기'를 검색.
+- 검색 결과를 클릭하고 올바른 페이지로 이동 확인.
+- 배경을 클릭하여 검색 모달을 닫음. (모달 close 확인)
+
+<br />
+
+<FileName>메인 글 목록 Test</FileName>
+
+```
+[태그 선택 -> 글 필터링]
+---------------------
+| 태그 필터링된 글 목록 |
+| 'Next.js 블로그 만들기 Ver.1' |
+| 클릭 -> 글 상세 페이지 이동  |
+---------------------
+
+```
+
+**태그 선택과 글 목록**
+
+- 'tag'를 클릭하여 태그 목록을 표시한다
+- 다양한 태그('학습', '기술', '생각', '경험')를 클릭하여 순서대로 필터링 되는지 확인
+- 'Next.js 블로그 만들기 Ver.1' 글 선택 후 해당 콘텐츠 페이지로 이동.
+
+<br />
+
+<FileName>Footer Test</FileName>
+
+```
+[Footer]
+---------------------
+| banhogu 링크 클릭 |
+| Source 링크 확인(GitHub) |
+---------------------
+
+```
+
+**Footer 링크 확인**
+
+- 인스타그램 링크가 올바르게 작동하는지 확인.
+- 'Source' 링크가 올바른 GitHub URL을 가리키는지 확인.
+
+<br />
+
+## 글 상세 페이지 시나리오 플로우
+
+<FileName>기본 컴포넌트 노출 Test</FileName>
+
+```
+---------------------
+| 경험               |
+| Next.js 블로그... |
+| On This Page      |
+| AI Bot 버튼       |
+| To Top 버튼       |
+---------------------
+
+```
+
+1. **시작 화면**
+   - 특정 글 상세 페이지 방문한다.
+   - 다양한 텍스트 요소가 화면에 표시된다 '경험', 'Next.js 블로그 만들기 Ver.1', 'On This Page'. 등
+2. **기타 UI 요소 확인**
+   - AI Bot 버튼과 To Top 버튼이 존재하는지 확인한다.
+   - 페이지를 하단까지 스크롤하고, 하단 컴포넌트 또한 확인
+
+<br />
+
+<FileName>사이드바 기능 확인</FileName>
+
+```
+[사이드바 항목 클릭]
+---------------------
+| #블로그를-직접-만드는-이유 클릭 |
+| #기능-정리 클릭               |
+---------------------
+
+```
+
+**사이드바 항목 선택**
+
+- '#블로그를-직접-만드는-이유' 링크를 클릭하여 링크가 올바르게 동작하는지 확인.
+- '#기능-정리' 링크를 클릭하여링크가 올바르게 동작하는지 확인. + (text-pink 속성확인)
+
+<br />
+
+<FileName>각 버튼 테스트</FileName>
+
+```
+[To Top 버튼]
+---------------------
+| To Top 버튼 클릭 -> 최상단 이동 |
+---------------------
+[AI Bot 버튼]
+---------------------
+| AI Bot 버튼 클릭 -> 요약 모달 표시 |
+| 모달 닫기 버튼 클릭                |
+---------------------
+
+```
+
+- To Top 버튼에 호버하여 툴팁 텍스트 표시 확인.
+- To Top 버튼 클릭 후 페이지 최상단으로 이동하는지 확인.
+- AI Bot 버튼에 호버하여 툴팁 텍스트 표시 확인.
+- AI Bot 버튼 클릭 후 요약 모달 표시 확인.
+- 요약 모달을 닫기 버튼으로 닫고 확인
+
+<br />
+
+## 테스트 코드 작성
+
+상세 테스트 시나리오를 바탕으로 테스트 코드를 작성한다.
+
+![](/images/experience/next-blog-test2/5.png)
+
+> _Hydration 작업을 실패하였습니다. 그 원인은 첫 번째 UI가 서버에서 render된 것과 매칭되지 않았기 때문입니다._
+
+<Callout>
+  드디어 테스트 코드를 작성하겠구나 들뜬 마음에 `visit(’/’)` 를 통해 메인페이지에 접속하자 마자 위와
+  같은 오류가 발생했다. 관련 오류 내용을 찾아보니 cypress 공식 문서에는 관련 내용이 전혀 적혀져 있지
+  않았다. 멘붕 상태로 열심히 구글링 한 결과,
+</Callout>
+
+<br />
+
+![](/images/experience/next-blog-test2/6.png)
+
+https://github.com/cypress-io/cypress/issues/27204#issuecomment-1894217901
+
+나와 같은 문제를 겪고 있는 사람들이 많았고 해당 issues에서 해결 코드를 찾을 수 있었다. 모든 issues 글들을 번역해서 읽어본 결과, 무엇이 문제고 저 코드가 어떤 역할의 코드인지 설명하는 글이 없었다.
+
+<br />
+
+![](/images/experience/next-blog-test2/7.png)
+
+혹시나 해서 stack overflow로도 검색해봤지만 역시 오류가 발생한 이유나, 해당 코드의 역할이 적혀져 있지 않았다. ~~이유는 알려줘야죠~~
+
+<br />
+
+```tsx
+Cypress.on('uncaught:exception', (err) => {
+  // Cypress and React Hydrating the document don't get along
+  // for some unknown reason. Hopefully, we figure out why eventually
+  // so we can remove this.
+  if (
+    /hydrat/i.test(err.message) ||
+    /Minified React error #418/.test(err.message) ||
+    /Minified React error #423/.test(err.message)
+  ) {
+    return false;
+  }
+});
+```
+
+어쨋든 해당 코드를 e2e.ts 파일에 추가해주면, 거짓말처럼 오류가 사라진다. 공식문서에도 없는 코드를 어떻게 찾아내신거지 궁금하다.<br /><br />
+
+### 테스트 코드작성
+
+```tsx
+describe('페이지 정상 접속 테스트', () => {
+  Cypress.on('uncaught:exception', () => {
+    return false;
+  });
+  it('메인 페이지 방문', () => {
+    cy.visit(API_URL);
+  });
+  it('About 페이지 방문', () => {
+    cy.visit(`${API_URL}/about`);
+  });
+  it('글 상세 페이지 방문', () => {
+    cy.visit(`${API_URL}/experience/implement-dijkstra`);
+  });
+});
+```
+
+```tsx
+describe('메인 페이지', () => {
+  Cypress.on('uncaught:exception', () => {
+    return false;
+  });
+
+  beforeEach(() => {
+    cy.visit(API_URL);
+    cy.wait(1000);
+  });
+
+  /**
+   * 기본 컴포넌트 노출 Test
+   */
+  it('각 항목들이 정상적으로 노출 되어야 한다.', () => {
+    cy.contains('호진방 블로그');
+    cy.contains('About');
+    cy.contains('HJ Bang');
+    cy.contains('안녕하세요 배움을 나누며 함께 전진하는 신입 개발자 방호진입니다.');
+    cy.contains('tag');
+    cy.contains('title');
+    cy.contains('posts');
+    cy.contains('tags');
+    cy.contains('Source');
+  });
+
+  /**
+   * Header Test
+   */
+  it('About 페이지로 이동한다', () => {
+    cy.contains('About').click();
+    cy.wait(1000);
+    cy.contains('안녕하세요 배움을 나누며 함께 전진하는 신입 개발자 방호진입니다.');
+  });
+
+  it('검색 아이콘을 누르면 검색 모달이 열린다. 검색 결과를 클릭하면 해당 글로 이동한다.', () => {
+    cy.get('[data-cy=search-icon]').click();
+    cy.get('input[placeholder="Type Post Title...').type('not found');
+    cy.wait(1000);
+    cy.contains('No Posts found.');
+    cy.get('input[placeholder="Type Post Title...').clear();
+    cy.get('input[placeholder="Type Post Title...').type('Next.js 블로그 모달 관리 개선하기');
+    cy.wait(1000);
+    cy.get('[data-cy="Next.js 블로그 모달 관리 개선하기"]')
+      .parent()
+      .parent()
+      .parent()
+      .should('have.attr', 'href')
+      .and('include', 'experience/next-blog-manage-modal');
+    cy.get('.fixed.inset-0').click();
+    cy.get('input[placeholder="Type Post Title..."]').should('not.exist');
+  });
+
+  /**
+   * 메인 글 목록 Test
+   */
+  it('글 목록 테스트', () => {
+    cy.contains('tag').click();
+    cy.contains('학습').click();
+    cy.contains('기술').click();
+    cy.contains('생각').click();
+    cy.contains('경험').click();
+    cy.contains('경험');
+    cy.contains('Next.js 블로그 만들기 Ver.1').click();
+    cy.url().should('eq', `${API_URL}/experience/next-blog-ver1`);
+  });
+
+  /**
+   * Footer Test
+   */
+  it('footer 테스트', () => {
+    cy.contains('banhogu').should('have.attr', 'href');
+    cy.contains('Source')
+      .should('have.attr', 'href')
+      .then((href) => {
+        expect(href).to.contain('https://github.com/banghogu/Blog');
+      });
+  });
+});
+```
+
+```tsx
+import { API_URL } from './basic.cy';
+
+describe('글 상세 페이지', () => {
+  Cypress.on('uncaught:exception', () => {
+    return false;
+  });
+
+  beforeEach(() => {
+    cy.visit(`${API_URL}/experience/next-blog-ver1`);
+    cy.wait(1000);
+  });
+
+  /**
+   * 기본 컴포넌트 노출 Test
+   */
+  it('각 항목들이 정상적으로 노출 되어야 한다.', () => {
+    cy.contains('경험');
+    cy.contains('Next.js 블로그 만들기 Ver.1');
+    cy.contains('# Next.js + MDX 블로그 개발기 1');
+    cy.contains('On This Page');
+    cy.contains('다음 글');
+    cy.get('[data-cy=AiBot-Btn]');
+    cy.get('[data-cy=ToTop-Btn]');
+    cy.scrollTo('bottom');
+  });
+
+  it('사이드바 기능들이 정상적으로 작동해야 한다', () => {
+    cy.get('a[href="#블로그를-직접-만드는-이유"]').parent().should('have.class', 'text-pink-600');
+    cy.get('a[href="#기능-정리"]').click();
+    cy.wait(500);
+    cy.get('a[href="#기능-정리"]').parent().should('have.class', 'text-pink-600');
+    cy.get('[data-cy=ToTop-Btn]').trigger('mouseover');
+    cy.contains('To Top').should('be.visible');
+    cy.get('[data-cy=ToTop-Btn]').click();
+    cy.wait(1000);
+    cy.get('a[href="#블로그를-직접-만드는-이유"]').parent().should('have.class', 'text-pink-600');
+    cy.get('[data-cy=AiBot-Btn]').trigger('mouseover');
+    cy.contains('AI 요약').should('be.visible');
+    cy.get('[data-cy=AiBot-Btn]').click();
+    cy.contains(
+      '안녕하세요. 방호진 블로그에 오신것을 환영합니다. 글이 많이 길었죠? 금방 요약해서 보여드릴게요 잠시만 기다려주세요~'
+    );
+    cy.contains('요약중');
+    cy.get('.bg-red-500').click();
+    cy.get('[data-cy=AiModal]').should('not.exist');
+  });
+});
+```
+
+<br />
+
+### 테스트 결과
+
+![](/images/experience/next-blog-test2/8.png)
+
+> 테스트 시나리오대로 테스트 코드를 작성했고, 모든 테스트 케이스에 대해 통과한 모습이다.
+
+---

@@ -104,6 +104,11 @@
       "id": "next-blog-test1",
       "tag": "study",
       "title": "Next.js 블로그에 Cypress를 통한 E2E 테스트 적용해보기 Ver.1"
+    },
+    {
+      "id": "next-blog-test2",
+      "tag": "experience",
+      "title": "Next.js 블로그에 Cypress를 통한 E2E 테스트 적용해보기 Ver.2"
     }
   ]
 }

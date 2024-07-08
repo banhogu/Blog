@@ -71,7 +71,7 @@ const AiModal = () => {
       <div
         data-cy="AiModal"
         ref={ref}
-        className="border border-gray-500 absolute top-1/2 transform -translate-y-1/2 w-[720px] min-h-[600px] max-h-[700px] overflow-y-auto mx-auto bg-gray-50 pb-4 rounded-xl shadow-lg custom-scrollbar2"
+        className="border-[0.3px] border-gray-500 absolute top-1/2 transform -translate-y-1/2 w-[720px] min-h-[600px] max-h-[700px] overflow-y-auto mx-auto bg-gray-50 pb-4 rounded-xl shadow-lg custom-scrollbar2"
       >
         <div className="w-full h-9 bg-gray-900 px-3 py-3 flex items-center gap-2">
           <div
@@ -84,7 +84,7 @@ const AiModal = () => {
         <div className="mx-6 mt-4 items-end flex flex-col gap-2">
           <div className="flex items-center">
             <Image
-              src="/images/chatbot_me.jpeg"
+              src="/images/me.jpeg"
               width={55}
               height={55}
               alt="me"
