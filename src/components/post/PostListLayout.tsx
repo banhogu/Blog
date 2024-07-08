@@ -12,7 +12,7 @@ interface PostListLayoutType {
 const PostListLayout = ({ posts }: PostListLayoutType) => {
   const [divide, setDivide] = useState<Option>(['tag', '전체']);
 
-  const divideOptions: Option[1][] = ['전체', '학습', '기술', '생각', '경험'];
+  const divideOptions: Option[1][] = ['전체', '기술', '경험', '학습', '생각'];
 
   const clickBtn = () => {
     setDivide((prevDivide) => {
