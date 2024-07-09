@@ -119,6 +119,11 @@
       "id": "what-is-open-ai-api",
       "tag": "study",
       "title": "OpenAI API 이해하기"
+    },
+    {
+      "id": "how-to-react-ssr-seo",
+      "tag": "study",
+      "title": "리액트에서의 SSR, SEO 처리 방법."
     }
   ]
 }
