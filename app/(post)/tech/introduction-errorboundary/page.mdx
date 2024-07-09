@@ -23,14 +23,14 @@ import { FileName } from '@/components/ui/FileName';
 
 ![](/images/tech/introduction-errorboundary/3.png)
 
-글 상세페이지에서는 총 2개의 API 호출된다.
+글 상세페이지에서는 총 2개의 API가 호출된다.
 
 - 글 상세 정보를 조회하는 **post, id**
-- 해당 글에 달린 댓글 정보를 가져오는 **AllComments, id**
+- 해당 글에 달린 댓글 정보를 가져오는 **AllComments, id** <br/><br/>
 
-현재는 API가 제대로 동작하여 글 상세 페이지가 잘 보여지지만, 어느 한 곳이라도 에러가 발생한다면?
+현재는 API가 제대로 동작하여 글 상세 페이지가 잘 보여지지만, 어느 한 곳이라도 에러가 발생한다면?<br/><br/>
 
-> MSW를 이용하여 글 상세 데이터를 가져오는 API에 임의로 에러를 발생시켜보자.
+MSW를 이용하여 글 상세 데이터를 가져오는 API에 임의로 에러를 발생시켜보자.
 
 ```tsx
 export const postHandlers = [
@@ -54,19 +54,21 @@ export const postHandlers = [
 
 <br />
 
-## Error Boundary 도입
+## React Error Boundary 도입
 
-<div className="bg-my-gray py-1 px-5 text-base font-medium rounded-xl dark:text-white dark:bg-gray-800">
-  💡 React에서 제공하는 Error Boundary 라는 개념을 이용하여 위에서 발생한 문제를 내용을 해결할 수
-  있다. Error Boundary는 렌더링 중 hasError 상태를 추적하여 하위 트리 에서 발생하는 에러를 잡아내어
-  처리 할 수 있도록 도와준다.
-</div>
+React에서 제공하는 Error Boundary 라는 개념을 이용하여 위에서 발생한 문제를 내용을 해결할 수
+있다. Error Boundary는 렌더링 중 hasError 상태를 추적하여 하위 트리 에서 발생하는 에러를 잡아내어
+처리 할 수 있도록 도와준다.<br/><br/>
 
-[Configuring: Error Handling](https://nextjs.org/docs/pages/building-your-application/configuring/error-handling)
+(https://nextjs.org/docs/pages/building-your-application/configuring/error-handling)
 
 ![](/images/tech/introduction-errorboundary/5.png)
 
-Error Boundary는 위와 같이 작성된다. 다만 Next에서 제공되는 코드는 type이 적용되지 않아 Error Boundary Type관련 글을 찾아보고 적용시켜줬다. 이제 코드를 뜯어보자.
+Error Boundary는 위와 같이 작성된다. 다만 Next에서 제공되는 코드는 type이 적용되지 않아 Error Boundary Type관련 글을 찾아보고 적용시켜줬다.
+
+https://react-typescript-cheatsheet.netlify.app/docs/basic/getting-started/error_boundaries/
+
+이제 코드를 뜯어보자.
 
 <br />
 <FileName>ErrorBoundary 클래스 정의</FileName>
