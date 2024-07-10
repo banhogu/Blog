@@ -129,6 +129,11 @@
       "id": "next-blog-error-handling",
       "tag": "experience",
       "title": "Next.js 블로그 에러 핸들링 적용해보기"
+    },
+    {
+      "id": "web-rendering-methodology",
+      "tag": "study",
+      "title": "전체적인 흐름으로 이해해보는 웹 렌더링의 발전"
     }
   ]
 }
