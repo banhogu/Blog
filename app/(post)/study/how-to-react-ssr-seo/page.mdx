@@ -144,7 +144,7 @@ module: {
 }
 ```
 
-- 번들링 과정에서 사용할 로더(특정 파일 형식을 처리기)를 설정한다.
+- 번들링 과정에서 사용할 로더(특정 파일 형식 처리기)를 설정한다.
   - `test: /\.js$/`: 모든 `.js` 파일에 대해 아래의 로더를 사용하도록 설정
   - `use: 'babel-loader'`: Babel 로더를 사용하여 ES6+ 문법을 하위 호환되는 JavaScript로 변환
   - `exclude: /node_modules/`: `node_modules` 디렉토리 내의 파일은 Babel 로더의 처리 대상에서 제외한다.<br /><br />
@@ -230,10 +230,10 @@ import App from './App';
 ReactDOM.hydrate(<App />, document.getElementById('root'));
 ```
 
-클라이언트 파일을 작성합니다. `src/client.js` 파일을 생성하고 다음과 같이 작성한다.
+클라이언트 파일을 작성한다. `src/client.js` 파일을 생성하고 다음과 같이 작성한다.
 
 - `ReactDOM.hydrate(<App />, document.getElementById('root'))`: 서버에서 렌더링된 HTML과 일치하는 클라이언트 측 React 애플리케이션을 초기화한다.
-- `document.getElementById('root')`: React 애플리케이션이 렌더링될 DOM 요소를 지정합니다. 일반적으로 main HTML의 root ID를 찾아 들어간다.
+- `document.getElementById('root')`: React 애플리케이션이 렌더링될 DOM 요소를 지정한다. 일반적으로 main HTML의 root ID를 찾아 들어간다.
 - `hydrate`는 기존에 서버에서 렌더링된 마크업과 일치하는지 비교하여 이벤트 처리 및 상태를 보존한다.<br/><br/>
 
 ### 7. 웹팩 실행 및 서버 시작
@@ -269,7 +269,9 @@ npm start
 
 우선, React로 SSR을 직접 구현하는 과정에서 초기 설정과 환경 구성이 매우 어려웠다. 기존에는 `vite init`을 사용하여 손쉽게 React를 설치하였는데, webpack부터 babel까지 직접 설치하려니 매우 불편했다.
 
-Express와 같은 서버 라이브러리를 사용하여 React 애플리케이션을 서버에서 렌더링하도록 설정하는 과정 또한 상당히 어려웠고, 구글링하여 관련 자료를 찾아가며 설정할 수 밖에 없었지만, 해당 과정에서 웹팩과 바벨과 같은 빌드 도구들을 사용하는 방법을 익힐 수 있었다.
+Express와 같은 서버 라이브러리를 사용하여 React 애플리케이션을 서버에서 렌더링하도록 설정하는 과정 또한 상당히 어려웠고, 구글링하여 관련 자료를 찾아가며 설정할 수 밖에 없었지만, 해당 과정에서 웹팩과 바벨과 같은 빌드 도구들에 대한 이해도를 높일 수 있었다.
+
+[다양한 개발 환경 툴에 대해 알아보자.](https://www.banghojin.site/study/development-tools)
 
 React로 SSR을 직접 구현해본 후, 코드가 변경될 때마다 빌드를 해줘야 한다는점과 항시 서버단 클라이언트단이 동시에 켜져있어야 한다는점을 통해 Next.js와 같은 프레임워크가 제공하는 장점들을 직접 느낄 수 있었는데, Next App Router에서 자동으로 SSR이 적용된다는게 얼마나 편한건지 느낄 수 있었다. 감사합니다 Vercel팀
 
