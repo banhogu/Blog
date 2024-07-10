@@ -259,7 +259,7 @@ const debounce = (func, wait) => {
 - `let timeout`: timeout 변수는 디바운스 함수의 내부에서 유지되며, `setTimeout` 핸들을 저장한다
 - `return function (...args) { ... }`: 실제 디바운스된 함수를 반환한다다. 이 함수는 클로저(closure)를 통해 외부의 `func`와 `wait` 값을 기억한다.
 - `clearTimeout(timeout);`: 새로운 호출이 발생할 때 이전에 설정된 타임아웃을 제거하여 새로운 타이머가 시작된다.
-- `timeout = setTimeout(() => { func.apply(this, args); }, wait);`: 새로운 타임아웃을 설정하는데, `wait` 시간이 지난 후 `func` 함수를 호출합니다.
+- `timeout = setTimeout(() => { func.apply(this, args); }, wait);`: 새로운 타임아웃을 설정하는데, `wait` 시간이 지난 후 `func` 함수를 호출한다.
 
 <br />
 

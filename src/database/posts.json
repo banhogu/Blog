@@ -134,6 +134,11 @@
       "id": "web-rendering-methodology",
       "tag": "study",
       "title": "전체적인 흐름으로 이해해보는 웹 렌더링의 발전"
+    },
+    {
+      "id": "design-pattern",
+      "tag": "study",
+      "title": "mvc, mvm, mvvm 패턴 이해하기"
     }
   ]
 }
