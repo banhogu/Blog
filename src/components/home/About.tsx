@@ -12,7 +12,13 @@ const About = () => {
   return (
     <div className="flex gap-5 items-center my-12 py-6">
       <div>
-        <Image width={80} height={80} src="/images/me.jpeg" alt="me" className="rounded-full" />
+        <Image
+          width={80}
+          height={80}
+          src="/images/about_me.jpeg"
+          alt="me"
+          className="rounded-full"
+        />
       </div>
       <div className="flex flex-col gap-2">
         <div className="flex flex-col">
