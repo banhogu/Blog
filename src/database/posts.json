@@ -149,6 +149,11 @@
       "id": "what-is-servercomponent",
       "tag": "study",
       "title": "서버 컴포넌트 이해하기"
+    },
+    {
+      "id": "why-react-query",
+      "tag": "study",
+      "title": "React Query 왜 쓰는지 이해하기"
     }
   ]
 }
