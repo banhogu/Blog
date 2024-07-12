@@ -13,6 +13,10 @@ interface SidebarType {
 }
 
 const Sidebar = ({ parsedContent, post }: SidebarType) => {
+  if (parsedContent.length === 0) {
+    return null;
+  }
+
   const activeHeading = useHeadingsObserver('h2');
 
   return (

@@ -133,12 +133,22 @@
     {
       "id": "web-rendering-methodology",
       "tag": "study",
-      "title": "전체적인 흐름으로 이해해보는 웹 렌더링의 발전"
+      "title": "전체적인 흐름으로 이해해보는 웹 렌더링의 발전과정"
     },
     {
       "id": "design-pattern",
       "tag": "study",
       "title": "mvc, mvm, mvvm 패턴 이해하기"
+    },
+    {
+      "id": "want-to-be",
+      "tag": "think",
+      "title": "내가 되고 싶은 개발자"
+    },
+    {
+      "id": "what-is-servercomponent",
+      "tag": "study",
+      "title": "서버 컴포넌트 이해하기"
     }
   ]
 }
