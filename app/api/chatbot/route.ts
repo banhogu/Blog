@@ -1,3 +1,4 @@
+import { cotMessage, fewShotMessage, framingMessage } from '@/constants/promptMessage';
 import { NextRequest, NextResponse } from 'next/server';
 import OpenAI from 'openai';
 import type { ChatCompletionMessageParam } from 'openai/resources/index.mjs';
@@ -15,11 +16,22 @@ export async function POST(request: NextRequest) {
       messages: [
         {
           role: 'system',
-          content: '너는 개발 전문 챗봇이야.',
+          content: `
+          ${framingMessage}
+
+          ${cotMessage}
+          여기 몇 가지 예시가 있어:
+          
+          ${fewShotMessage}
+          이제 이 과정을 참고하여 주어진 글을 요약해줘.
+
+          요약 중에 참고할만한 내용이 있다면 해당 링크[https://www.banghojin.site]를 참고해서 뒤에 구체적인 경로를 포함해서 제공해줘.
+          
+        `,
         },
         ...messages,
       ],
-      model: 'gpt-3.5-turbo-0125',
+      model: 'gpt-3.5-turbo-1106',
     });
 
     messages.push(response.choices[0].message);
