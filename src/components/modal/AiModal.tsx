@@ -1,7 +1,7 @@
 'use client';
 import useOnClickOutside from '@/hooks/useOnClickOutside';
 import { useAiModalStore } from '@/store/useAiModal.store';
-import React, { FormEvent, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import type { ChatCompletionMessageParam } from 'openai/resources/index';
 import { useMutation } from '@tanstack/react-query';
 import axios from 'axios';
@@ -40,7 +40,9 @@ const AiModal = () => {
   useEffect(() => {
     const firstMessage = [
       {
-        content: `${content.content} 해당 글을 최대한 길고 자세하게 요약해줘. 해당 글은 내가 작성한거고, 나의 블로그에 방문한 독자에게 설명하는 식으로 ~입니다 말투로 설명해주면 돼. 요약 중에 참고할만한 내용이 있다면 해당 링크[https://www.banghojin.site]를 참고해서 뒤에 구체적인 경로를 포함해서 제공해줘. 만약 참고하지 않은 내용이라면 URL을 포함하지 말아줘.`,
+        content: `${content.content} 
+        너가 요약해야 할 글이야. system 메세지에 요구한대로 작성해줘
+        `,
         role: 'user' as const,
       },
     ];

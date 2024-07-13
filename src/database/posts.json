@@ -154,6 +154,11 @@
       "id": "why-react-query",
       "tag": "study",
       "title": "React Query 왜 쓰는지 이해하기"
+    },
+    {
+      "id": "improve-gpt-response",
+      "tag": "experience",
+      "title": "GPT 답변 퀄리티 개선해보기"
     }
   ]
 }

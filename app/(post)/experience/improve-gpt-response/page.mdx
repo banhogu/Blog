@@ -1,0 +1,331 @@
+---
+title: GPT 답변 퀄리티 개선해보기
+tag: experience
+description: 다양한 프롬프팅 기법을 적용해보며, ChatGPT API를 이용한 답변 퀄리티를 개선해봅시다.
+subTitle: 다양한 프롬프팅 기법을 적용해보며, ChatGPT API를 이용한 답변 퀄리티를 개선해봅시다.
+---
+
+import { FileName } from '@/components/ui/FileName';
+import { Callout } from '@/components/ui/callout';
+
+## 문제 상황
+
+최근 들어, Next.js를 이용해 개발하고 운영 중인 기술 블로그에서 Chat GPT API를 활용해 포스팅 글을 요약하는 기능에 대한 피드백이 부정적이다. 블로그 독자(~~내 친구들 밖에없지만.. ㅠㅠ~~)들과 나 자신이 느끼기에, GPT의 요약 답변 퀄리티가 초기보다 떨어졌다고 생각했다. 이로 인해 독자들은 요약된 내용을 통해 얻고자 했던 중요한 정보들을 제대로 얻지 못하고 있으며, 이는 요약 기능 신뢰도와 사용자 만족도에 부정적인 영향을 미칠것이라고 생각된다.<br/><br/>
+
+특히, 요약된 내용이 본문과의 일관성을 유지하지 못하거나, 핵심 포인트를 제대로 짚지 못하는 경우가 많아졌다. 매 호출시마다 10원이라는 코스트를 지불하고 있지만, "효율적인 정보 제공"이라는 기능 목표를 달성하지 못하는것이다. 따라서 이번 글을 통해 이러한 문제를 해결하고, GPT의 답변 퀄리티를 향상 시켜보는 시간을 가져보고자 한다.<br/><br/>
+
+### 문제상황 1 , 이상한 링크 추천
+
+![](/images/experience/improve-gpt-response/1.png)
+
+> 현재 나의 블로그에 위 링크를 가진 포스팅은 존재하지 않는다.
+
+<br />
+
+### 문제상황 2 , 글 요약 내용이 부실함
+
+![](/images/experience/improve-gpt-response/2.png)
+
+> 아무리 요약이라지만, 내가 생각한 핵심 내용을 전혀 짚지 못하고 있고, 문제상황 1에 비해 답변 퀄리티가 매우 떨어져보인다.
+
+<br />
+
+## 개선 이전 코드
+
+<Callout>
+❗ 먼저 문제가 되고 있는 Chatbot 기능의 코드를 살펴보자.
+
+</Callout>
+
+<br />
+<br />
+
+<FileName> chatbot > route.ts </FileName>
+
+```tsx
+export async function POST(request: NextRequest) {
+  try {
+    const requestData = await request.json();
+    const messages = requestData.messages as ChatCompletionMessageParam[];
+
+    const response = await openai.chat.completions.create({
+      messages: [
+        {
+          role: 'system',
+          content: '너는 개발 전문 챗봇이야.',
+        },
+        ...messages,
+      ],
+      model: 'gpt-3.5-turbo-0125',
+    });
+
+    messages.push(response.choices[0].message);
+
+    return NextResponse.json({ messages });
+  } catch (error) {
+    return new NextResponse('An error occurred while processing your request.', { status: 500 });
+  }
+}
+```
+
+Next.js API 라우트에서 POST 요청을 처리하여, 입력된 대화 메시지를 Chat GPT API로 전달하고, 생성된 응답 메시지를 클라이언트에게 반환하는 함수이다. 시스템 메시지를 통해 챗봇의 기본 역할을 설정하고, Chat GPT API의 응답을 원래 메시지 배열에 추가하여 반환한다.
+
+<br />
+
+<FileName> modal > AiModal.tsx </FileName>
+
+```tsx
+const AiModal = () => {
+  const { content, setOpen } = useAiModalStore();
+  const [messageParams, setMessageParams] = useState<ChatCompletionMessageParam[]>([]);
+
+  const { mutate, isPending } = useMutation<
+    ChatCompletionMessageParam[],
+    unknown,
+    ChatCompletionMessageParam[]
+  >({
+    mutationFn: async (messages) => {
+      const res = await axios.post('/api/chatbot', {
+        messages,
+      });
+
+      return res.data.messages;
+    },
+    onSuccess: (data) => {
+      setMessageParams(data);
+    },
+  });
+
+  useOnClickOutside(ref, () => setOpen(false));
+
+  useEffect(() => {
+    const firstMessage = [
+      {
+        content: `${content.content} 해당 글을 최대한 길고 자세하게 요약해줘.`,
+        role: 'user' as const,
+      },
+    ];
+    mutate(firstMessage);
+  }, [content.content, mutate]);
+
+  const messageProps = useMemo(() => {
+    return messageParams
+      .slice(1, messageParams.length)
+      .filter((param): param is MessageType => param.role === 'assistant');
+  }, [messageParams]);
+
+  return (
+   ...
+  );
+};
+```
+
+사용자로부터 요약 요청을 받으면 `useAiModalStore` 에 저장된 `content` (요약해야 하는 글의 본문)를 `useMutation`을 Chat GPT API에 전달하고, 반환된 요약 메시지를 상태에 저장하여 렌더링한다.
+
+`useEffect` 에 `firstMessage` : `content` 를 보면 chat gpt에 질문하듯이 글 본문을 포함하여, user 속성으로 해당 글의 요약 메세지를 작성 한것을 볼 수 있다.
+
+<br />
+
+## 필요한 사전지식 Prompting, RAG 개념 이해하기
+
+### Prompting이란
+
+[OpenAI API 공식문서에서 설명하는 Prompting](https://platform.openai.com/docs/guides/prompt-engineering)
+
+프롬프트 엔지니어링은 LLM을 효과적으로 활용하기 위해 프롬프트 메세지를 설계하고 최적화하는 과정이다. 즉, LLM 모델이 원하는 결과의 답변을 내놓을 수 있도록, 사용자가 직접 문구를 입력하여 정확하고 수준 높은 답변을 생성하도록 하는 과정이다. 이를 위해 사용자는 여러 가지 전략과 기법을 사용해야 한다.<br /><br />
+
+### 프롬프트의 기본 규칙
+
+```
+당신은 [고대 역사 전문가]입니다.
+[로마 제국의 몰락이 갖는 중요성]에 대해
+[고등학교 역사 수업 수준]에 맞게 [자세히] 설명해 주세요.
+```
+
+- **컨텍스트 제공**: 모델이 이해할 수 있도록 필요한 배경 정보나 상황을 제공 해야한다.
+- **질문 또는 지시사항**: 모델이 수행해야 할 작업을 명확히 설명 해야한다.
+- **제약 조건 또는 형식**: 출력 형식이나 요구사항을 명시 해야한다.<br /><br />
+
+### 기법1 - Chain of Thought
+
+![](/images/experience/improve-gpt-response/3.png)
+
+Chain of Thought는 복잡한 문제 해결을 위해 모델이 단계별로 논리적 추론을 하도록 유도하는 기법이다. CoT 프롬프트는 모델이 중간 단계를 명시적으로 거치도록 함으로써 더 정확하고 신뢰할 수 있는 출력을 생성한다.
+
+```
+질문: 세 개의 집이 있습니다.
+첫 번째 집은 빨간색,
+두 번째 집은 파란색,
+세 번째 집은 녹색입니다.
+첫 번째 집은 두 번째 집의 왼쪽에 있고,
+두 번째 집은 세 번째 집의 왼쪽에 있습니다.
+집들은 어떤 순서로 배열되어 있습니까?
+
+답변: 차근차근 생각해 봅시다.
+- 첫 번째 집은 빨간색입니다.
+- 두 번째 집은 파란색입니다.
+- 세 번째 집은 녹색입니다.
+- 첫 번째 집은 두 번째 집의 왼쪽에 있습니다.
+- 두 번째 집은 세 번째 집의 왼쪽에 있습니다.
+따라서, 순서는: 빨간색, 파란색, 녹색입니다.
+```
+
+위 코드처럼 단계별로 추론을 유도하며, 최종 답을 도출하는 과정을 명확히 하는 과정을 거친다.<br /><br />
+
+### 기법2 - Few-Shot
+
+Few-Shot 학습은 모델에게 여러 예시를 함께 제공하는 방법이다. 이를 통해 모델은 특정 작업의 패턴을 학습하고 유사한 새로운 입력에 대해 적절한 출력을 생성할 수 있다.
+
+```
+다음 문장을 영어로 번역하세요:
+1. 고양이가 매트 위에 있습니다. -> The cat is on the mat.
+2. 개가 크게 짖습니다. -> The dog barks loudly.
+3. 새가 노래하고 있습니다. -> The bird is singing.
+
+이 문장을 영어로 번역하세요:
+4. 해가 빛나고 있습니다.
+```
+
+위 코드처럼 몇 가지 예시 문장과 번역 패턴을 제공하고, 해당 패턴으로 새로운 문장을 번역하도록 모델에게 요청한다.<br /><br />
+
+### 기법3 - Framing
+
+Framing은 모델이 특정 역할을 수행하거나 특정 관점을 유지하도록 유도하는 기법이다. 이를 통해 모델의 응답이 일관되게 특정 스타일을 유지 할 수 있다.
+
+```
+당신은 친절한 고객 지원 담당자입니다. 고객이 인터넷 연결 문제를 해결하도록 도와주세요.
+```
+
+모델에게 친근한 고객 지원 담당자 역할을 하도록 지시하며, 인터넷 연결 문제를 해결하는 데 도움을 주도록 요청한다.<br /><br />
+
+<Callout>
+❗ 이외에도 다양한 프롬프팅 기법들이 있지만, 공식 문서를 읽어본 결과 내가 쉽게 적용 할 수 있을만한 기법은 위 3가지라고 생각했고 이를 적용해보려고 한다.
+
+</Callout>
+
+<br />
+
+### RAG란?
+
+RAG(Recurrent Attention Generator)는 대화형 AI 모델이 보다 정확하고 관련성 높은 응답을 생성할 수 있도록 돕는 기법으로 언제 어떤 정보를 선택할지를 모델이 판단하고, **나만의 데이터베이스**를 활용하여 경쟁력을 확보할 수 있게 해준다.
+
+복잡하고 어려운 개념이지만 간단하게 정리하자면 아래의 내용으로 요약할 수 있다.
+
+**Context에 넣을 핵심 정보만 그때그때 골라서 넣자** <br />
+**언제 어떤 정보를 골라올지를 LLM 보고 정하라 하자**<br />
+**정보를 골라올 나만의 데이터베이스를 만들어 경쟁력 확보하자**<br />
+
+<br />
+
+## Prompting, RAG 기법 적용해보기
+
+### Chain of Thought 메세지 생성
+
+```jsx
+const cotMessage = `주어진 글을 요약하기 전에, 다음 단계를 따르세요: 
+1. 주요 주제와 핵심 사항을 식별합니다. 
+2. 각 주요 주제와 핵심 사항을 자세히 설명합니다. 
+3. 각 상세 설명을 하나의 문단으로 통합하여 전체 내용을 형성합니다. 
+4. 최종적으로 긴 글을 길고 자세하게 요약합니다. 
+요약 본문에서 독자에게 설명하듯이 ~입니다 말투로 작성해 주세요. 
+중간 과정에서는 각 단계를 명확히 구분해서 생각의 흐름을 유지하세요.`;
+```
+
+<br />
+
+### Few-Shot 메세지 생성
+
+```jsx
+const fewShotMessage = `
+예시 1:
+원문: 오늘은 날씨가 매우 좋습니다. 나는 아침 일찍 일어나 산책을 나갔습니다. 공원에는 많은 사람들이 나와 있었고, 모두들 행복해 보였습니다.
+요약: 오늘은 날씨가 좋아서 많은 사람들이 공원에서 행복하게 시간을 보냈습니다.
+
+예시 2:
+원문: 최근 기술 분야에서는 인공지능이 큰 화제가 되고 있습니다. 인공지능은 여러 산업에서 활용되며 우리의 삶을 혁신적으로 변화시키고 있습니다.
+요약: 최근 인공지능이 여러 산업에서 사용되어 삶을 혁신적으로 변화시키고 있습니다.
+
+예시 3:
+원문: 새로 개봉한 영화는 매우 인상적이었습니다. 주연 배우와 스토리라인이 뛰어났으며, 시각적 효과도 훌륭했습니다. 관객들은 박수를 보냈으며 영화 평론가들에게도 호평을 받았습니다.
+요약: 새로 개봉한 영화는 주연 배우와 스토리라인, 시각적 효과가 뛰어나 호평을 받았습니다.
+`;
+```
+
+<br />
+
+### Framing 메세지 생성
+
+```jsx
+const framingMessage = `
+너는 개발 전문 블로그를 위한 요약 전문가야. 
+너의 역할은 주어진 긴 글을 독자가 이해하기 쉽게 요약해서 제공하는 거야. 
+중요한 핵심 사항과 주요 주제를 파악하고, 이를 독자가 알기 쉽게 길고 자세히 설명하면서도, 
+요약한 내용을 단순화하는 것이 중요해. 
+기본적으로는 독자가 이해하기 쉽게, 상세하게 요약해줘. '~입니다' 말투를 사용해줘.
+`;
+```
+
+<br />
+
+![](/images/experience/improve-gpt-response/4.png)
+
+> 위 Prompt message들을 하나의 파일에서 유동적으로 관리할 수 있도록 저장했다.
+
+<br />
+
+### RAG 기법 적용
+
+```tsx
+// 관련 글 찾기 함수 (키워드 매칭 기반)
+const findRelatedPosts = (content, tag) => {
+  const relatedPosts = postsData.posts.filter(post => {
+    return post.tag === tag && content.includes(post.title);
+  });
+
+  return relatedPosts.map(post => ({
+    title: post.title,
+    url: `https://www.banghojin.site/${post.tag}/${post.id}`
+  }));
+};
+
+// 요약 요청 생성 로직
+const createSummaryRequest = async (content, tag) => {
+  const relatedLinks = findRelatedPosts(content, tag);
+  const linksMessage = relatedLinks.length > 0
+    ? `참고할 만한 다른 글들: ${relatedLinks.map(link => `[${link.title}](${link.url})`).join(", ")}`
+    : "";
+
+const ragMessage = (posts) =>
+  `
+    너는 ${posts} 위 데이터를 이용해서, 요약해야 하는 글과 관련된 내용의 링크를 추천해줄 수 있어.
+    baseurl: https://www.banghojin.site 이고
+    https://www.banghojin.site/tag/id 형식으로 전해주면돼
+    예를들어
+    {
+        "id": "why-react-query",
+        "tag": "study",
+        "title": "React Query 왜 쓰는지 이해하기"
+    }
+    위 데이터는 https://www.banghojin.site/study/why-react-query 인거지
+
+    `;
+```
+
+<br />
+
+## 적용 결과 및 느낀점
+
+![](/images/experience/improve-gpt-response/5.png)
+
+![](/images/experience/improve-gpt-response/6.png)
+
+적용 이 후 여러번의 테스트를 걸쳐 최적의 답변을 내놓을 수 있도록 문구를 꾸준히 수정하였다. 최종적으로 개선 이전 답변 퀄리티와 비교해봤을 때, 짜임성 있는 글로 핵심 내용을 자세히 요약해주고, 글 링크 또한 제대로 갖고 오는 좀 더 수준높은 답변을 기대할 수 있게 되었다.<br /><br />
+
+<Callout>
+💡 GPT 및 LLM 기술이 현재 개발자들 사이에서 점차 필수적인 요소로 자리 잡고 있는 현대 시대에, 이러한 프롬프팅 기술을 통해 더 정확하고 확실한 답변을 작성하는 방법을 공부하게 되어 매우 유익한 시간이었다.
+
+</Callout>
+
+<br />
+
+---

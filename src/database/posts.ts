@@ -1,0 +1,163 @@
+interface Post {
+  id: string;
+  tag: string;
+  title: string;
+}
+
+export const posts: Post[] = [
+  {
+    id: 'coupling-cohesion',
+    tag: 'study',
+    title: '응집도와 결합도 이야기',
+  },
+  {
+    id: 'what-is-architecture',
+    tag: 'study',
+    title: '그래서 아키텍처가 뭔데?',
+  },
+  {
+    id: 'abstract-axios',
+    tag: 'tech',
+    title: 'API 공통 사항 관리를 위한, Axios 추상화 구현',
+  },
+  {
+    id: 'implement-focuszone',
+    tag: 'tech',
+    title: '눈물을 흘리며 개발한 1인석 좌석 배치도 구현기',
+  },
+  {
+    id: 'introduction-errorboundary',
+    tag: 'tech',
+    title: 'Error Boundary를 이용하여 똑똑하게 에러처리해보기',
+  },
+  {
+    id: 'introduction-infinitescroll',
+    tag: 'tech',
+    title: '글, 댓글 조회시 무한스크롤을 구현하겠습니다, 근데 이제 에러핸들링까지 곁들인',
+  },
+  {
+    id: 'introduction-msw',
+    tag: 'tech',
+    title: 'API 언제나와요? 아 네… API로부터 독립된 컴포넌트 생성하기 + MSW 도입기',
+  },
+  {
+    id: 'introduction-reactmarkdown',
+    tag: 'tech',
+    title: 'React-markdown을 도입하여 생산성 높이기',
+  },
+  {
+    id: 'offispace-optimization',
+    tag: 'tech',
+    title: 'Offispace 프로젝트 최적화 해보기',
+  },
+  {
+    id: 'signup-design',
+    tag: 'tech',
+    title: '응집도와 결합도를 고려한 회원가입 설계와 유저가 지치지 않는 UI',
+  },
+  {
+    id: 'why-i-use-next',
+    tag: 'think',
+    title: '나는 Next를 왜 쓰는가, 취업 할 때 유리해서? 기술 스택 하나 더 채우려고?',
+  },
+  {
+    id: 'bestpractice-meaning',
+    tag: 'think',
+    title: '내가 생각한 Best Pratice의 의미',
+  },
+  {
+    id: 'retrospect-likelion',
+    tag: 'think',
+    title: '멋쟁이사자처럼 10기 회고록',
+  },
+  {
+    id: 'implement-dijkstra',
+    tag: 'study',
+    title: '자바스크립트를 이용하여 다익스트라 알고리즘 구현해보기',
+  },
+  {
+    id: 'next-blog-1',
+    tag: 'experience',
+    title: 'Next.js 블로그 만들기 ver1',
+  },
+  {
+    id: 'next-blog-2',
+    tag: 'experience',
+    title: 'Next.js 블로그 만들기 ver2',
+  },
+  {
+    id: 'next-blog-3',
+    tag: 'experience',
+    title: 'Next.js 블로그 만들기 ver3',
+  },
+  {
+    id: 'next-blog-seo',
+    tag: 'tech',
+    title: 'Next.js 블로그 SEO 개선해보기',
+  },
+  {
+    id: 'next-blog-manage-modal',
+    tag: 'experience',
+    title: 'Next.js 블로그 모달 관리 개선하기',
+  },
+  {
+    id: 'development-tools',
+    tag: 'study',
+    title: '다양한 개발 환경 툴에 대해 알아보자.',
+  },
+  {
+    id: 'next-blog-test1',
+    tag: 'study',
+    title: 'Next.js 블로그에 Cypress를 통한 E2E 테스트 적용해보기 Ver.1',
+  },
+  {
+    id: 'next-blog-test2',
+    tag: 'experience',
+    title: 'Next.js 블로그에 Cypress를 통한 E2E 테스트 적용해보기 Ver.2',
+  },
+  {
+    id: 'next-blog-test3',
+    tag: 'experience',
+    title: 'Next.js 블로그에 Cypress를 통한 E2E 테스트 적용해보기 Ver.3',
+  },
+  {
+    id: 'what-is-open-ai-api',
+    tag: 'study',
+    title: 'OpenAI API 이해하기',
+  },
+  {
+    id: 'how-to-react-ssr-seo',
+    tag: 'study',
+    title: '리액트에서의 SSR, SEO 처리 방법.',
+  },
+  {
+    id: 'next-blog-error-handling',
+    tag: 'experience',
+    title: 'Next.js 블로그 에러 핸들링 적용해보기',
+  },
+  {
+    id: 'web-rendering-methodology',
+    tag: 'study',
+    title: '전체적인 흐름으로 이해해보는 웹 렌더링의 발전과정',
+  },
+  {
+    id: 'design-pattern',
+    tag: 'study',
+    title: 'mvc, mvm, mvvm 패턴 이해하기',
+  },
+  {
+    id: 'want-to-be',
+    tag: 'think',
+    title: '내가 되고 싶은 개발자',
+  },
+  {
+    id: 'what-is-servercomponent',
+    tag: 'study',
+    title: '서버 컴포넌트 이해하기',
+  },
+  {
+    id: 'why-react-query',
+    tag: 'study',
+    title: 'React Query 왜 쓰는지 이해하기',
+  },
+];
