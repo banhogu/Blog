@@ -45,14 +45,14 @@ const Header = ({ posts }: HeaderType) => {
           </div>
 
           {pathname === '/posts' ? (
-            <span className="text-[15.5px] text-gray-900 font-semibold inline-flex rounded-sm p-2 transition-[background-color] cursor-default dark:text-gray-300">
+            <span className="text-[15.5px] text-gray-900 font-bold inline-flex rounded-sm p-2 transition-[background-color] cursor-default dark:text-gray-300">
               Posts
             </span>
           ) : (
             <Link
               id="aboutLink"
               href="/posts"
-              className="text-[15.5px] text-gray-600 font-semibold inline-flex hover:bg-gray-200 dark:hover:bg-[#313131] active:bg-gray-300 dark:active:bg-[#242424] rounded-sm p-2 transition-[background-color] dark:text-gray-300"
+              className="text-[15.5px] text-gray-600 font-medium inline-flex hover:bg-gray-200 dark:hover:bg-[#313131] active:bg-gray-300 dark:active:bg-[#242424] rounded-sm p-2 transition-[background-color] dark:text-gray-300"
             >
               Posts
             </Link>
@@ -66,7 +66,7 @@ const Header = ({ posts }: HeaderType) => {
             <Link
               id="aboutLink"
               href="/projects"
-              className="text-[15.5px] text-gray-600 font-semibold inline-flex hover:bg-gray-200 dark:hover:bg-[#313131] active:bg-gray-300 dark:active:bg-[#242424] rounded-sm p-2 transition-[background-color] dark:text-gray-300"
+              className="text-[15.5px] text-gray-600 font-medium inline-flex hover:bg-gray-200 dark:hover:bg-[#313131] active:bg-gray-300 dark:active:bg-[#242424] rounded-sm p-2 transition-[background-color] dark:text-gray-300"
             >
               Projects
             </Link>
