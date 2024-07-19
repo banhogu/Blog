@@ -17,7 +17,7 @@ const ToTop = () => {
         }}
         onClick={handleClick}
         style={{ boxShadow: '0 0 1px 1px #b9b9b9' }}
-        className={`relative mt-3 w-9 h-9 rounded-md cursor-pointer flex items-center justify-center transition duration-100
+        className={`relative mt-3 w-[34px] h-[34px] rounded-md cursor-pointer flex items-center justify-center transition duration-100
         ${isHover ? 'bg-gray-200 dark:bg-gray-700' : ''}
         `}
       >

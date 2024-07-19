@@ -72,7 +72,9 @@ const About = () => {
               setIsResumeHover(false);
             }}
             className="relative transition duration-100 hover:bg-zinc-400 px-1 py-1 rounded-lg"
-            href={'mailto: devbang5674@gmail.com'}
+            href={
+              'https://drive.google.com/file/d/1YG8zJl-3KevuwE7Xxdx5FZxkgzpiQxiG/view?usp=sharing'
+            }
             target="_blank"
           >
             <IoDocument size={23} className="text-gray-800 dark:text-gray-300" />

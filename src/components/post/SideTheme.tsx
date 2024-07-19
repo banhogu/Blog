@@ -50,7 +50,7 @@ const SideTheme = () => {
         }}
         aria-label="Toggle theme"
         style={{ boxShadow: '0 0 1px 1px #b9b9b9' }}
-        className={`relative duration-100  hover:bg-gray-200 mt-3 w-9 h-9 rounded-md cursor-pointer flex items-center justify-center transition-[background-color] p-2 
+        className={`relative duration-100  hover:bg-gray-200 mt-3 w-[34px] h-[34px] rounded-md cursor-pointer flex items-center justify-center transition-[background-color] p-2 
         [&_.sun-icon]:hidden
         dark:[&_.moon-icon]:hidden
         dark:[&_.sun-icon]:inline
