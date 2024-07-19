@@ -41,7 +41,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         />
       </head>
       <Providers>
-        <body className="dark:text-gray-100 max-w-2xl m-auto">
+        <body className="dark:text-gray-100 max-w-[700px] m-auto">
           <ModalProvider />
           <main className="p-4 pt-3 md:pt-6 min-h-screen">
             <Header posts={posts} />

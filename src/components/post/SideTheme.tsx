@@ -50,7 +50,7 @@ const SideTheme = () => {
         }}
         aria-label="Toggle theme"
         style={{ boxShadow: '0 0 1px 1px #b9b9b9' }}
-        className={`relative duration-100  hover:bg-gray-200 mt-3 w-9 h-9 rounded-md cursor-pointer flex items-center justify-center transition-[background-color] p-2 
+        className={`relative duration-100  hover:bg-gray-200 mt-3 w-[34px] h-[34px] rounded-md cursor-pointer flex items-center justify-center transition-[background-color] p-2 
         [&_.sun-icon]:hidden
         dark:[&_.moon-icon]:hidden
         dark:[&_.sun-icon]:inline
@@ -82,7 +82,7 @@ const SideTheme = () => {
       </button>
       {isHover && (
         <div
-          className={`text-sm text-zinc-600 font-naverBold  py-2 px-3 flex items-center justify-center rounded-lg  absolute -bottom-10 shadow-lg bg-white dark:bg-gray-600 dark:text-white
+          className={`text-sm text-zinc-600 font-semibold  py-2 px-3 flex items-center justify-center rounded-lg  absolute -bottom-10 shadow-lg bg-white dark:bg-gray-600 dark:text-white
           ${preference === null ? 'left-[72px]' : 'left-[78px]'}
           `}
         >

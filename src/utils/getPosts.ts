@@ -20,6 +20,7 @@ export const getPostBySlug = (slug: string): Post => {
     description: data.description,
     postTag: data.postTag,
     subTitle: data.subTitle,
+    date: data.date,
   };
 };
 

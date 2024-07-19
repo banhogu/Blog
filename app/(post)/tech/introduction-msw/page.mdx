@@ -3,6 +3,7 @@ title: API 언제나와요? 아 네… API로부터 독립된 컴포넌트 생�
 tag: tech
 description: 프론트엔드 백엔드 병렬적인 개발 진행이 가능한 방법
 subTitle: 프론트엔드 백엔드 병렬적인 개발 진행이 가능한 방법
+date: 2024-05-21
 ---
 
 import { FileName } from '@/components/ui/FileName';
@@ -432,7 +433,7 @@ export const MOCK_POSTDETAIL_DATA = {
 <div className="bg-my-gray py-1 px-5 text-base font-medium rounded-xl dark:text-white dark:bg-gray-800">
   💡 UI 컴포넌트와 API 간의 결합을 줄이기 위해 중간 레이어 Factory 함수를 도입했다. 해당 함수는 직접 API와 상호 작용하고, 데이터에 접근하여 각 컴포넌트에 알맞은 데이터를 내려주었고, 이를 통해 컴포넌트는 보다 독립적으로 설계될 수 있었고, 유지보수가 용이해졌다.
 
-또한, MSW를 사용하여 API 응답 데이를을 가상으로 생성함으로써 프론트엔드 개발 과정에서 실제 API 호출의 필요성을 제거했다. 이를 통해 백엔드 개발이 완료되지 않은 상태에서도 프론트엔드 작업을 지속할 수 있었고, 각 팀이 독립적, 병렬적으로 작업을 진행할 수 있었다.
+또한, MSW를 사용하여 API 응답 데이터를 가상으로 생성함으로써 프론트엔드 개발 과정에서 실제 API 호출의 필요성을 제거했다. 이를 통해 백엔드 개발이 완료되지 않은 상태에서도 프론트엔드 작업을 지속할 수 있었고, 각 팀이 독립적, 병렬적으로 작업을 진행할 수 있었다.
 
 </div>
 

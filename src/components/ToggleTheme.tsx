@@ -47,9 +47,12 @@ const ToggleTheme = () => {
       {isHovering && (
         <span
           className={`
-          text-[9px]
-          text-gray-400
+          text-[10px]
+          text-gray-600
+          font-bold
           mr-[-5px]
+
+          dark:text-gray-300
 
           /* mobile */
           hidden
