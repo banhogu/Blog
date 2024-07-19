@@ -14,11 +14,11 @@ const About = () => {
   const [isAboutHover, setIsAboutHover] = useState(false);
 
   return (
-    <div className="flex gap-5 items-center my-12 py-6 px-3 ">
+    <div className="flex gap-5 items-center mt-12 mb-10 py-6 px-3 ">
       <div>
         <Image
-          width={90}
-          height={90}
+          width={85}
+          height={85}
           src="/images/about_me.jpeg"
           alt="me"
           className="rounded-full"
@@ -26,8 +26,8 @@ const About = () => {
       </div>
       <div className="flex flex-col gap-2">
         <div className="flex flex-col">
-          <div className="font-naverBold text-gray-800 text-[20px] dark:text-gray-300">HJ Bang</div>
-          <div className="font-naverSemi text-gray-600 text-[14.5px] dark:text-gray-300">
+          <div className="font-bold text-gray-800 text-[17.5px] dark:text-gray-300">HoJin Bang</div>
+          <div className="font-semibold text-gray-600 text-[14px] dark:text-gray-300">
             안녕하세요 배움을 나누며 함께 전진하는 신입 개발자 방호진입니다.
           </div>
         </div>
@@ -42,9 +42,9 @@ const About = () => {
             href={'https://github.com/banghogu'}
             target="_blank"
           >
-            <FaGithub size={26} className="text-gray-800 dark:text-gray-300" />
+            <FaGithub size={24} className="text-gray-800 dark:text-gray-300" />
             {isGithubHover && (
-              <div className="px-[6px] py-1 bg-white font-naverSemi text-[14px] shadow-lg absolute -bottom-9 -left-2">
+              <div className="px-[6px] py-1 bg-white font-semibold text-[14px] shadow-lg absolute -bottom-9 -left-2">
                 Github
               </div>
             )}
@@ -59,9 +59,9 @@ const About = () => {
             href={'mailto: devbang5674@gmail.com'}
             target="_blank"
           >
-            <IoMdMail size={26} className="text-gray-800 dark:text-gray-300" />
+            <IoMdMail size={24} className="text-gray-800 dark:text-gray-300" />
             {isMailHover && (
-              <div className="px-[6px] py-1 bg-white font-naverSemi text-[14px] shadow-lg absolute -bottom-9 -left-[6px]">
+              <div className="px-[6px] py-1 bg-white font-semibold text-[14px] shadow-lg absolute -bottom-9 -left-[6px]">
                 Gmail
               </div>
             )}
@@ -75,9 +75,9 @@ const About = () => {
             href={'mailto: devbang5674@gmail.com'}
             target="_blank"
           >
-            <IoDocument size={25} className="text-gray-800 dark:text-gray-300" />
+            <IoDocument size={23} className="text-gray-800 dark:text-gray-300" />
             {isResumeHover && (
-              <div className="px-[6px] py-1 bg-white font-naverSemi text-[14px] shadow-lg absolute -bottom-9 -left-[14px]">
+              <div className="px-[6px] py-1 bg-white font-semibold text-[14px] shadow-lg absolute -bottom-9 -left-[14px]">
                 Resume
               </div>
             )}
@@ -90,9 +90,9 @@ const About = () => {
             className="relative transition duration-100 hover:bg-zinc-400 px-1 py-1 rounded-lg"
             href={'/about'}
           >
-            <SiAboutdotme size={29} className="text-gray-800 dark:text-gray-300" />
+            <SiAboutdotme size={27} className="text-gray-800 dark:text-gray-300" />
             {isAboutHover && (
-              <div className="px-[6px] py-1 bg-white font-naverSemi text-[14px] shadow-lg absolute -bottom-9 -left-[8px]">
+              <div className="px-[6px] py-1 bg-white font-semibold text-[14px] shadow-lg absolute -bottom-9 -left-[8px]">
                 About
               </div>
             )}

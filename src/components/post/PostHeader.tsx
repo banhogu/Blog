@@ -7,7 +7,7 @@ import ToTop from '../ToTop';
 import Progressbar from '../Progressbar';
 import { parseContent } from '@/utils/parseContent';
 import Sidebar from './Sidebar';
-import { format, parseISO } from 'date-fns';
+import { format } from 'date-fns';
 
 interface PostHeaderType {
   posts: Post[];
@@ -33,7 +33,6 @@ export function PostHeader({ posts }: PostHeaderType) {
   const parsedContent = parseContent(post.content);
 
   const formattedDate = format(new Date(post.date), 'yyyy.MM.dd');
-  console.log(formattedDate);
 
   useEffect(() => {
     const handleScroll = debounce(() => {
