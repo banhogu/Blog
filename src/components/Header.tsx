@@ -4,16 +4,17 @@ import { Logo } from './Logo';
 import ToggleTheme from './ToggleTheme';
 import Link from 'next/link';
 import { IoIosSearch } from 'react-icons/io';
-import SearchModal from './modal/SearchModal';
 import { Post } from '@/models/post';
 import { disablePageScroll, enablePageScroll } from 'scroll-lock';
 import { useModalStore } from '@/store/useModal.store';
+import { usePathname } from 'next/navigation';
 
 interface HeaderType {
   posts: Post[];
 }
 
 const Header = ({ posts }: HeaderType) => {
+  const pathname = usePathname();
   const { setAllPost, setOpen, setModalType, open } = useModalStore();
 
   useEffect(() => {
@@ -42,13 +43,20 @@ const Header = ({ posts }: HeaderType) => {
           >
             <IoIosSearch size={22} />
           </div>
-          <Link
-            id="aboutLink"
-            href="/about"
-            className="text-[15.5px] inline-flex hover:bg-gray-200 dark:hover:bg-[#313131] active:bg-gray-300 dark:active:bg-[#242424] rounded-sm p-2 transition-[background-color]"
-          >
-            About
-          </Link>
+
+          {pathname === '/posts' ? (
+            <span className="text-[15.5px] font-naverBold inline-flex rounded-sm p-2 transition-[background-color] cursor-default">
+              Posts
+            </span>
+          ) : (
+            <Link
+              id="aboutLink"
+              href="/posts"
+              className="text-[15.5px] font-naverBold inline-flex hover:bg-gray-200 dark:hover:bg-[#313131] active:bg-gray-300 dark:active:bg-[#242424] rounded-sm p-2 transition-[background-color]"
+            >
+              Posts
+            </Link>
+          )}
         </nav>
       </header>
     </>

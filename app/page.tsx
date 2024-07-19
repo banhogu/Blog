@@ -9,7 +9,7 @@ const HomePage = () => {
   return (
     <div>
       <About />
-      <PostListLayout posts={posts} />
+      {/* <PostListLayout posts={posts} /> */}
     </div>
   );
 };
