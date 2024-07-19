@@ -14,7 +14,7 @@ const About = () => {
   const [isAboutHover, setIsAboutHover] = useState(false);
 
   return (
-    <div className="flex gap-5 items-center my-12 py-6">
+    <div className="flex gap-5 items-center my-12 py-6 px-3 ">
       <div>
         <Image
           width={90}
@@ -90,9 +90,9 @@ const About = () => {
             className="relative transition duration-100 hover:bg-zinc-400 px-1 py-1 rounded-lg"
             href={'/about'}
           >
-            <SiAboutdotme size={25} className="text-gray-800 dark:text-gray-300" />
+            <SiAboutdotme size={29} className="text-gray-800 dark:text-gray-300" />
             {isAboutHover && (
-              <div className="px-[6px] py-1 bg-white font-naverSemi text-[14px] shadow-lg absolute -bottom-9 -left-[9px]">
+              <div className="px-[6px] py-1 bg-white font-naverSemi text-[14px] shadow-lg absolute -bottom-9 -left-[8px]">
                 About
               </div>
             )}

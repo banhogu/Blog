@@ -7,6 +7,7 @@ import ToTop from '../ToTop';
 import Progressbar from '../Progressbar';
 import { parseContent } from '@/utils/parseContent';
 import Sidebar from './Sidebar';
+import { format, parseISO } from 'date-fns';
 
 interface PostHeaderType {
   posts: Post[];
@@ -31,6 +32,9 @@ export function PostHeader({ posts }: PostHeaderType) {
 
   const parsedContent = parseContent(post.content);
 
+  const formattedDate = format(new Date(post.date), 'yyyy.MM.dd');
+  console.log(formattedDate);
+
   useEffect(() => {
     const handleScroll = debounce(() => {
       if (window.pageYOffset > 1500) {
@@ -53,8 +57,9 @@ export function PostHeader({ posts }: PostHeaderType) {
         >
           {getTag(post.tag)}
         </div>
-        <h1 className=" text-[32px] font-naverBold dark:text-gray-100">{post.title}</h1>
+        <h1 className=" text-[30px] font-naverBold dark:text-gray-100">{post.title}</h1>
         <p className=" font-naverSemi text-[16px] mt-2"># {post.subTitle}</p>
+        <p className="mt-1 font-naverSemi text-gray-500 ">{formattedDate}</p>
       </div>
       {showToTop && <ToTop postId={post.id} />}
       <Sidebar parsedContent={parsedContent} post={post} />

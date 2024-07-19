@@ -7,4 +7,5 @@ export interface Post {
   content: string;
   postTag: string;
   subTitle: string;
+  date: string;
 }
