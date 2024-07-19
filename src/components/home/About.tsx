@@ -44,7 +44,7 @@ const About = () => {
           >
             <FaGithub size={24} className="text-gray-800 dark:text-gray-300" />
             {isGithubHover && (
-              <div className="px-[6px] py-1 bg-white font-semibold text-[14px] shadow-lg absolute -bottom-9 -left-2">
+              <div className="px-[6px] py-1 bg-white font-semibold text-[14px] shadow-lg absolute -bottom-9 -left-2 dark:text-gray-700">
                 Github
               </div>
             )}
@@ -61,7 +61,7 @@ const About = () => {
           >
             <IoMdMail size={24} className="text-gray-800 dark:text-gray-300" />
             {isMailHover && (
-              <div className="px-[6px] py-1 bg-white font-semibold text-[14px] shadow-lg absolute -bottom-9 -left-[6px]">
+              <div className="px-[6px] py-1 bg-white font-semibold text-[14px] shadow-lg absolute -bottom-9 -left-[6px] dark:text-gray-700">
                 Gmail
               </div>
             )}
@@ -79,7 +79,7 @@ const About = () => {
           >
             <IoDocument size={23} className="text-gray-800 dark:text-gray-300" />
             {isResumeHover && (
-              <div className="px-[6px] py-1 bg-white font-semibold text-[14px] shadow-lg absolute -bottom-9 -left-[14px]">
+              <div className="px-[6px] py-1 bg-white font-semibold text-[14px] shadow-lg absolute -bottom-9 -left-[14px] dark:text-gray-700">
                 Resume
               </div>
             )}
@@ -94,7 +94,7 @@ const About = () => {
           >
             <SiAboutdotme size={27} className="text-gray-800 dark:text-gray-300" />
             {isAboutHover && (
-              <div className="px-[6px] py-1 bg-white font-semibold text-[14px] shadow-lg absolute -bottom-9 -left-[8px]">
+              <div className="px-[6px] py-1 bg-white font-semibold text-[14px] shadow-lg absolute -bottom-9 -left-[8px] dark:text-gray-700">
                 About
               </div>
             )}
