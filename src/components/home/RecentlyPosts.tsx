@@ -32,9 +32,11 @@ const RecentlyPosts = (posts: RecentlyPostsType) => {
                  ${isLast ? 'border-b-0' : ''}
                 `}
                 >
-                  <p className="font-bold text-[15.5px]">{item.title}</p>
+                  <p className="font-bold text-zinc-800 text-[15.5px] dark:text-gray-300">
+                    {item.title}
+                  </p>
                   <p className="font-semibold text-[14px]"># {item.subTitle}</p>
-                  <p className="font-semibold text-gray-500 text-[13.5px]">
+                  <p className="font-semibold text-gray-500 text-[13.5px] dark:text-gray-300">
                     {format(new Date(item.date), 'yyyy.MM.dd')}
                   </p>
                 </div>
