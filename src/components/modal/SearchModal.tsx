@@ -56,12 +56,12 @@ const SearchModal = () => {
           type="text"
           value={keyWord}
           placeholder="Type Post Title..."
-          className={` bg-gray-50 outline-none font-naverBold text-xl text-gray-800 w-full placeholder-gray-500
+          className={` bg-gray-50 outline-none font-bold text-xl text-gray-800 w-full placeholder-gray-500
           ${filteredPosts.length > 0 ? 'mb-6' : ''}
           `}
         />
         {debouncedKeyword !== '' && filteredPosts.length === 0 ? (
-          <div className="text-gray-800 mt-8 py-4 font-naverSemi flex justify-center items-center">
+          <div className="text-gray-800 mt-8 py-4 font-semibold flex justify-center items-center">
             No Posts found.
           </div>
         ) : (
@@ -80,17 +80,17 @@ const SearchModal = () => {
                   <Link href={`https://banghojin.site/${post.slug}`}>
                     <div
                       onClick={() => setOpen(false)}
-                      className={`text-gray-800 font-naverNormal flex items-center py-3 transition-[background-color] hover:bg-gray-100 active:bg-gray-100
+                      className={`text-gray-800 flex items-center py-3 transition-[background-color] hover:bg-gray-100 active:bg-gray-100
                ${!isFirst ? 'border-t-0' : ''}
                ${isLast ? 'border-b-0' : ''}`}
                     >
-                      <div className="w-12 flex items-center justify-center mr-4 font-naverBold text-[16px]">
+                      <div className="w-12 flex items-center justify-center mr-4 font-bold text-[16px]">
                         {isFirstOfTag && getTag(post.tag)}
                       </div>
                       <div className="flex-1 text-gray-800  dark:text-gray-100 flex flex-col">
                         <div
                           data-cy={`${post.title}`}
-                          className="text-[16px] font-naverSemi text-gray-800"
+                          className="text-[16px] font-semibold text-gray-700"
                         >
                           {post.title}
                         </div>

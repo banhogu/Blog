@@ -18,7 +18,7 @@ const RecentlyPosts = (posts: RecentlyPostsType) => {
 
   return (
     <div>
-      <div className="px-3 font-bold text-[17.5px] text-zinc-800 dark:text-gray-300">
+      <div className="px-3 font-bold text-[18px] text-zinc-800 dark:text-gray-300">
         Recently Posts
       </div>
       <ul className="px-3 mt-4 ">
@@ -32,9 +32,9 @@ const RecentlyPosts = (posts: RecentlyPostsType) => {
                  ${isLast ? 'border-b-0' : ''}
                 `}
                 >
-                  <p className="font-bold text-[15px]">{item.title}</p>
-                  <p className="font-semibold text-[13.5px]">#{item.subTitle}</p>
-                  <p className="font-semibold text-gray-500 text-[13px]">
+                  <p className="font-bold text-[15.5px]">{item.title}</p>
+                  <p className="font-semibold text-[14px]"># {item.subTitle}</p>
+                  <p className="font-semibold text-gray-500 text-[13.5px]">
                     {format(new Date(item.date), 'yyyy.MM.dd')}
                   </p>
                 </div>

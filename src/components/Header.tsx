@@ -45,14 +45,14 @@ const Header = ({ posts }: HeaderType) => {
           </div>
 
           {pathname === '/posts' ? (
-            <span className="text-[15.5px] font-medium inline-flex rounded-sm p-2 transition-[background-color] cursor-default">
+            <span className="text-[15.5px] font-semibold inline-flex rounded-sm p-2 transition-[background-color] cursor-default">
               Posts
             </span>
           ) : (
             <Link
               id="aboutLink"
               href="/posts"
-              className="text-[15.5px] font-medium inline-flex hover:bg-gray-200 dark:hover:bg-[#313131] active:bg-gray-300 dark:active:bg-[#242424] rounded-sm p-2 transition-[background-color]"
+              className="text-[15.5px] font-semibold inline-flex hover:bg-gray-200 dark:hover:bg-[#313131] active:bg-gray-300 dark:active:bg-[#242424] rounded-sm p-2 transition-[background-color]"
             >
               Posts
             </Link>

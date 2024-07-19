@@ -94,7 +94,7 @@ const AiModal = () => {
               priority
             />
           </div>
-          <div className="mr-3 text-zinc-800 font-naverSemi text-[15px] rounded-l-3xl bg-gray-100 p-4 rounded-br-3xl shadow-lg">
+          <div className="mr-3 text-zinc-800 font-semibold text-[15px] rounded-l-3xl bg-gray-100 p-4 rounded-br-3xl shadow-lg">
             <p>안녕하세요. 방호진 블로그에 오신것을 환영합니다. 글이 많이 길었죠? </p>
             <p>금방 요약해서 보여드릴게요 잠시만 기다려주세요~</p>
           </div>
@@ -105,10 +105,10 @@ const AiModal = () => {
             <div className="flex items-center">
               <div className="flex items-center gap-1">
                 <LiaRobotSolid size={40} color="black" />
-                <div className="text-zinc-800 font-bold text-[15px]">호진봇</div>
+                <div className="text-zinc-800 font-semibold text-[15px]">호진봇</div>
               </div>
             </div>
-            <div className="font-naverSemi ml-3 text-zinc-800  text-[15px] rounded-r-3xl bg-gray-100 p-4 rounded-bl-3xl shadow-lg">
+            <div className="font-semibold ml-3 text-zinc-800  text-[15px] rounded-r-3xl bg-gray-100 p-4 rounded-bl-3xl shadow-lg">
               {`요약중 ${' . '.repeat(dotCount)}`}
             </div>
           </div>

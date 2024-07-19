@@ -28,7 +28,7 @@ const Message = ({ content, role }: MessageType) => {
       </div>
       <div
         dangerouslySetInnerHTML={{ __html: formattedContent }}
-        className="whitespace-pre-wrap font-naverSemi ml-3 text-zinc-800  text-[15px] rounded-r-3xl bg-gray-100 p-4 rounded-bl-3xl shadow-lg"
+        className="whitespace-pre-wrap font-semibold ml-3 text-zinc-800  text-[15px] rounded-r-3xl bg-gray-100 p-4 rounded-bl-3xl shadow-lg"
       />
     </div>
   );

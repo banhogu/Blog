@@ -42,7 +42,7 @@ const AiBot = ({ post }) => {
         <LiaRobotSolid size={24} className="text-gray-600 dark:text-white" />
       </div>
       {isHover && (
-        <div className="text-sm bg-white text-zinc-600 font-naverBold  py-2 px-3 flex items-center justify-center rounded-lg  absolute -bottom-10 shadow-lg left-[30px] dark:bg-gray-600 dark:text-white">
+        <div className="text-sm bg-white text-zinc-600 font-semibold  py-2 px-3 flex items-center justify-center rounded-lg  absolute -bottom-10 shadow-lg left-[30px] dark:bg-gray-600 dark:text-white">
           AI 요약
         </div>
       )}
