@@ -1,36 +1,55 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# 호진방 블로그
 
-## Getting Started
+<img width="800" alt="Offispace-Info" src="https://velog.velcdn.com/images/banghogu/post/9d1f6bae-d416-438a-8dfa-1b33bbc2978e/image.png">
+<br/>
+<br/>
 
-First, run the development server:
+## 🔗 프로젝트 링크
+[블로그 바로가기](https://www.banghojin.site/)
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+  
+  <br />
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 📖 프로젝트 소개
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+플랫폼 의존 없이 자유로운 커스텀 디자인과 개인 도메인에서 글을 공유하고, 경험을 나누기 위해 
+개발 블로그를 직접 만들었습니다.
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+<br/>
 
-## Learn More
+### 💡 핵심 기능
 
-To learn more about Next.js, take a look at the following resources:
+> **실시간 공간 예약 서비스**
+> 
+> - 내 주변 오피스 지점 찾기 및 정보 제공
+> - 회의실, 1인실, 휴게실 3타입의 공간 실시간 예약
+> - 예약한 공간과 날짜에 대해 일정 관리 및 요약
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+> **직무 별 커뮤니티 서비스**
+> 
+> - 회원가입 시 설정한 직무별, 관심사별 커뮤니티 제공
+> - 글 작성, 댓글 작성, 좋아요, 조회수 기능
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+> **ETC**
+> 
+> - 알림 기능이 포함된, PWA 환경 제공
+> - 마이페이지
+> - 지점 별 1대1 문의
 
-## Deploy on Vercel
+> **로그인/회원가입**
+> 
+> - 휴대폰 인증, 이메일 인증이 포함된 3단계 회원가입
+> - 회원탈퇴 기능
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+<br/>
+
+## 🛠️ Tech Stack
+
+
+    - 좋아요 기능을 제공하고, 조회수는 글이 열릴 때마다 자동으로 증가합니다.
+    
+    ---
+
+
+<br/><br/>
