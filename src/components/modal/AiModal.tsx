@@ -1,6 +1,6 @@
 'use client';
 import useOnClickOutside from '@/hooks/useOnClickOutside';
-import { useAiModalStore } from '@/store/useAiModal.store';
+import { useModalStore } from '@/store/useModal.store';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import type { ChatCompletionMessageParam } from 'openai/resources/index';
 import { useMutation } from '@tanstack/react-query';
@@ -10,7 +10,7 @@ import Image from 'next/image';
 import { LiaRobotSolid } from 'react-icons/lia';
 
 const AiModal = () => {
-  const { content, setOpen } = useAiModalStore();
+  const { content, setOpen } = useModalStore();
 
   const [messageParams, setMessageParams] = useState<ChatCompletionMessageParam[]>([]);
   const [dotCount, setDotCount] = useState(1);

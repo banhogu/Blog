@@ -1,5 +1,5 @@
 'use client';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { Logo } from './Logo';
 import ToggleTheme from './ToggleTheme';
 import Link from 'next/link';
@@ -7,21 +7,22 @@ import { IoIosSearch } from 'react-icons/io';
 import SearchModal from './modal/SearchModal';
 import { Post } from '@/models/post';
 import { disablePageScroll, enablePageScroll } from 'scroll-lock';
+import { useModalStore } from '@/store/useModal.store';
 
 interface HeaderType {
   posts: Post[];
 }
 
 const Header = ({ posts }: HeaderType) => {
-  const [searchModalOpen, setSearchModalOpen] = useState(false);
+  const { setAllPost, setOpen, setModalType, open } = useModalStore();
 
   useEffect(() => {
-    if (searchModalOpen) {
+    if (open) {
       disablePageScroll();
     } else {
       enablePageScroll();
     }
-  }, [searchModalOpen]);
+  }, [open]);
 
   return (
     <>
@@ -32,7 +33,11 @@ const Header = ({ posts }: HeaderType) => {
           <ToggleTheme />
           <div
             data-cy="search-icon"
-            onClick={() => setSearchModalOpen(true)}
+            onClick={() => {
+              setOpen(true);
+              setAllPost(posts);
+              setModalType('search');
+            }}
             className="cursor-pointer hover:bg-gray-200 dark:hover:bg-[#313131] p-2"
           >
             <IoIosSearch size={22} />
@@ -46,7 +51,6 @@ const Header = ({ posts }: HeaderType) => {
           </Link>
         </nav>
       </header>
-      {searchModalOpen && <SearchModal posts={posts} setSearchModalOpen={setSearchModalOpen} />}
     </>
   );
 };

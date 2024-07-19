@@ -1,6 +1,6 @@
 'use client';
 import { Post } from '@/models/post';
-import { useAiModalStore } from '@/store/useAiModal.store';
+import { useModalStore } from '@/store/useModal.store';
 import React, { useEffect, useState } from 'react';
 import { LiaRobotSolid } from 'react-icons/lia';
 import { disablePageScroll, enablePageScroll } from 'scroll-lock';
@@ -10,7 +10,7 @@ interface AiBot {
 }
 
 const AiBot = ({ post }) => {
-  const { setContent, setOpen, setModalType, open } = useAiModalStore();
+  const { setContent, setOpen, setModalType, open } = useModalStore();
   const [isHover, setIsHover] = useState(false);
 
   useEffect(() => {
