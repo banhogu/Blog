@@ -18,7 +18,7 @@ export default function Giscus() {
     scriptElem.async = true;
     scriptElem.crossOrigin = 'anonymous';
 
-    scriptElem.setAttribute('data-repo', 'banghogu/Blog');
+    scriptElem.setAttribute('data-repo', 'banhogu/Blog');
     scriptElem.setAttribute('data-repo-id', 'R_kgDOMNeu0A');
     scriptElem.setAttribute('data-category', 'Comments');
     scriptElem.setAttribute('data-category-id', 'DIC_kwDOMNeu0M4CgZU9');

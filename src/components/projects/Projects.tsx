@@ -16,7 +16,7 @@ const Projects = () => {
             Offispace
           </div>
           <div className="flex gap-[1px] sm:gap-2 items-center">
-            <Link href={'https://github.com/banghogu/Offispace-Project'} target="_blank">
+            <Link href={'https://github.com/banhogu/Offispace-Project'} target="_blank">
               <FiGithub className="text-[14px] sm:text-[17px]" />
             </Link>
             <Link
@@ -55,7 +55,7 @@ const Projects = () => {
             호진방 블로그
           </div>
           <div className="flex gap-[1px] sm:gap-2 items-center">
-            <Link href={'https://github.com/banghogu/Blog'} target="_blank">
+            <Link href={'https://github.com/banhogu/Blog'} target="_blank">
               <FiGithub className="text-[14px] sm:text-[17px]" />
             </Link>
           </div>
@@ -83,7 +83,7 @@ const Projects = () => {
             휴방
           </div>
           <div className="flex gap-[1px] sm:gap-2 items-center">
-            <Link href={'https://github.com/banghogu/HyuBang-Project'} target="_blank">
+            <Link href={'https://github.com/banhogu/HyuBang-Project'} target="_blank">
               <FiGithub className="text-[14px] sm:text-[17px]" />
             </Link>
             <Link
@@ -101,7 +101,7 @@ const Projects = () => {
           국내 숙소를 조회하고 예약할 수 있는 플랫폼
         </div>
         <div className="font-medium text-gray-500 text-[11px] sm:text-[13px]  dark:text-gray-300">
-          2024.03 ~ 2024.03
+          2024.03 ~ 2024.04
         </div>
         <div className="flex items-center justify-center mt-3 pr-3">
           <Image
@@ -120,7 +120,7 @@ const Projects = () => {
             4UTeamIntranet
           </div>
           <div className="flex gap-[1px] sm:gap-2 items-center">
-            <Link href={'https://github.com/banghogu/4UTeamIntranet-Project'} target="_blank">
+            <Link href={'https://github.com/banhogu/4UTeamIntranet-Project'} target="_blank">
               <FiGithub className="text-[14px] sm:text-[17px]" />
             </Link>
             <Link
@@ -140,7 +140,7 @@ const Projects = () => {
           직원들을 위한 급여 및 업무 관리 플랫폼
         </div>
         <div className="font-medium text-gray-500 text-[11px] sm:text-[13px]  dark:text-gray-300">
-          2024.03 ~ 2024.03
+          2024.03 ~ 2024.04
         </div>
         <div className="flex items-center justify-center mt-3 pr-3">
           <Image
@@ -159,7 +159,7 @@ const Projects = () => {
             FourUnity
           </div>
           <div className="flex gap-[1px] sm:gap-2 items-center">
-            <Link href={'https://github.com/banghogu/FourUnity-Project'} target="_blank">
+            <Link href={'https://github.com/banhogu/FourUnity-Project'} target="_blank">
               <FiGithub className="text-[14px] sm:text-[17px]" />
             </Link>
             <Link href={'https://fourunity.netlify.app'} target="_blank">
