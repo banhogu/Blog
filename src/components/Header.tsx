@@ -46,7 +46,7 @@ const Header = ({ posts }: HeaderType) => {
 
           {pathname === '/posts' ? (
             <span className="text-[15.5px] text-gray-900 font-bold inline-flex rounded-sm p-2 transition-[background-color] cursor-default dark:text-gray-300">
-              Posts
+              Post
             </span>
           ) : (
             <Link
@@ -54,13 +54,13 @@ const Header = ({ posts }: HeaderType) => {
               href="/posts"
               className="text-[15.5px] text-gray-600 font-medium inline-flex hover:bg-gray-200 dark:hover:bg-[#313131] active:bg-gray-300 dark:active:bg-[#242424] rounded-sm p-2 transition-[background-color] dark:text-gray-300"
             >
-              Posts
+              Post
             </Link>
           )}
 
           {pathname === '/projects' ? (
             <span className="text-[15.5px] text-gray-900 font-bold inline-flex rounded-sm p-2 transition-[background-color] cursor-default dark:text-gray-300">
-              Projects
+              Project
             </span>
           ) : (
             <Link
@@ -68,7 +68,7 @@ const Header = ({ posts }: HeaderType) => {
               href="/projects"
               className="text-[15.5px] text-gray-600 font-medium inline-flex hover:bg-gray-200 dark:hover:bg-[#313131] active:bg-gray-300 dark:active:bg-[#242424] rounded-sm p-2 transition-[background-color] dark:text-gray-300"
             >
-              Projects
+              Project
             </Link>
           )}
         </nav>

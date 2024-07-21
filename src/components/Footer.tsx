@@ -22,7 +22,7 @@ const Footer = () => {
       </div>
       <div className="flex items-center gap-1">
         <FiGithub size={14} />
-        <A target="_blank" href="https://github.com/banghogu/Blog" className="font-bold">
+        <A target="_blank" href="https://github.com/banhogu/Blog" className="font-bold">
           Source
         </A>
       </div>

@@ -26,7 +26,10 @@ const About = () => {
       </div>
       <div className="flex flex-col gap-2">
         <div className="flex flex-col">
-          <div className="font-bold text-gray-800 text-[17.5px] dark:text-gray-300">HoJin Bang</div>
+          <div className="font-bold text-gray-800 text-[17.5px] dark:text-gray-300">
+            <span>@</span>
+            <span className="ml-[1px]">banhogu</span>
+          </div>
           <div className="font-semibold text-gray-600 text-[14px] dark:text-gray-300">
             안녕하세요 배움을 나누며 함께 전진하는 신입 개발자 방호진입니다.
           </div>
@@ -39,7 +42,7 @@ const About = () => {
               setIsGithubHover(false);
             }}
             className="relative transition duration-100 hover:bg-zinc-400 px-1 py-1 rounded-lg"
-            href={'https://github.com/banghogu'}
+            href={'https://github.com/banhogu'}
             target="_blank"
           >
             <FaGithub size={24} className="text-gray-800 dark:text-gray-300" />

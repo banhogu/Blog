@@ -21,7 +21,7 @@ const RecentlyPosts = (posts: RecentlyPostsType) => {
       <div className="px-3 font-bold text-[18px] text-zinc-800 dark:text-gray-300">
         Recently Posts
       </div>
-      <ul className="px-3 mt-4 ">
+      <ul className="px-3 mt-4 mb-6">
         {sortedPosts.map((item, i) => {
           const isLast = i === sortedPosts.length - 1;
           return (
