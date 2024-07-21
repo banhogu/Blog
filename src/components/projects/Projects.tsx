@@ -101,7 +101,7 @@ const Projects = () => {
           국내 숙소를 조회하고 예약할 수 있는 플랫폼
         </div>
         <div className="font-medium text-gray-500 text-[11px] sm:text-[13px]  dark:text-gray-300">
-          2024.03 ~ 2024.03
+          2024.03 ~ 2024.04
         </div>
         <div className="flex items-center justify-center mt-3 pr-3">
           <Image
@@ -140,7 +140,7 @@ const Projects = () => {
           직원들을 위한 급여 및 업무 관리 플랫폼
         </div>
         <div className="font-medium text-gray-500 text-[11px] sm:text-[13px]  dark:text-gray-300">
-          2024.03 ~ 2024.03
+          2024.03 ~ 2024.04
         </div>
         <div className="flex items-center justify-center mt-3 pr-3">
           <Image
