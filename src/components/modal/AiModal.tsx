@@ -91,7 +91,7 @@ const AiModal = () => {
               height={55}
               alt="me"
               className="rounded-full"
-              priority
+              priority={true}
             />
           </div>
           <div className="mr-3 text-zinc-800 font-semibold text-[15px] rounded-l-3xl bg-gray-100 p-4 rounded-br-3xl shadow-lg">

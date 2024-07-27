@@ -22,6 +22,7 @@ const About = () => {
           src="/images/about_me.jpeg"
           alt="me"
           className="rounded-full"
+          priority={true}
         />
       </div>
       <div className="flex flex-col gap-2">
