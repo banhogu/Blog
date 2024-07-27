@@ -32,7 +32,7 @@ const Sidebar = ({ parsedContent, post }: SidebarType) => {
                   className={`
                   ${
                     activeHeading[0] == item.link
-                      ? 'text-sky-600 font-extrabold bg-zinc-100'
+                      ? 'text-sky-700 font-extrabold bg-zinc-100 dark:bg-gray-900'
                       : 'text-gray-500 dark:text-gray-300 font-semibold'
                   }
                   mt-1 px-3 text-[13.5px] py-2`}
