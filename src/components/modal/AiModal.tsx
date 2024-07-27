@@ -92,7 +92,7 @@ const AiModal = () => {
           <div className="mx-6 mt-4 items-end flex flex-col gap-2">
             <div className="flex items-center">
               <Image
-                src="/images/aboutProfile.svg"
+                src="/images/about_me.png"
                 width={55}
                 height={55}
                 alt="me"

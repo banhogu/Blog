@@ -74,10 +74,10 @@ const SideTheme = () => {
         }}
       >
         <span className="sun-icon">
-          <MdOutlineWbSunny size={22} className="text-sky-900" />
+          <MdOutlineWbSunny size={22} className="text-sky-900 dark:text-gray-300" />
         </span>
         <span className="moon-icon">
-          <LuMoon size={22} className="text-sky-900" />
+          <LuMoon size={22} className="text-sky-900 dark:text-gray-300" />
         </span>
       </button>
       {isHover && (
