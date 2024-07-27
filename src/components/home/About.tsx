@@ -48,7 +48,7 @@ const About = () => {
           >
             <FaGithub size={24} className="text-gray-800 dark:text-gray-300" />
             {isGithubHover && (
-              <div className="px-[6px] py-1 bg-white font-semibold text-[14px] shadow-lg absolute -bottom-9 -left-2 dark:text-gray-700">
+              <div className=" px-[6px] py-1 bg-white font-semibold text-[14px] shadow-lg absolute -bottom-9 -left-2 dark:text-gray-700">
                 Github
               </div>
             )}
