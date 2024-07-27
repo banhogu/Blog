@@ -2,12 +2,12 @@
 export function P({ children }) {
   return (
     <p
-      className="leading-7 text-[15px] font-naverNormal my-5 
-    [blockquote_&]:font-naverSemi 
+      className="leading-7 text-[15px] font-medium my-5 
+    [blockquote_&]:font-semibold
     [blockquote_&]:my-2 
     [blockquote_&]:text-[15px] 
 
-    [div_&]:font-naverSemi 
+    [div_&]:font-semibold
     [div_&]:text-[15px] 
     [div_&]:leading-7
 

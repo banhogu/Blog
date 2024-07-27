@@ -12,8 +12,8 @@ export function H2({ children }) {
   return (
     <h2
       id={parsedId}
-      className="font-naverBold pl-2 flex items-center group my-8 relative text-[22px] bg-my-strong-gray py-1 
-      sm:font-naverBold
+      className="font-bold pl-2 flex items-center group my-8 relative text-[22px] bg-my-strong-gray py-1 
+      sm:font-bold
       sm:text-[25px]
       dark:bg-gray-800"
     >

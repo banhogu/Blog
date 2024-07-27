@@ -13,7 +13,7 @@ export function LI({ children }) {
     [ul_&]:before:mt-[6px]
     [ul_&]:before:absolute
     [ul_&]:before:-ml-4
-    font-naverNormal
+    font-medium
     text-[17px]
   `}
     >
