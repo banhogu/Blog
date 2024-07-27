@@ -22,9 +22,9 @@ const Sidebar = ({ parsedContent, post }: SidebarType) => {
   return (
     <>
       <div className="text-xs fixed ml-[750px] top-[25%]">
-        <div className="border-l border-gray-300 flex flex-col gap-1 py-4 px-4">
-          <div className="font-bold text-[19px] text-gray-700 dark:text-gray-300">On This Page</div>
-          <ul>
+        <div className="border-l border-gray-300 flex flex-col gap-1 py-4 px-3">
+          <div className="font-bold text-[19px] text-sky-950 dark:text-gray-300">On This Page</div>
+          <ul className="mt-2">
             {parsedContent.map((item, i) => {
               return (
                 <li
@@ -32,10 +32,10 @@ const Sidebar = ({ parsedContent, post }: SidebarType) => {
                   className={`
                   ${
                     activeHeading[0] == item.link
-                      ? 'text-pink-600 font-bold'
+                      ? 'text-sky-600 font-extrabold bg-zinc-100'
                       : 'text-gray-500 dark:text-gray-300 font-semibold'
                   }
-                  mt-4 text-[13.5px]  `}
+                  mt-1 px-3 text-[13.5px] py-2`}
                 >
                   <Link href={item.link}>{item.text}</Link>
                 </li>

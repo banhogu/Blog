@@ -39,8 +39,8 @@ const AiBot = ({ post }) => {
         ${isHover ? 'bg-gray-200 dark:bg-gray-700' : ''}
         `}
       >
-        <LiaRobotSolid size={24} className="text-gray-600 dark:text-white" />
-        <div className="w-[8px] h-[8px] rounded-full bg-pink-500 absolute -top-[2.5px] -right-[2.5px]" />
+        <LiaRobotSolid size={24} className="text-sky-900 dark:text-white" />
+        <div className="w-[8px] h-[8px] rounded-full bg-sky-500 absolute -top-[2.5px] -right-[2.5px]" />
       </div>
       {isHover && (
         <div className="text-sm bg-white text-zinc-600 font-semibold  py-2 px-3 flex items-center justify-center rounded-lg  absolute -bottom-10 shadow-lg left-[30px] dark:bg-gray-600 dark:text-white">

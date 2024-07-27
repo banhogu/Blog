@@ -51,7 +51,7 @@ export function PostHeader({ posts }: PostHeaderType) {
     <>
       <div className="pt-3 pb-8 flex flex-col items-center gap-1">
         <div
-          className="text-[17px] max-w-max flex items-center py-1 px-2 bg-gray-200 font-semibold rounded-md mb-2 dark:text-white dark:bg-gray-800"
+          className="text-sky-900 text-[17px] max-w-max flex items-center py-1 px-2 bg-gray-200 font-semibold rounded-md mb-2 dark:text-white dark:bg-gray-800"
           suppressHydrationWarning={true}
         >
           {getTag(post.tag)}

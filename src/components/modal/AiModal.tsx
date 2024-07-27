@@ -8,6 +8,7 @@ import axios from 'axios';
 import Message, { MessageType } from './Message';
 import Image from 'next/image';
 import { LiaRobotSolid } from 'react-icons/lia';
+import { motion } from 'framer-motion';
 
 const AiModal = () => {
   const { content, setOpen } = useModalStore();
@@ -70,55 +71,61 @@ const AiModal = () => {
 
   return (
     <div className="fixed inset-0 bg-gray-400 bg-opacity-30 z-50 flex justify-center items-start">
-      <div
-        data-cy="AiModal"
-        ref={ref}
-        className="border-[0.3px] border-gray-500 absolute top-1/2 transform -translate-y-1/2 w-[720px] min-h-[600px] max-h-[700px] overflow-y-auto mx-auto bg-gray-50 pb-4 rounded-xl shadow-lg custom-scrollbar2"
-      >
-        <div className="w-full h-9 bg-gray-900 px-3 py-3 flex items-center gap-2">
-          <div
-            onClick={() => setOpen(false)}
-            className="w-[14px] h-[14px] flex items-center justify-center cursor-pointer rounded-full bg-red-500 hover-button"
-          ></div>
-          <div className="w-[14px] h-[14px] flex items-center justify-center cursor-pointer rounded-full bg-yellow-500 "></div>
-          <div className="w-[14px] h-[14px] flex items-center justify-center cursor-pointer rounded-full bg-green-500 "></div>
-        </div>
-        <div className="mx-6 mt-4 items-end flex flex-col gap-2">
-          <div className="flex items-center">
-            <Image
-              src="/images/aboutProfile.svg"
-              width={55}
-              height={55}
-              alt="me"
-              className="rounded-full"
-              priority
-            />
+      <div data-cy="AiModal" ref={ref} className=" absolute top-1/2 transform -translate-y-1/2  ">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.7 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{
+            duration: 0.8,
+            ease: [0, 0.71, 0.2, 1.01],
+          }}
+          className="bg-gray-50 border-[0.3px] border-gray-500 overflow-y-auto mx-auto pb-4 rounded-xl shadow-lg custom-scrollbar2 w-[720px] min-h-[600px] max-h-[700px]"
+        >
+          <div className="w-full h-9 bg-gray-900 px-3 py-3 flex items-center gap-2">
+            <div
+              onClick={() => setOpen(false)}
+              className="w-[14px] h-[14px] flex items-center justify-center cursor-pointer rounded-full bg-red-500 hover-button"
+            ></div>
+            <div className="w-[14px] h-[14px] flex items-center justify-center cursor-pointer rounded-full bg-yellow-500 "></div>
+            <div className="w-[14px] h-[14px] flex items-center justify-center cursor-pointer rounded-full bg-green-500 "></div>
           </div>
-          <div className="mr-3 text-zinc-800 font-semibold text-[15px] rounded-l-3xl bg-gray-100 p-4 rounded-br-3xl shadow-lg">
-            <p>안녕하세요. 방호진 블로그에 오신것을 환영합니다. 글이 많이 길었죠? </p>
-            <p>금방 요약해서 보여드릴게요 잠시만 기다려주세요~</p>
-          </div>
-        </div>
-
-        {isPending && (
-          <div className="mx-6 mt-5 items-start flex flex-col gap-2">
+          <div className="mx-6 mt-4 items-end flex flex-col gap-2">
             <div className="flex items-center">
-              <div className="flex items-center gap-1">
-                <LiaRobotSolid size={40} color="black" />
-                <div className="text-zinc-800 font-semibold text-[15px]">호진봇</div>
+              <Image
+                src="/images/aboutProfile.svg"
+                width={55}
+                height={55}
+                alt="me"
+                className="rounded-full"
+                priority={true}
+              />
+            </div>
+            <div className="mr-3 text-zinc-800 font-semibold text-[15px] rounded-l-3xl bg-gray-100 p-4 rounded-br-3xl shadow-lg">
+              <p>안녕하세요. 방호진 블로그에 오신것을 환영합니다. 글이 많이 길었죠? </p>
+              <p>금방 요약해서 보여드릴게요 잠시만 기다려주세요~</p>
+            </div>
+          </div>
+
+          {isPending && (
+            <div className="mx-6 mt-5 items-start flex flex-col gap-2">
+              <div className="flex items-center">
+                <div className="flex items-center gap-1">
+                  <LiaRobotSolid size={40} color="black" />
+                  <div className="text-zinc-800 font-semibold text-[15px]">호진봇</div>
+                </div>
+              </div>
+              <div className="font-semibold ml-3 text-zinc-800  text-[15px] rounded-r-3xl bg-gray-100 p-4 rounded-bl-3xl shadow-lg">
+                {`요약중 ${' . '.repeat(dotCount)}`}
               </div>
             </div>
-            <div className="font-semibold ml-3 text-zinc-800  text-[15px] rounded-r-3xl bg-gray-100 p-4 rounded-bl-3xl shadow-lg">
-              {`요약중 ${' . '.repeat(dotCount)}`}
-            </div>
-          </div>
-        )}
+          )}
 
-        <div className=" max-h-[600px] mx-4">
-          {messageProps.map((props, i) => (
-            <Message {...props} key={i} />
-          ))}
-        </div>
+          <div className=" max-h-[600px] mx-4">
+            {messageProps.map((props, i) => (
+              <Message {...props} key={i} />
+            ))}
+          </div>
+        </motion.div>
       </div>
     </div>
   );

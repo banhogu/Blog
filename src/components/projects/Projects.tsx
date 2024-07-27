@@ -1,4 +1,3 @@
-'use client';
 import Link from 'next/link';
 import React from 'react';
 import { FiGithub } from 'react-icons/fi';
@@ -45,6 +44,7 @@ const Projects = () => {
             width={130}
             height={51}
             className="rounded-md"
+            priority={true}
           />
         </div>
       </div>
@@ -73,6 +73,7 @@ const Projects = () => {
             width={300}
             height={150}
             className="rounded-md"
+            priority={true}
           />
         </div>
       </div>
@@ -110,6 +111,7 @@ const Projects = () => {
             width={380}
             height={300}
             className="rounded-md"
+            priority={true}
           />
         </div>
       </div>
@@ -149,6 +151,7 @@ const Projects = () => {
             width={320}
             height={80}
             className="rounded-md"
+            priority={true}
           />
         </div>
       </div>
@@ -180,6 +183,7 @@ const Projects = () => {
             width={320}
             height={80}
             className="rounded-md"
+            priority={true}
           />
         </div>
       </div>

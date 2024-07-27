@@ -50,7 +50,7 @@ const ToggleTheme = () => {
           text-[10px]
           text-gray-600
           font-bold
-          mr-[-5px]
+          mr-[-1px]
 
           dark:text-gray-300
 
@@ -71,9 +71,10 @@ const ToggleTheme = () => {
         } active:bg-gray-300 transition-[background-color] dark:active:bg-[#242424] rounded-sm p-2 
         
         theme-system:!bg-inherit
-        [&_.sun-icon]:hidden
-        dark:[&_.moon-icon]:hidden
-        dark:[&_.sun-icon]:inline
+        [&_.moon-icon]:hidden
+        dark:[&_.sun-icon]:hidden
+        dark:[&_.moon-icon]:inline
+
       }`}
         onClick={(ev) => {
           ev.preventDefault();
@@ -99,10 +100,10 @@ const ToggleTheme = () => {
         }}
       >
         <span className="sun-icon">
-          <MdOutlineWbSunny size={18} />
+          <MdOutlineWbSunny size={23} />
         </span>
         <span className="moon-icon">
-          <LuMoon size={18} />
+          <LuMoon size={23} />
         </span>
       </button>
     </>
