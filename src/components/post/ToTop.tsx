@@ -21,7 +21,7 @@ const ToTop = () => {
         ${isHover ? 'bg-gray-200 dark:bg-gray-700' : ''}
         `}
       >
-        <BiArrowToTop size={24} className="text-gray-600 dark:text-white" />
+        <BiArrowToTop size={24} className="text-sky-900 dark:text-white" />
       </div>
       {isHover && (
         <div className="text-sm text-zinc-600 font-semibold  py-2 px-3 flex items-center justify-center rounded-lg  absolute -bottom-10 -left-[12px] shadow-lg bg-white dark:bg-gray-600 dark:text-white">

@@ -30,7 +30,7 @@ const Header = ({ posts }: HeaderType) => {
       <header className="flex mt-2 mb-5 md:mb-10 items-center relative">
         <Logo />
 
-        <nav className="font-medium text-xs grow justify-end items-center flex gap-1 md:gap-3">
+        <nav className="font-medium text-xs grow justify-end items-center flex gap-1 md:gap-[6px]">
           <ToggleTheme />
           <div
             data-cy="search-icon"
@@ -45,7 +45,7 @@ const Header = ({ posts }: HeaderType) => {
           </div>
 
           {pathname === '/posts' ? (
-            <span className="text-[15.5px] text-gray-900 font-bold inline-flex rounded-sm p-2 transition-[background-color] cursor-default dark:text-gray-300">
+            <span className="text-[15.5px] text-sky-950 font-extrabold inline-flex rounded-sm p-2 transition-[background-color] cursor-default dark:text-gray-300">
               Post
             </span>
           ) : (
@@ -59,7 +59,7 @@ const Header = ({ posts }: HeaderType) => {
           )}
 
           {pathname === '/projects' ? (
-            <span className="text-[15.5px] text-gray-900 font-bold inline-flex rounded-sm p-2 transition-[background-color] cursor-default dark:text-gray-300">
+            <span className="text-[15.5px] text-sky-950 font-extrabold inline-flex rounded-sm p-2 transition-[background-color] cursor-default dark:text-gray-300">
               Project
             </span>
           ) : (

@@ -51,9 +51,9 @@ const SideTheme = () => {
         aria-label="Toggle theme"
         style={{ boxShadow: '0 0 1px 1px #b9b9b9' }}
         className={`relative duration-100  hover:bg-gray-200 mt-3 w-[34px] h-[34px] rounded-md cursor-pointer flex items-center justify-center transition-[background-color] p-2 
-        [&_.sun-icon]:hidden
-        dark:[&_.moon-icon]:hidden
-        dark:[&_.sun-icon]:inline
+        [&_.moon-icon]:hidden
+        dark:[&_.sun-icon]:hidden
+        dark:[&_.moon-icon]:inline
         ${isHover ? 'bg-gray-200 dark:bg-gray-700' : ''}
       }`}
         onClick={(ev) => {
@@ -74,10 +74,10 @@ const SideTheme = () => {
         }}
       >
         <span className="sun-icon">
-          <MdOutlineWbSunny size={22} />
+          <MdOutlineWbSunny size={22} className="text-sky-900" />
         </span>
         <span className="moon-icon">
-          <LuMoon size={22} />
+          <LuMoon size={22} className="text-sky-900" />
         </span>
       </button>
       {isHover && (

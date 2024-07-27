@@ -19,10 +19,10 @@ const RecentlyPosts = (posts: RecentlyPostsType) => {
 
   return (
     <div>
-      <div className="px-3 font-bold text-[19px] text-zinc-800 dark:text-gray-300">
+      <div className=" bg-sky-950 text-gray-100 rounded-full max-w-max  px-3 py-[1px]  font-semibold text-[17.5px] dark:text-gray-300">
         Recently Posts
       </div>
-      <ul className="px-3 mt-3 mb-6">
+      <ul className="px-3 mt-1 mb-6">
         {sortedPosts.map((item, i) => {
           const isLast = i === sortedPosts.length - 1;
           return (
@@ -33,7 +33,7 @@ const RecentlyPosts = (posts: RecentlyPostsType) => {
                  ${isLast ? 'border-b-0' : ''}
                 `}
                 >
-                  <div className=" text-[12px] max-w-max flex items-center py-[1.5px] px-[4px] bg-gray-200 font-bold rounded-md dark:text-white dark:bg-gray-800">
+                  <div className="text-sky-900 text-[12px] max-w-max flex items-center py-[1.5px] px-[4px] bg-gray-200 font-bold rounded-md dark:text-white dark:bg-gray-800">
                     {getTag(item.tag)}
                   </div>
                   <p className="font-bold text-zinc-800 text-[15.5px] dark:text-gray-300">

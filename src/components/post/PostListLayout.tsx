@@ -34,7 +34,7 @@ const PostListLayout = ({ posts }: PostListLayoutType) => {
           <div className="flex items-center text-[16.5px]">
             <button
               onClick={clickBtn}
-              className={` font-bold flex mr-2 items-center justify-center w-12 h-9 text-left  dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-[#242424] active:bg-gray-200 dark:active:bg-[#222]`}
+              className={`text-sky-950 font-extrabold flex mr-2 items-center justify-center w-12 h-9 text-left  dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-[#242424] active:bg-gray-200 dark:active:bg-[#222]`}
             >
               {divide[1] === '전체' ? 'tag' : `${divide[1]}`}
             </button>
