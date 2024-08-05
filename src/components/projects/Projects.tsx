@@ -118,7 +118,7 @@ const Projects = () => {
       {/* 프로젝트4 */}
       <div className="flex flex-col rounded-md border shadow-sm p-5 gap-1">
         <div className="flex justify-between items-center">
-          <div className="font-semibold text-gray-800 text-[15px] sm:text-[17.5px] dark:text-gray-300">
+          <div className="font-semibold text-gray-800 text-[12.5px] sm:text-[17.5px] dark:text-gray-300">
             4UTeamIntranet
           </div>
           <div className="flex gap-[1px] sm:gap-2 items-center">
