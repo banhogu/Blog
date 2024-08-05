@@ -59,7 +59,7 @@ const SearchModal = () => {
       >
         <div
           ref={ref}
-          className=" w-[393px] mx-auto mt-[120px] bg-gray-50 px-6 py-4 rounded-md shadow-xl sm:w-[672px]"
+          className="mb-10 w-[363px] mx-auto mt-[120px] bg-gray-50 px-6 py-4 rounded-md shadow-xl sm:w-[672px]"
         >
           <input
             onChange={handleKeyword}
