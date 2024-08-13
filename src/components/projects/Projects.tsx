@@ -8,6 +8,39 @@ import Image from 'next/image';
 const Projects = () => {
   return (
     <div className="grid grid-cols-2 gap-5 mt-10 pb-10">
+      {/* 프로젝트0 */}
+      <div className="flex flex-col rounded-md border shadow-sm p-5 gap-1">
+        <div className="flex justify-between items-center">
+          <div className="font-semibold text-gray-800 text-[15px] sm:text-[19px] dark:text-gray-300">
+            Spoting
+          </div>
+          <div className="flex gap-[1px] sm:gap-2 items-center">
+            <Link href={'https://github.com/banhogu/Spoting'} target="_blank">
+              <FiGithub className="text-[14px] sm:text-[17px]" />
+            </Link>
+
+            <Link href={'https://www.spoting.site/'} target="_blank">
+              <IoIosLink className="text-[14px] text-blue-600 dark:text-gray-300 sm:text-[17px]" />
+            </Link>
+          </div>
+        </div>
+        <div className="font-medium text-gray-500 text-[12px] sm:text-[15px]  dark:text-gray-300">
+          운동 약속 플랫폼 랜딩 페이지
+        </div>
+        <div className="font-medium text-gray-500 text-[11px] sm:text-[13px]  dark:text-gray-300">
+          2024.08 ~ 2024.08
+        </div>
+        <div className="flex items-center justify-center mt-5">
+          <Image
+            src={'/images/projects/spoting.png'}
+            alt="spoting"
+            width={130}
+            height={51}
+            className="rounded-md w-full"
+            priority={true}
+          />
+        </div>
+      </div>
       {/* 프로젝트1 */}
       <div className="flex flex-col rounded-md border shadow-sm p-5 gap-1">
         <div className="flex justify-between items-center">
