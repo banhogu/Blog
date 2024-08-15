@@ -12,13 +12,18 @@ const Projects = () => {
       <div className="flex flex-col rounded-md border shadow-sm p-5 gap-1">
         <div className="flex justify-between items-center">
           <div className="font-semibold text-gray-800 text-[15px] sm:text-[19px] dark:text-gray-300">
-            Spoting
+            Sporting
           </div>
           <div className="flex gap-[1px] sm:gap-2 items-center">
             <Link href={'https://github.com/banhogu/Spoting'} target="_blank">
               <FiGithub className="text-[14px] sm:text-[17px]" />
             </Link>
-
+            <Link
+              href={'https://www.notion.so/SPORTING-d4138d73031c4750b8e026228e2103da'}
+              target="_blank"
+            >
+              <RiNotionLine className="text-[14px] sm:text-[17px]" />
+            </Link>
             <Link href={'https://www.spoting.site/'} target="_blank">
               <IoIosLink className="text-[14px] text-blue-600 dark:text-gray-300 sm:text-[17px]" />
             </Link>
