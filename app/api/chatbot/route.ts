@@ -3,6 +3,9 @@ import { NextRequest, NextResponse } from 'next/server';
 import OpenAI from 'openai';
 import type { ChatCompletionMessageParam } from 'openai/resources/index.mjs';
 
+/**
+ * openai 객체 생성
+ */
 const openai = new OpenAI({
   apiKey: process.env.OPEN_AI_API_KEY,
 });

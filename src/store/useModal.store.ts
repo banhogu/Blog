@@ -1,12 +1,17 @@
 import { Post } from '@/models/post';
 import { create } from 'zustand';
 
+/**
+ * 모달의 열림 상태, 모달 종류를 관리하는 store입니다.
+ */
+
 interface useModalStoreType {
   open: boolean;
   /* eslint-disable no-unused-vars */
   setOpen: (payload: boolean) => void;
   content?: Post;
   setContent: (payload: Post) => void;
+
   allPost?: Post[];
   setAllPost: (payload: Post[]) => void;
 

@@ -1,5 +1,9 @@
 const GA_ID = process.env.NEXT_PUBLIC_GA_TRACKING_ID;
 
+/**
+ * 구글 애널리틱스 연결
+ */
+
 export const pageview = (url: URL | string) => {
   window.gtag('config', GA_ID as string, {
     page_path: url,
