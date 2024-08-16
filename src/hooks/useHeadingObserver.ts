@@ -1,5 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
 
+/**
+ * 글 상세 페이지 사이드바에서 뷰포트에 들어오는 헤딩을 강조하는데 사용되는 observer 함수
+ */
+
 export const useHeadingsObserver = (query: string) => {
   const observer = useRef<IntersectionObserver>();
   const [activeIdList, setActiveIdList] = useState<string[]>([]);

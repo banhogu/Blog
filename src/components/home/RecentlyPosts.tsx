@@ -9,6 +9,9 @@ interface RecentlyPostsType {
   posts: Post[];
 }
 
+/**
+ * 최근 글 리스트 시간순으로 5개 자르기
+ */
 const RecentlyPosts = (posts: RecentlyPostsType) => {
   const sortedPosts = useMemo(() => {
     return posts.posts

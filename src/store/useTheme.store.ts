@@ -2,6 +2,10 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 /* eslint-disable no-unused-vars */
 
+/**
+ * 현재 테마를 관리하는 store입니다.
+ */
+
 interface currentThemeType {
   currentTheme: string;
   setCurentTheme: (payload: string) => void;

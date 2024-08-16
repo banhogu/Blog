@@ -1,3 +1,7 @@
+/**
+ * 영어 태그 -> 한국어 태그 변경 함수
+ */
+
 export const getTag = (tag: string) => {
   const arr = [
     {
