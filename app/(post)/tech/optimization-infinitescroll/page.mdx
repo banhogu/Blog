@@ -1,0 +1,272 @@
+---
+title: 가상화를 이용하여 대형 리스트 무한스크롤 최적화 해보기
+tag: tech
+description: 10,000개의 데이터를 이용하여 무한 스크롤을 구현 하는법
+subTitle: 10,000개의 데이터를 이용하여 무한 스크롤을 구현 하는법
+date: 2024-08-19
+---
+
+import { FileName } from '@/components/ui/FileName';
+import { Callout } from '@/components/ui/callout';
+
+## 도입 배경
+
+모아가이드 프로젝트의 최신 이슈 파트에서는 무한 스크롤을 이용하여 20개 단위로 최신 IT 신문기사를 받아온다. 하지만 스크롤을 내릴수록 기존 DOM 노드에 무한정의 기사 데이터가 추가되면서 불필요한 DOM 노드를 렌더링하게 되어 버벅거림이 발생되고, 성능이 저하되는 문제를 파악했다. <br/><br/>
+
+따라서 큰 크기의 리스트를 효율적으로 보여줄 방법이 필요했다. 이를 위해 새로운 전략이 필요했는데, 자료를 찾아본 결과 보통 **react-virtuoso**를 이용하여 큰 크기의 리스트를 가상화하여 최적화된 렌더링 기법을 사용한다고 알게 되었다. 이번 글에서는 react-virtuoso를 통해 가상화(virtualization) 기법을 사용하여 무한스크롤을 최적화 해보는 시간을 가져보고자 한다.
+
+<br />
+
+## 기존 방식과 문제점
+
+사실 이전 많은 프로젝트에서도 무한 스크롤을 사용했지만 [(Link)](https://www.banghojin.site/tech/introduction-infinitescroll), 성능이 하락한다거나 버벅거림이 발생한적은 없었다. 아마 새로 가져오는 리스트의 사이즈가 작거나, 렌더링 하는데 필요한 데이터의 크기가 작았을것이라고 예측된다. 하지만 이번 모아가이드에서는 한번에 20개의 사이즈의 데이터를 매 호출 시 가져오고, 데이터마다 사진, 링크, 텍스트 등 많은 데이터를 포함하고 있기 때문에 유독 성능 문제가 드러난것 같다.<br /><br />
+
+![](/images/tech/optimization-infinitescroll/1.png)
+
+기존 방식에서는 대부분의 무한스크롤 방식처럼 IntersectionObserver 객체를 이용하여 다음으로 패치할 부분에 div 태그를 만들고 해당 태그(빨간선)에 교차시에 다음 페이지 fetch를 하도록 설정하였는데,<br /><br />
+
+![](/images/tech/optimization-infinitescroll/2.png)
+
+스크롤을 몇번 내린 후 DOM트리를 살펴보면 과도 할 정도로 Link 태그가 추가된 모습을 볼 수 있다. 수 백, 수 천개의 Link 태그가 추가 되어 프레임이 떨어지는 문제가 발생한것이다.
+
+<br />
+
+## 다른 서비스는 이러한 문제를 어떻게 해결했을까?
+
+그렇다면 나같은 주니어 베이비 개발자가 아닌 실제 큰 규모의 무한스크롤을 사용하는 서비스에서는 해당 문제를 어떻게 대처하고 있을까? 그 답은 오늘의 집에서 찾을 수 있었다.<br /><br />
+
+![](/images/tech/optimization-infinitescroll/3.gif) <br />
+
+![](/images/tech/optimization-infinitescroll/4.png) <br />
+
+![](/images/tech/optimization-infinitescroll/5.png)
+
+오늘의 집에서의 검색 결과 페이지를 보면 평범한 무한 스크롤이라고 생각될 수 있으나, 코드를 자세히 살펴보면 보여주는 상품 갯수는 30개로 동일하지만 매번 dom에 새로운 데이터를 추가하는것이 아닌, 뷰포트에 보이지 않는 아이템들은 사라지고, `virtualized-list` 의 padding이 동적으로 바뀌어서 새로운 아이템들을 가져오는 과정이 마치 스크롤되는것처럼 작동되는 것을 볼 수 있다.<br /><br />
+
+즉, 사용자가 보이는 view의 일정 부분만 dom에 남겨두고 view 이외의 리스트들은 DOM에서 element를 제거하고, 사라진 부분만큼 padding-top을 이용해 공백을 만들어서 dom을 관리하고 있는것이다.<br /><br />
+
+![](/images/tech/optimization-infinitescroll/6.jpeg) <br />
+
+![](/images/tech/optimization-infinitescroll/7.png)
+
+이렇게, 화면에 보이는 부분만 렌더링하는것을 가상화 기법이라고 한다. 사용자가 볼수있는 화면은 제한적인만큼, 불필요한 렌더링을 하지 않는것이다. 가상화 라이브러리에는 보통 `react-window`, `react-virtuoso` 가 대표적으로 사용되고있다.<br /><br />
+
+![](/images/tech/optimization-infinitescroll/8.png)
+
+`react-window`는 리스트 요소의 크기가 고정된 경우에 사용하는 `FixedSizeList`와 그와 반대인 경우에 사용하는 `VariableSizeList`를 제공한다. 이는 요소의 너비, 높이가 고정된 경우에는 사용이 간편하지만, 그렇지 않은 경우에는 다소 까다로워진다. `VariableSizeList`를 쓸 때에는 요소의 높이를 결정하는 함수를 작성해주어야 하기 때문이다.<br /><br />
+
+이번 모아가이드 프로젝트에서는 모바일 반응형 디자인을 구현이 필수적인데, 데스크톱, 태블릿, 모바일에 따른 각기 다른 신문기사 컴포넌트의 높이 예측 함수를 직접 작성하는 것이 매우 까다로워질것 같다고 생각했기 때문에 `react-virtuoso` 를 선택하게 되었다.
+
+<br />
+
+## 구현
+
+<br />
+
+<FileName>뉴스기사 무한스크롤 Hook</FileName>
+
+```tsx
+const fetchIssueLists = async ({
+  queryKey,
+  pageParam = 1,
+}: {
+  queryKey: any[];
+  pageParam?: number;
+}) => {
+  const [, category, sort] = queryKey;
+  const { data } = await axios.get(
+    `${baseURL}/content/news/${category}?page=${pageParam}&size=20&sort=${sort}`
+  );
+  return data;
+};
+
+export const getIssueLists = (category: string, sort: string) => {
+  const queryKey = ['IssueLists', category, sort];
+
+  const { data, fetchNextPage, hasNextPage, isFetching, isFetchingNextPage, isLoading } =
+    useInfiniteQuery({
+      queryKey,
+      queryFn: fetchIssueLists,
+      getNextPageParam: (lastPage, allPages) => {
+        if (lastPage.length === 0) {
+          return undefined;
+        }
+        return allPages.length + 1;
+      },
+      initialPageParam: 1,
+      enabled: !!category,
+    });
+
+  return {
+    data,
+    fetchNextPage,
+    hasNextPage: !!data?.pages.length,
+    isFetching,
+    isFetchingNextPage,
+    isLoading,
+  };
+};
+```
+
+<br />
+<br />
+
+<FileName>가상화 적용 이전 코드</FileName>
+
+```tsx
+const CategoryNews = () => {
+  const [category, setCategory] = useState('building'); //신문기사 카테고리
+  const [sort, setSort] = useState('latest'); //신문기사 정렬
+  const ref = useRef<HTMLDivElement | null>(null); //isPageEnd Ref
+  const pageRef = useIntersectionObserver(ref, {}); //isPageEnd Ref
+  const isPageEnd = !!pageRef?.isIntersecting; //isPageEnd Ref
+
+  const { data, fetchNextPage, hasNextPage, isFetching, isFetchingNextPage, isLoading } =
+    getIssueLists(category, sort); //무한스크롤 hook
+
+  const fetchNext = useCallback(async () => {
+    //다음 페이지 fetch 함수
+    if (hasNextPage && !isFetching && !isFetchingNextPage && !isLoading) {
+      await fetchNextPage();
+    }
+  }, [fetchNextPage, hasNextPage, isFetching, isFetchingNextPage, isLoading]);
+
+  useEffect(() => {
+    //isPageEnd 감지
+    let timerId: NodeJS.Timeout | undefined;
+
+    if (isPageEnd && hasNextPage) {
+      timerId = setTimeout(() => {
+        fetchNext();
+      }, 1000);
+    }
+
+    return () => clearTimeout(timerId);
+  }, [fetchNext, isPageEnd, hasNextPage]);
+
+  const allPosts = data?.pages?.flat() || []; //무한스크롤 데이터 펼치기
+
+  return (
+    <div className="mt-5">
+      ...
+      {isLoading
+        ? Array.from({ length: 5 }).map((_, i) => <CategoryNewsItemSkeleton key={i} />)
+        : allPosts.map((item: IssueListItem) => (
+            <CategoryNewsItem key={item.id} {...item} /> //신문기사 item
+          ))}
+      {(isFetching || isFetchingNextPage || hasNextPage) && <LoaderSkeleton />}
+      <div className="w-full touch-none" ref={ref} />
+    </div>
+  );
+};
+
+export default CategoryNews;
+```
+
+<br />
+<br />
+
+<FileName>가상화 적용 후 코드</FileName>
+
+```tsx
+const CategoryNews = () => {
+  const [category, setCategory] = useState('building');
+  const [sort, setSort] = useState('latest');
+
+  const { data, fetchNextPage, hasNextPage, isFetching, isFetchingNextPage, isLoading } =
+    getIssueLists(category, sort);
+
+  const loadMore = useCallback(() => {
+    if (hasNextPage && !isFetching && !isFetchingNextPage && !isLoading) {
+      setTimeout(() => {
+        fetchNextPage();
+      }, 200);
+    }
+  }, [fetchNextPage, hasNextPage, isFetching, isFetchingNextPage, isLoading]);
+
+  const allPosts = data?.pages?.flat() || [];
+
+  return (
+    <div className="mt-5">
+      ...
+      {isLoading ? (
+        Array.from({ length: 5 }).map((_, i) => <CategoryNewsItemSkeleton key={i} />)
+      ) : (
+        <Virtuoso
+          style={{ height: 'calc(100vh - 50px)', margin: '0px' }}
+          useWindowScroll
+          totalCount={allPosts.length}
+          data={allPosts}
+          endReached={loadMore}
+          itemContent={(index, item: IssueListItem) => <CategoryNewsItem key={item.id} {...item} />}
+        />
+      )}
+    </div>
+  );
+};
+
+export default CategoryNews;
+```
+
+- **useWindowScroll** : Virtuoso 자체적으로 스크롤을 관리하지 않고, 브라우저의 스크롤을 사용하게 된다.
+- **totalCount allPosts.length** : Virtuoso가 렌더링해야 할 전체 아이템의 수(Index)를 알 수 있도록 하여, 가상화 과정에서 성능을 최적화
+- **data allPosts** : Virtuoso에게 렌더링 할 데이터를 알려준다. `allPosts`는 무한 스크롤을 통해 로드된 뉴스 아이템들의 배열
+- **endReached = loadMore** : 스크롤이 리스트의 끝에 도달했을 때 호출될 콜백 함수 `loadMore` 함수를 호출하여 추가 데이터를 불러온다.
+- **itemContent** : Virtuoso가 리스트 내에서 각 아이템을 어떻게 렌더링할지 결정하는데, 현재는 `CategoryNewsItem` 컴포넌트를 사용하여 각 뉴스 아이템을 렌더링하고 있다.<br /><br />
+
+### 개선점
+
+**Intersection Observer의 사용 여부**
+
+- **가상화 적용 이전 코드**: `useIntersectionObserver` 훅을 사용하여 페이지 끝 (`isPageEnd`)이 감지되면 다음 페이지를 로드하는 방식으로 구현. `ref`가 `isPageEnd`를 추적하며, 스크롤이 특정 지점에 도달할 때 다음 페이지를 로드하기 위해 Debounce 타이머를 설정하고 `fetchNext` 함수를 호출하게 된다.
+- **가상화 적용 후 코드**: `Intersection Observer`를 사용하지 않고, Virtuoso 라이브러리의 `endReached` 콜백을 통해 스크롤이 끝에 도달할 때 `fetchNextPage`를 호출하는 방식으로 전환하여 Intersection Observer의 사용을 피하면서도 스크롤의 끝을 감지할 수 있게 되었다.<br /><br />
+
+**Virtuoso를 사용한 가상화 리스트 구현**
+
+- **가상화 적용 이전 코드**: 단순히 `allPosts.map`을 사용하여 모든 아이템을 렌더링 하는데, 해당 방식은 데이터가 많아질 경우 지금처럼 성능 저하 문제 발생
+- **가상화 적용 후 코드**: `Virtuoso` 라이브러리를 사용하여 스크롤 이벤트를 가상화하고, 성능을 최적화하여 대량의 데이터를 효율적으로 뷰포트에 따라 필요한 부분만 렌더링
+
+<br />
+
+## 성능 향상 측정 결과
+
+### 1️⃣ 크롬 Layer 검사
+
+![](/images/tech/optimization-infinitescroll/9.png)
+
+- **개선 전 - Dom이 많이 힘들어보인다.**<br /><br />
+
+![](/images/tech/optimization-infinitescroll/10.png)
+
+- **개선 후 - 필요한 부분만 렌더링 되고 있다.**<br /><br />
+
+### 2️⃣ 렌더링 검사
+
+![](/images/tech/optimization-infinitescroll/11.gif)
+
+스크롤에 따라 padding이 동적으로 바뀌게 된다.<br /><br />
+
+### 3️⃣ LightHouse 검사
+
+- **빌드 후 yarn start, 크롬 시크릿 창, 데스크톱 기준**
+- **검사 횟수 10회 평균값**
+
+![](/images/tech/optimization-infinitescroll/12.png)
+
+- **개선 전** <br /><br />
+
+![](/images/tech/optimization-infinitescroll/13.png)
+
+- **개선 후**
+
+<Callout>
+  💡 Lighthouse는 페이지의 초기 로딩 성능에 더 집중하기 때문에, 무한 스크롤이나 가상화된 컴포넌트가
+  실제로 성능에 미치는 영향은 초기 로딩 단계에서 미미한것 같다. 가상화는 스크롤 후에 더 많은
+  데이터를 렌더링할 때 성능을 개선하는데, 이 부분은 Lighthouse 측정에 포함되지 않아 얼마만큼의 성능
+  향상이 올라갔는지는 알 수 없어 아쉬웠다.
+</Callout>
+
+<br />
+<br />
+
+---
