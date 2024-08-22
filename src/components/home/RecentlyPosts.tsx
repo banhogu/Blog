@@ -25,14 +25,14 @@ const RecentlyPosts = (posts: RecentlyPostsType) => {
       <div className=" bg-sky-950 text-gray-100 rounded-full max-w-max  px-3 py-[1px]  font-semibold text-[17.5px] dark:text-gray-300">
         Recently Posts
       </div>
-      <ul className="px-3 mt-1 mb-6">
+      <ul className="px-3 mt-3 mb-6">
         {sortedPosts.map((item, i) => {
           const isLast = i === sortedPosts.length - 1;
           return (
             <li key={i} className="text-zinc-700 dark:text-gray-300">
               <Link href={item.slug}>
                 <div
-                  className={` py-[12px] border-b border-gray-200 flex flex-col gap-[2px] hover:bg-gray-100 dark:hover:bg-[#242424] active:bg-gray-200 dark:active:bg-[#222]
+                  className={` py-[12px] border-b border-gray-300 flex flex-col gap-[3px] hover:bg-gray-100 dark:hover:bg-[#242424] active:bg-gray-200 dark:active:bg-[#222]
                  ${isLast ? 'border-b-0' : ''}
                 `}
                 >

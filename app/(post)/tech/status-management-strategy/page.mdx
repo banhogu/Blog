@@ -1,0 +1,482 @@
+---
+title: RSC와 SSR을 고려한 상태 관리 전략
+tag: tech
+description: 클라이언트 컴포넌트에서 서버 컴포넌트로 전환하기
+subTitle: 클라이언트 컴포넌트에서 서버 컴포넌트로 전환하기
+date: 2024-08-22
+---
+
+import { FileName } from '@/components/ui/FileName';
+import { Callout } from '@/components/ui/callout';
+
+## 도입배경
+
+![](/images/tech/status-management-strategy/1.png)
+
+현재 진행중인 모아가이드 프로젝트 메인페이지의 디자인을 보면 홈, 최신이슈, 조각투자 상품, 리포트 상태 카테고리에 따라 적절한 컴포넌트가 렌더링 되어야 한다.
+
+이렇게 카테고리 상태에 따른 컴포넌트 렌더링을 위해 생각해낸 초기 아이디어는 다음과 같다.
+
+- GNB 컴포넌트에서 카테고리 클릭 시, 클릭 된 카테고리를 currentCategory 현재 카테고리 상태로 지정
+- 변경된 카테고리 상태를 감지하여 메인페이지에서 분기적으로 컴포넌트 렌더링
+
+하지만 카테고리를 `useState`의 상태로 지정하게 되면 발생하는 문제가 있었다. <br/><br/>
+
+<FileName>RootLayout</FileName>
+
+```tsx
+export default function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
+  return (
+    <html lang="kr" className={`${pretendard.variable}`}>
+      <body className={pretendard.className}>
+        <IntegrateMSW>
+          <QueryProvider>
+            <Script
+              strategy="beforeInteractive"
+              src={`//dapi.kakao.com/v2/maps/sdk.js?appkey=${process.env.NEXT_PUBLIC_MAP_KEY}&autoload=false`}
+            />
+            <Gnb /> //Here!!
+            {children}
+            <ModalProvider />
+            <div id="root-portal"></div>
+          </QueryProvider>
+        </IntegrateMSW>
+      </body>
+    </html>
+  );
+}
+```
+
+`Gnb` 컴포넌트는 현재 `RootLayout` 컴포넌트에 위치하고 있으므로 `Gnb` 컴포넌트에서 `useState`를 사용해 홈, 최신이슈, 조각투자 상품, 리포트 카테고리를 누르게 되면 `setState` 액션이 일어나게 되고, <br/><br/>
+
+<FileName>Mainpage</FileName>
+
+```tsx
+const Mainpage = ({ currentCategory }) => {
+  return (
+    <div>
+      <Navbar />
+      {currentCategory === 'home' && <HomeIndex />}
+      {currentCategory === 'new_issue' && <RecentlyIssueIndex />}
+      {currentCategory === 'report' && <ReportIndex />}
+    </div>
+  );
+};
+```
+
+이렇게 변경된 currentCategory State 값을 감지하기 위해 저 멀리 메인페이지 children으로 props와 함께 내려보내야 하므로 위 코드와 같이 불필요한 Prop Drilling이 발생했다.
+
+때문에 불필요한 Prop Drilling과 단순화된 코드 흐름을 위해 해당 currentCategory 상태를 zustand를 이용하여 전역으로 관리하도록 했다.<br/><br/>
+
+<FileName>zustand 카테고리 전역 상태 관리</FileName>
+
+```tsx
+import { create } from 'zustand';
+
+/**
+ * currentNav : home(홈), 최신이슈(new_issue), 조각투자 상품(item), 리포트(report)
+ */
+
+interface useNavStoreType {
+  currentNav: string;
+  setCurrentNav: (payload: string) => void;
+}
+
+export const useNavStore = create<useNavStoreType>((set) => ({
+  currentNav: 'home',
+  setCurrentNav: (payload: string) =>
+    set(() => ({
+      currentNav: payload,
+    })),
+}));
+```
+
+<br />
+<br />
+
+<FileName>GNB 컴포넌트에서 전역 카테고리 State 직접 변경</FileName>
+
+```tsx
+const GNB = () => {
+  const { currentNav, setCurrentNav } = useNavStore();
+  return (
+    <div className="shadow-custom-light border-b border-gray100 ">
+     ...
+         <div
+          onClick={() => setCurrentNav('home')}
+          ...
+          >
+          홈
+        </div>
+         <div
+          onClick={() => setCurrentNav('new_issue')}
+          ...
+          >
+          최신 이슈
+        </div>
+         <div
+          onClick={() => setCurrentNav('item')}
+          ...
+          >
+          조각 투자 상품
+        </div>
+        <div
+          onClick={() => setCurrentNav('report')}
+          ...
+          >
+          리포트
+        </div>
+      </div>
+    </div>
+  );
+};
+```
+
+<br />
+<br />
+
+<FileName>Mainpage에서 전역 카테고리 State 직접 사용</FileName>
+
+```tsx
+const Mainpage = () => {
+  const { currentNav } = useNavStore();
+  return (
+    <div>
+      <Navbar />
+      {currentNav === 'home' && <HomeIndex />}
+      {currentNav === 'new_issue' && <RecentlyIssueIndex />}
+      {currentNav === 'report' && <ReportIndex />}
+      {currentNav === 'product' && <ProductIndex />}
+    </div>
+  );
+};
+```
+
+기존 setState 동작을 통해 current Category State를 변경하고 이를 props로 받아온 메인 페이지에서 감지하는 것이 아닌, current Category를 전역 State로 전환하고, setState 대신 zustand의 set 액션을 통해 해당 State를 변경하면 Mainpage에서 이를 감지하여 카테고리에 알맞은 컴포넌트를 분기적으로 렌더링하게 되는것이다.
+
+### 문제 발생
+
+하지만 `zustand`와 같은 클라이언트 상태 관리 라이브러리를 사용하는 경우, 상태를 구독하고 사용하는 컴포넌트는 클라이언트 컴포넌트로 만들어야 한다. 이는 `zustand`가 클라이언트에서 동작하는 JavaScript 상태 관리 라이브러리이기 때문에, 상태를 사용하려면 컴포넌트가 클라이언트에서 실행되어야 하기 때문인데, 따라서 메인페이지 최상위에 `'use client'` 선언을 통해 클라이언트 컴포넌트로 지정해줘야 했다.
+
+하지만 클라이언트 컴포넌트(`'use client'`가 선언된 컴포넌트)는 서버 컴포넌트를 자식으로 가질 수 없다. 서버 컴포넌트는 서버에서 렌더링되고, 클라이언트 컴포넌트는 클라이언트에서 렌더링되기 때문에, 서버 컴포넌트는 클라이언트 컴포넌트를 포함할 수 있지만, 클라이언트 컴포넌트가 서버 컴포넌트를 자식으로 포함할 수 없는 구조적 제약이 있다. 때문에 `HomeIndex`, `RecentlyIssueIndex`, `ReportIndex` 등은 모두 클라이언트 컴포넌트여야 한다.
+
+[관련글](https://www.banghojin.site/study/what-is-servercomponent)
+
+엄밀히 말하자면 클라이언트 컴포넌트 내에 서버 컴포넌트를 포함할 수 있는 경우가 존재하긴 한다. 서버 컴포넌트는 서버에서만 렌더링되며, 클라이언트 측에서는 HTML로만 전달되는데, 클라이언트 컴포넌트가 서버 컴포넌트를 자식으로 가질 경우, 서버 컴포넌트는 서버에서 미리 렌더링된 HTML을 클라이언트 컴포넌트의 자식으로 포함시키게 된다.
+
+클라이언트 컴포넌트가 서버 컴포넌트를 자식으로 포함할 때, 실제로 클라이언트에서 동작하는 것은 클라이언트 컴포넌트 자체이고, 서버 컴포넌트는 그 안에 미리 렌더링된 정적 콘텐츠로 포함되므로, 서버 컴포넌트는 클라이언트 측에서 재활용되는것이다.<br/><br/>
+
+<FileName>클라이언트 컴포넌트가 서버컴포넌트를 하위 자식으로 갖는법</FileName>
+
+```tsx
+import ClientComponent from './ClientComponent';
+import ServerComponent from './ServerComponent';
+
+export default function Page() {
+  return (
+    <ClientComponent>
+      <ServerComponent />
+    </ClientComponent>
+  );
+}
+
+('use client');
+
+export default function ClientComponent({ children }) {
+  return <>{children}</>;
+}
+```
+
+위 코드에서, `ClientComponent`가 클라이언트 컴포넌트이고, 그 하위에 `ServerComponent`가 위치한다. `ServerComponent`는 서버에서 렌더링되어 HTML로만 전달되고, `ClientComponent`는 클라이언트에서 동작하며 그 HTML을 포함하여 렌더링된다.
+
+하지만 역시 문제점이 존재하는데, 클라이언트 컴포넌트에서는 서버 컴포넌트가 서버에서 동적으로 가져오는 데이터를 변경하거나 동적으로 조작할 수 없다. 또한 클라이언트 컴포넌트는 상태를 관리하고, 훅을 사용할 수 있지만, 하위에 있는 서버 컴포넌트의 동작에는 영향을 미치지 않는다.
+
+때문에 이러한 단점을 안고 가면서도 굳이굳이 억지로 클라이언트 컴포넌트에서 서버 컴포넌트를 하위 자식 컴포넌트로 가지는것보다는 그냥 최상위 메인페이지를 서버 컴포넌트로 전환하는것이 더 좋은 선택지라고 생각했다.
+
+![](/images/tech/status-management-strategy/2.png)
+
+또한 다른 컴포넌트(홈, 최신이슈, 리포트)들은 그렇다 치고 조각투자 플랫폼이라는 서비스 특성상 조각투자 상품 카테고리에서의 초기 렌더링 성능 및 SEO 최적화는 꼭 필요해보였고, 해당 조각투자 상품 카테고리의 SSR, 서버컴포넌트 동작은 개발 초기부터 목표로 설정한 부분이였기 때문에 구조적인 개선이 필요해보였다.
+
+<br />
+
+## 해결 아이디어
+
+생각해낸 해결 아이디어는 다음과 같다.
+
+- zustand 사용처가 어쩔수 없이 클라이언트 컴포넌트가 된다면, zustand나 다른 Hook(useState)들을 대신하여 서버 컴포넌트를 유지하면서 카테고리별 구분을 지을 수 있는 방법이 있을까? 또한 모든 분기되는 컴포넌트는 하나의 페이지 안에서 렌더링되어야 한다.
+- `useSearchParams` 를 이용한다. 상태에 따른 구분이 아닌, params에 따라 카테고리를 구분한다.
+- Nav 컴포넌트에서는 기존 set 함수가 아닌, `useRouter` 를 이용하여 카데고리에 맞는 params를 지정한다. 메인페이지에서는 이를 `searchParams` 로 감지하여 변경된 카테고리별로 알맞은 컴포넌트를 분기적으로 렌더링한다.<br/><br/>
+
+<Callout>
+❗ 앞에 장황하게 설명한것치고는 단순한 해결법이였다. 해당 해결 아이디어는 이전 사설 교육에서 멘토링을 받았던 멘토분께 얻은 아이디어였는데, 다른 더 좋은 아이디어가 있는지 생각해봐도 될 것 같다.
+
+</Callout>
+
+<br />
+
+## 구현
+
+<br />
+
+<FileName>변경된 GNB 컴포넌트</FileName>
+
+```tsx
+const GNB = () => {
+  const params = useSearchParams();
+  const router = useRouter();
+  return (
+    <div className="shadow-custom-light border-b border-gray100 ">
+     ...
+         <div
+          onClick={() => {
+            router.push('/?category=product');
+          }}
+          ...
+          >
+          홈
+        </div>
+         <div
+          onClick={() => {
+            router.push('/?category=newissue');
+          }}
+          ...
+          >
+          최신 이슈
+        </div>
+         <div
+          onClick={() => {
+            router.push('/?category=product');
+          }}
+          ...
+          >
+          조각 투자 상품
+        </div>
+        <div
+          onClick={() => {
+            router.push('/?category=report');
+          }}
+          ...
+          >
+          리포트
+        </div>
+      </div>
+    </div>
+  );
+};
+```
+
+<br />
+<br />
+
+<FileName>변경된 Mainpage</FileName>
+
+```tsx
+const HomePage = async ({
+  searchParams,
+}: {
+  searchParams: { [key: string]: string | string[] | undefined };
+}) => {
+  const response = await fetch(`${process.env.BASE_URL}/summary/recent/building`, {
+    cache: 'no-store',
+  });
+  const data: SummaryData = await response.json();
+  return (
+    <div>
+      <Navbar />
+
+      {searchParams['category'] === 'newissue' ? (
+        <RecentlyIssueIndex />
+      ) : searchParams['category'] === 'product' ? (
+        <ProductIndex divide={data.divide} summary={data.summary} />
+      ) : searchParams['category'] === 'report' ? (
+        <ReportIndex />
+      ) : (
+        <HomeIndex />
+      )}
+    </div>
+  );
+};
+```
+
+<br />
+<br />
+
+<Callout>
+❗ zustand 사용처를 모두 searchParams로 변경해주었고, 이를 상태 관리를 단순화하고, 상태 변화에 따른 서버 사이드 렌더링(SSR)을 자연스럽게 구현할 수 있어 페이지 로딩 속도와 SEO 최적화를 동시에 달성할 수 있다.
+
+</Callout>
+
+<br />
+
+## 문제 발생
+
+![](/images/tech/status-management-strategy/3.png)
+
+하지만 메인 페이지와 조각투자 상품 컴포넌트를 서버 컴포넌트로 전환 후 빌드를 한 결과 위와 같은 오류가 발생했다. 거의 1시간 동안 구글링, 스택오버플로우, chatGPT를 이용해서 관련 오류를 찾아보았는데 도무지 어떤 문제인지 파악 할 수 없었다. 알 수 있는건 `ModalProvider` 에서 일어난 문제라는것 뿐<br /><br />
+
+<FileName>ModalProvider</FileName>
+
+```tsx
+'use client';
+import Quitmodal from '@/components/modal/Quitmodal';
+import { useModalStore } from '@/store/modal.store';
+import React from 'react';
+import { createPortal } from 'react-dom';
+
+const ModalProvider = () => {
+  const { open, modalType } = useModalStore();
+  const $portalRoot = typeof window !== 'undefined' ? document.getElementById('root-portal') : null;
+
+  if ($portalRoot == null) {
+    return null;
+  }
+  return createPortal(<div>{open && modalType === 'secession' && <Quitmodal />}</div>, $portalRoot);
+};
+
+export default ModalProvider;
+```
+
+먼저 `ModalProvider` 에서는 전역 모달 열림 State를 감지하고 open이 true가 된다면, 해당 하는 modalType에 맞는 모달이 $portalRoot 위치에 렌더링 된다. 이는 중복된 모달 state 코드와, 일관된 모달 렌더링 위치를 위함인데, 아래 참고글을 읽어보면 좋다.
+
+[참고글](https://www.banghojin.site/experience/next-blog-manage-modal)<br /><br />
+
+<FileName>RootLayout</FileName>
+
+```tsx
+const ModalProvider = dynamic(() => import('@/providers/ModalProvider'), { ssr: false });
+
+...
+
+export default function RootLayout({
+  children
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
+  return (
+    <html lang="kr" className={`${pretendard.variable}`}>
+      <body className={pretendard.className}>
+      ...
+            <Gnb />
+            {children}
+            <ModalProvider />
+            <div id="root-portal"></div>
+      </body>
+    </html>
+  );
+}
+```
+
+RootLayout에서는 해당 ModalProvider를 ssr false인 상태로 dynamic import 하고 있다. 아마 이 부분에서 문제가 발생했다고 생각했다. 왜냐하면 기존에는 메인페이지와 ModalProvider 모두 클라이언트 컴포넌트였기 때문에 정상적으로 렌더링이 된 반면, 이제 메인페이지와는 서버 컴포넌트가 되었기 때문에 앞서 말한대로 클라이언트 컴포넌트 아래 서버 컴포넌트가 위치 하게 된 것이다.
+
+<br />
+
+## 해결
+
+제발 이 문제가 맞길 바라며, 위에 작성한 클라이언트 컴포넌트 하위로 서버 컴포넌트를 가질 수 있는 코드를 사용하여 기존 RootLayout과 ModalProvider 코드를 다시 작성했다.<br /><br />
+
+<FileName>클라이언트 컴포넌트가 서버컴포넌트를 하위 자식으로 갖는법</FileName>
+
+```tsx
+import ClientComponent from './ClientComponent';
+import ServerComponent from './ServerComponent';
+
+export default function Page() {
+  return (
+    <ClientComponent>
+      <ServerComponent />
+    </ClientComponent>
+  );
+}
+
+('use client');
+
+export default function ClientComponent({ children }) {
+  return <>{children}</>;
+}
+```
+
+해당 방식은 서버에서 동적으로 가져오는 하위 데이터를 변경하거나 동적으로 조작할 수 없다는 단점이 존재 한다고 했는데, 모달에서는 하위 서버 컴포넌트의 데이터를 사용하는 부분이 없고, 상태와 훅 역시 단순히 전역 모달 열림 State을 닫는 동작밖에 없기 때문에 상위 모달과 하위 서버 컴포넌트와 연관있는 부분이 없다고 판단하여 과감히 사용하게 되었다.<br /><br />
+
+<FileName>변경된 ModalProvider</FileName>
+
+```tsx
+'use client';
+
+const ModalProvider = ({ children }: { children: React.ReactNode }) => {
+  const { open, modalType } = useModalStore();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) {
+    return null;
+  }
+
+  const $portalRoot = document.getElementById('root-portal');
+  if (!$portalRoot) return null;
+
+  return createPortal(
+    <div>
+      {children} // Here!
+      {open && modalType === 'secession' && <Quitmodal />}
+    </div>,
+    $portalRoot
+  );
+};
+
+export default ModalProvider;
+```
+
+<br />
+<br />
+
+<FileName>변경된 RootLayout</FileName>
+
+```tsx
+export default function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
+  return (
+    <html lang="kr" className={`${pretendard.variable}`}>
+      <body className={pretendard.className}>
+        ...
+        <Gnb />
+        <ModalProvider>{children}</ModalProvider>
+        <div id="root-portal"></div>
+        ...
+      </body>
+    </html>
+  );
+}
+```
+
+### 결과
+
+![](/images/tech/status-management-strategy/4.png)
+
+> 사실 아직까지도 이게 정확한 이유인지는 모르겠으나, 일단은 생각한대로 ModalProvider의 dynamic import 개선 방식으로 코드를 변경한 결과, 기존 빌드 문제를 해결 할 수 있었다. 좀 더 깊은 이해와 공부가 필요하다고 생각하며, 나중에 내가 이 글을 보며 아 이건 이 문제지 하며 단번에 알 수 있을만큼 성장했으면 좋겠다.
+
+<br />
+
+## 마무리
+
+<Callout>
+💡 처음에는 `zustand`와 같은 클라이언트 상태 관리 라이브러리를 사용하여 상태를 전역으로 관리하려 했으나, 서버 컴포넌트와의 호환성 문제로 인해 어려움을 겪었다. 이 문제를 해결하기 위해 상태를 URL의 `searchParams`로 관리하는 방법으로 전환했으며,   이를 통해 코드 단순화와 함께 SSR 및 SEO 최적화를 달성할 수 있었다.
+
+그러나, 이 과정에서 새로운 문제가 발생했는데, 클라이언트 컴포넌트와 서버 컴포넌트 간의 관계로 인해 빌드 오류가 발생했다. 이 문제는 클라이언트 컴포넌트 내에서 서버 컴포넌트를 포함하는 방법을 적용하여 해결할 수 있었다
+
+이번 경험을 통해 클라이언트와 서버 컴포넌트의 구조적 차이를 이해하고, 상태 관리와 SSR, 렌더링 성능을 최적화하는 데 필요한 전략을 생각해볼 수 있었다.
+
+</Callout>
+
+<br />
+
+---
