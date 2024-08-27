@@ -1,0 +1,290 @@
+---
+title: 렌더링된 화면을 캡쳐하여 PDF 다운로드 기능 구현하기
+tag: tech
+description: jsPDF와 html2canvas를 활용한 리포트 PDF 변환 작업
+subTitle: jsPDF와 html2canvas를 활용한 리포트 PDF 변환 작업
+date: 2024-08-27
+---
+
+import { FileName } from '@/components/ui/FileName';
+import { Callout } from '@/components/ui/callout';
+
+## 도입 배경
+
+![](/images/tech/pdf-download/1.png)
+
+![](/images/tech/pdf-download/2.png)
+
+현재 진행중인 조각투자 플랫폼 모아가이드 프로젝트에서는 구독권 결제시 투자 관련 리포트를 제공하고, 이를 PDF로 저장할 수 있는 기능을 제공한다. 아직 MVP 개발이라 실제 퀄리티 높은 완성된 글은 아니고, 임의로 작성한 글 데이터를 받아오는 형식으로 화면을 렌더링하고 있다.
+
+PDF 다운로드 버튼을 클릭 시 실제 파일을 사용자에게 제공해주는것이 아닌, 위 데이터 형식의 content만 쏙 빼와서 PDF로 변환하도록 협의가 되었는데, 처음해보는 작업이라 재밌을것 같아서 간단하게 포스팅하여 기록해보려고 한다.
+
+<br />
+
+## 현재 화면 구현 방식
+
+먼저 PDF 다운로드 구현 이전 화면이 어떻게 렌더링 되었나 간단하게 살펴보자.<br/><br/>
+
+![](/images/tech/pdf-download/3.png)
+
+유저가 리포트 목록에서 마음에 드는 리포트를 발견하고, 해당 리포트를 클릭 할 시 일반적인 글/상세ID 형식의 report/id URL로 이동하게 되고, 해당 리포트 ID를 이용하여 리포트 상세 데이터를 API에 호출하여 화면을 그리는 동작인데 코드로 표현하면 아래와 같다.<br/><br/>
+
+<FileName>report/[id] > page.tsx</FileName>
+
+```tsx
+interface ReportDetailPageProps {
+  params: {
+    id: string;
+  };
+}
+
+const ReportDetailPage = async ({ params }: ReportDetailPageProps) => {
+  const response = await fetch(`https://api.moaguide.com/content/report/${params.id}`, {
+    cache: 'no-store',
+  });
+
+  const data: ReportListsItem = await response.json();
+
+  return <ReportDetailIndex data={data} />;
+};
+
+export default ReportDetailPage;
+```
+
+App Router로 개발되고 있기 때문에, 빠른 초기 렌더링을 위해 리포트 ID를 params로 받아와 이를 Next fetch에 넘겨줘 리포트 데이터를 받아오고 이를 `ReportDetailIndex` 에 넘겨주어 화면을 그리는데,<br/><br/>
+
+![](/images/tech/pdf-download/4.png)
+
+받아온 데이터는 위와 같은 형식으로 담겨져 있는데 잘 보면 content는 마크다운 형식 데이터기 때문에 그대로 렌더링 할 시 \n 와 같은 문자열이 변환되지 않고 그대로 렌더링되는 문제가 발생한다.<br/><br/>
+
+<FileName>ReportDetailIndex</FileName>
+
+```tsx
+<div className="mt-5">
+  <ReactMarkdown className="text-body4 text-gray400 ">{data.content}</ReactMarkdown>
+</div>
+```
+
+때문에 마크다운을 변환하여 알맞게 렌더링 될 수 있도록 react-markdown 라이브러리를 이용하여 화면을 그려줬다. [관련글](https://www.banghojin.site/tech/introduction-reactmarkdown)
+
+<br />
+
+## PDF 변환 작업
+
+이제 본격적으로 PDF 다운로드 버튼을 누를 시 해당 리포트 데이터를 이용하여 사용자에게 PDF 리포트 파일을 제공하는 작업을 진행해보자. 준비물은 2 종류의 라이브러리가 있다. `jsPDF` 과 `html2canvas` 이다.
+
+- **`jsPDF`**: 브라우저에서 PDF 파일을 생성할 수 있게 해주는 JavaScript 라이브러리
+- **`html2canvas`**: HTML 요소를 캔버스 요소로 변환해주는 라이브러리로, 이 캔버스를 사용해 이미지를 생성할 수 있다.<br/><br/>
+
+<FileName>useDownloadPDF</FileName>
+
+```tsx
+const useDownloadPDF = (
+  logoUrl: string,
+  reportContentRef: React.RefObject<HTMLDivElement>,
+  title: string
+) => {
+  const downloadPDF = async () => {
+    if (!reportContentRef.current) return;
+
+    const contentWithLogo = document.createElement('div');
+    contentWithLogo.style.position = 'relative';
+    contentWithLogo.style.width = '210mm';
+    contentWithLogo.style.height = '297mm';
+    contentWithLogo.style.padding = '20mm';
+    contentWithLogo.style.boxSizing = 'border-box';
+
+    contentWithLogo.innerHTML = `
+      <img src="${logoUrl}" alt="Logo" style="position: absolute; top: 0; left: 0; width: 120px; height: auto;" />
+      <div>${reportContentRef.current.innerHTML}</div>
+    `;
+
+    const container = document.createElement('div');
+    container.style.position = 'absolute';
+    container.style.left = '-9999px';
+    document.body.appendChild(container);
+    container.appendChild(contentWithLogo);
+
+    const canvas = await html2canvas(container, {
+      scale: 3,
+    });
+    document.body.removeChild(container);
+
+    const imgData = canvas.toDataURL('image/png');
+    const pdf = new jsPDF('p', 'mm', 'a4');
+    const pdfWidth = pdf.internal.pageSize.getWidth();
+    const pdfHeight = pdf.internal.pageSize.getHeight();
+
+    const imgProps = pdf.getImageProperties(imgData);
+    const imgRatio = imgProps.width / imgProps.height;
+    const pageHeight = pdfHeight - 20;
+
+    let imgWidth = pdfWidth - 20;
+    let imgHeight = imgWidth / imgRatio;
+
+    if (imgHeight > pageHeight) {
+      imgHeight = pageHeight;
+      imgWidth = imgHeight * imgRatio;
+    }
+
+    const marginX = (pdfWidth - imgWidth) / 2;
+    const marginY = 10;
+
+    pdf.addImage(imgData, 'PNG', marginX, marginY, imgWidth, imgHeight);
+    pdf.save(`${title}.pdf`);
+  };
+
+  return downloadPDF;
+};
+```
+
+<br />
+
+<Callout>
+❗ 먼저 완성된 코드를 보면서, 코드를 하나하나 뜯어보자. 생소한 코드라서 봐도 이해가 힘들 수 있으므로 간단하게 동작과정을 미리 설명하면 `html2canvas` 라이브러리는 `ref`로 참조된 `div` 요소(즉, 보고서 콘텐츠가 포함된 `div`)를 화면에서 캡쳐하고, 이 이미지 데이터를 PNG으로 변환한다. `jsPDF` 라이브러리를 사용해 PDF 문서를 생성한 후, 앞서 생성한 PNG 이미지를 PDF 페이지에 삽입하는데, 이때 이미지 크기와 위치가 PDF 페이지에 맞게 조정하는 작업이 필요하다.
+
+</Callout>
+
+<br />
+<br />
+
+```tsx
+const useDownloadPDF = (
+  logoUrl: string,
+  reportContentRef: React.RefObject<HTMLDivElement>,
+  title: string
+) => {
+```
+
+- **`logoUrl`**: PDF 상단에 포함될 로고의 URL.
+- **`reportContentRef`**: PDF로 변환할 보고서 콘텐츠를 포함한 `HTMLDivElement`에 대한 참조.
+- **`title`**: 보고서의 제목으로, 다운로드될 PDF 파일 이름을 지정
+
+<br />
+<br />
+
+```tsx
+const contentWithLogo = document.createElement('div');
+contentWithLogo.style.position = 'relative';
+contentWithLogo.style.width = '210mm';
+contentWithLogo.style.height = '297mm';
+contentWithLogo.style.padding = '20mm';
+contentWithLogo.style.boxSizing = 'border-box';
+
+contentWithLogo.innerHTML = `
+    <img src="${logoUrl}" alt="Logo" style="position: absolute; top: 0; left: 0; width: 120px; height: auto;" />
+    <div>${reportContentRef.current.innerHTML}</div>
+  `;
+```
+
+- **PDF 컨테이너 `div` 생성**: 로고와 보고서 콘텐츠를 포함할 새로운 `div` 요소
+- **PDF 크기 설정**: `contentWithLogo`의 크기와 여백은 A4 용지 크기(`210mm x 297mm`)와 `20mm`의 여백으로 설정
+- **로고 및 콘텐츠 삽입**: `contentWithLogo`의 `innerHTML`을 설정하여 상단 왼쪽에 `img` 요소로 로고를 삽입하고, 그 아래에 보고서 콘텐츠를 추가
+
+<br />
+
+```tsx
+const canvas = await html2canvas(container, {
+  scale: 3,
+});
+document.body.removeChild(container);
+```
+
+- **캔버스 생성**: `html2canvas`를 사용해 `container`를 `canvas` 요소로 변환하는데, `scale: 3` 옵션을 사용해 해상도를 최대한 올려 고해상도를 지원 할 수 있다.
+
+<br />
+
+```tsx
+const imgData = canvas.toDataURL('image/png');
+const pdf = new jsPDF('p', 'mm', 'a4');
+const pdfWidth = pdf.internal.pageSize.getWidth();
+const pdfHeight = pdf.internal.pageSize.getHeight();
+```
+
+- **이미지 데이터로 변환**: 생성된 `canvas`를 PNG 형식의 이미지로 변환.
+- **PDF 초기화**: `jsPDF`를 사용해 새로운 PDF 문서를 생성하며, 페이지 방향은 세로(`'p'`), 단위는 밀리미터(`'mm'`), 크기는 A4(`'a4'`)로 설정
+
+<br />
+
+```tsx
+const imgProps = pdf.getImageProperties(imgData);
+const imgRatio = imgProps.width / imgProps.height;
+const pageHeight = pdfHeight - 20;
+
+let imgWidth = pdfWidth - 20;
+let imgHeight = imgWidth / imgRatio;
+
+if (imgHeight > pageHeight) {
+  imgHeight = pageHeight;
+  imgWidth = imgHeight * imgRatio;
+}
+```
+
+- **이미지 크기 계산**: PDF 페이지에 맞추기 위해 이미지의 너비와 높이를 계산하며, 가로와 세로 비율을 유지한다.
+
+<br />
+
+```tsx
+
+  const marginX = (pdfWidth - imgWidth) / 2;
+  const marginY = 10;
+
+  pdf.addImage(imgData, 'PNG', marginX, marginY, imgWidth, imgHeight);
+  pdf.save(`${title}.pdf`);
+};
+```
+
+- **PDF에 이미지 추가**: 계산된 위치에 이미지를 PDF에 추가
+- **PDF 저장**: PDF를 `title` 매개변수에 기반한 파일 이름으로 저장한다.
+
+<br />
+
+<Callout>
+💡 여기까지 `useDownloadPDF` 의 동작과정인데, 사실 해당 함수는 따로 Hook으로 빼지 않아도 되지만, 워낙 코드가 길고 MVP 개발 이후 PDF 레이아웃 형식이 완벽히 정해지면 수정될 코드이므로 해당 함수는 Hook으로 빼두었다.
+
+</Callout>
+
+<br />
+<br />
+
+```tsx
+const ReportDetailIndex = ({ data }: { data: ReportListsItem }) => {
+
+  const reportContentRef = useRef<HTMLDivElement>(null);
+  const downloadPDF =
+  useDownloadPDF('/images/logo.svg', reportContentRef, data.title);
+
+  return (
+    <div>
+
+     ...
+
+      {/* 버튼 */}
+      <div className="flex items-center gap-3">
+       <div className="my-[28px]" ref={reportContentRef}>
+       ...
+        <div
+          onClick={downloadPDF}
+          className="cursor-pointer px-5 py-4 max-w-max flex items-center justify-center gap-2 border border-gray200 rounded-[100px]">
+          <span className="text-body1 text-gray400">PDF 다운로드</span>
+          <img src="/images/report/down.svg" alt="" />
+        </div>
+      </div>
+    </div>
+  );
+};
+```
+
+사용법은 간단하다. PDF 다운로드 버튼 클릭 시 downloadPDF가 실행되는데, 앞서 작성한 Hook 함수에 맞게 로고이미지, reportContentRef(컨텐츠), data.title(PDF 파일 제목)을 받고 있다.
+
+<br />
+
+## 결과
+
+![](/images/tech/pdf-download/5.png)
+
+화면에 렌더링 된 컨텐츠 그대로 PDF에 포함되었고, 최상단에는 지정한 모아가이드 로고 이미지까지 의도한 위치에 정상적으로 그려진 모습이다.
+
+<br />
+
+---

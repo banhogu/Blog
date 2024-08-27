@@ -2,10 +2,11 @@
 import { Caption } from './caption';
 
 export const Snippet = ({ children, scroll = true, caption = null }) => (
-  <div className="rounded-b-md">
+  <div className="rounded-b-md ">
     <pre
       className={`
-      rounded-b-md
+      rounded-md
+      -mt-[4px]
       p-4
       text-sm
       bg-[#222] text-white
