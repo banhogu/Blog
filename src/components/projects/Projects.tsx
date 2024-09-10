@@ -12,6 +12,46 @@ const Projects = () => {
       <div className="flex flex-col rounded-md border shadow-sm p-5 gap-1">
         <div className="flex justify-between items-center">
           <div className="font-semibold text-gray-800 text-[15px] sm:text-[19px] dark:text-gray-300">
+            모아가이드
+          </div>
+          <div className="flex gap-[1px] sm:gap-2 items-center">
+            <Link href={'https://github.com/Moaguide-develop'} target="_blank">
+              <FiGithub className="text-[14px] sm:text-[17px]" />
+            </Link>
+            <Link
+              href={
+                'https://radical-chatter-f1a.notion.site/STO-MVP-1e93646e83dc4d328d5fc4bcc526841f'
+              }
+              target="_blank"
+            >
+              <RiNotionLine className="text-[14px] sm:text-[17px]" />
+            </Link>
+            <Link href={'https://moaguide.vercel.app/'} target="_blank">
+              <IoIosLink className="text-[14px] text-blue-600 dark:text-gray-300 sm:text-[17px]" />
+            </Link>
+          </div>
+        </div>
+        <div className="font-medium text-gray-500 text-[12px] sm:text-[15px]  dark:text-gray-300">
+          조각 투자 상품 플랫폼
+        </div>
+        <div className="font-medium text-gray-500 text-[11px] sm:text-[13px]  dark:text-gray-300">
+          2024.07 ~
+        </div>
+        <div className="flex items-center justify-center mt-5">
+          <Image
+            src={'/images/projects/moaguide.svg'}
+            alt="spoting"
+            width={200}
+            height={51}
+            className="rounded-md"
+            priority={true}
+          />
+        </div>
+      </div>
+      {/* 프로젝트0 */}
+      <div className="flex flex-col rounded-md border shadow-sm p-5 gap-1">
+        <div className="flex justify-between items-center">
+          <div className="font-semibold text-gray-800 text-[15px] sm:text-[19px] dark:text-gray-300">
             Sporting
           </div>
           <div className="flex gap-[1px] sm:gap-2 items-center">
@@ -19,7 +59,9 @@ const Projects = () => {
               <FiGithub className="text-[14px] sm:text-[17px]" />
             </Link>
             <Link
-              href={'https://www.notion.so/SPORTING-d4138d73031c4750b8e026228e2103da'}
+              href={
+                'https://radical-chatter-f1a.notion.site/SPORTING-d4138d73031c4750b8e026228e2103da?pvs=4'
+              }
               target="_blank"
             >
               <RiNotionLine className="text-[14px] sm:text-[17px]" />
@@ -53,7 +95,7 @@ const Projects = () => {
             Offispace
           </div>
           <div className="flex gap-[1px] sm:gap-2 items-center">
-            <Link href={'https://github.com/banhogu/Offispace-Project'} target="_blank">
+            <Link href={'https://github.com/4bujak-4bujak'} target="_blank">
               <FiGithub className="text-[14px] sm:text-[17px]" />
             </Link>
             <Link
