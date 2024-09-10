@@ -189,6 +189,11 @@
       "id": "pdf-download",
       "tag": "tech",
       "title": "렌더링된 화면을 캡쳐하여 PDF 다운로드 기능 구현하기"
+    },
+    {
+      "id": "implement-revenuemodel",
+      "tag": "tech",
+      "title": "토스 페이먼츠 API를 이용하여 프로젝트 수익 모델 구현해보기"
     }
   ]
 }

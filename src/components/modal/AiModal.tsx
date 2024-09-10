@@ -76,7 +76,7 @@ const AiModal = () => {
           initial={{ opacity: 0, scale: 0.7 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{
-            duration: 0.8,
+            duration: 0.4,
             ease: [0, 0.71, 0.2, 1.01],
           }}
           className="bg-gray-50 border-[0.3px] border-gray-500 overflow-y-auto mx-auto pb-4 rounded-xl shadow-lg custom-scrollbar2 w-[720px] min-h-[600px] max-h-[700px]"

@@ -1,0 +1,536 @@
+---
+title: 토스 페이먼츠 API를 이용하여 프로젝트 수익 모델 구현해보기
+tag: tech
+description: 토스 페이먼츠를 이용하여 결제 시스템을 적용해봅시다
+subTitle: 토스 페이먼츠를 이용하여 결제 시스템을 적용해봅시다
+date: 2024-09-10
+---
+
+import { FileName } from '@/components/ui/FileName';
+import { Callout } from '@/components/ui/callout';
+
+## 도입 배경
+
+![](/images/tech/implement-revenuemodel/1.png)
+
+현재 진행 중인 모아가이드 MVP 개발 프로젝트는 구독 결제를 통해 무료 기능과 프리미엄 기능을 제공하여 수익 모델을 구축하고 있다. 무료 기능으로는 투자 상품 조회와 투자 관련 최신 뉴스 제공이 포함되며, 유료 기능으로는 투자 상품 상세 조회와 투자 가이드가 제공된다. 이번글에서는 수익 모델 구현을 위해 결제 API 연결 작업 과정을 작성해보려 한다.<br/><br/>
+
+### 카카오페이 같은 단순 결제가 아닌 PG 서비스를 도입한 이유
+
+먼저 결제 관련 API를 선택하는 과정에서, 어느 특정 서비스를 사용하기로 정해진 것이 없었다. PM 팀에 문의한 결과, MVP 개발이라는 특성상 개발자가 자유롭게 결제 API를 선택해서 사용해도 된다는 답변을 받았다. 따라서 이전에 사용해본 경험이 있는 카카오페이 간편결제를 후보로 정했다.
+
+하지만 문제가 있었다. 카카오페이와 같은 특정 결제 수단만 제공할 경우, 사용자는 제한된 옵션에 불편을 느낄 수 있다. 이는 고객 만족도에 크게 영향을 미칠 수밖에 없을것이다. 결제 시스템 도입 시 가장 중요하게 고려한 요소는 사용자 경험이라고 생각했기 때문에, 모아가이드에서는 단일 결제 수단보다는 복수의 결제 수단을 한 번에 지원하며, 각 사용자에게 맞춤형 결제 환경을 제공할 수 있는 PG 서비스를 도입하기로 결정했다.
+
+PG API 자료를 찾아본 결과 다양한 서비스가 존재했지만, 그 중에서도 토스 페이먼츠가 API 사용법 및 공식문서를 가장 읽기 좋게 지원해주었다. 또한 다양한 결제 수단을 제공했기 때문에 신용카드, 계좌이체, 간편결제, 휴대폰 결제 등 여러 옵션을 사용자들이 자유롭게 선택할 수 있어 결제가 한층 원활하게 이루어지고, 이는 곧 결제 성공률을 높이는 데도 큰 도움이 될것이라고 생각했다. 이러한 다양한 결제 옵션을 통해 사용자 편의성을 극대화하면서, 각각의 사용자에게 적합한 결제 방식을 제공할 수 있을 것이다.
+
+또한 현재 클라이언트(=PM) 분께서 사업자 등록이 되지 않은 상태인데, 토스 페이먼츠에서는 사업자 번호가 없어도 사용 가능한 테스트용 API KEY를 발급해주기 때문에 구현 및 테스트에 용이하다고 생각했다.
+
+<br />
+
+## 사전 준비
+
+![](/images/tech/implement-revenuemodel/2.png)
+
+구현하기 전, 플로우를 간단하게 설계해보았다. 유료 기능(상품 상세 조회, 투자 가이드) 페이지에 접속하기 전에 두 가지 주요 예외 처리를 통해 사용자 상태를 확인하는 과정을 거친다.
+
+- 첫 번째로, 해당 유저가 로그인이 되어 있는지를 확인한다. 만약 사용자가 로그인이 되어 있지 않다면, 로그인 페이지로 redirect된다.
+- 두 번째로, 로그인이 확인된 경우 해당 유저가 구독 결제권을 가지고 있는지 여부를 체크한다. 구독 결제를 하지 않은 사용자는 구독 페이지로 redirect된다.
+
+위 두 단계의 예외 처리를 모두 통과한 유저만이 정상적으로 유료 기능(상품 상세 조회, 투자 가이드)를 이용할 수 있다.<br/><br/>
+
+<FileName>user Data</FileName>
+
+```json
+ member: {
+          memberEmail: '',
+          memberNickName: '',
+          memberPhone: '',
+          }
+```
+
+하지만 문제점이 있었는데, 애초에 구독 결제권은 최후순위 기능으로 예정되어 있었기 때문에, 백엔드팀에서는 유저 테이블에 구독 결제 관련 정보를 포함시키지 않았고, 결제 데이터 테이블도 아직 만들어지지 않은 상태였다. 따라서 백엔드 팀에 다음과 같은 요청을 해야 했다.
+
+1. 유저 정보 밑에 구독 정보 필드를 추가할 것.
+2. 구독 정보는 별도의 구독 결제 데이터 테이블과 연결 관계를 갖도록 리팩토링할 것.
+
+<br />
+
+![](/images/tech/implement-revenuemodel/3.png)
+
+DB는 잘 모르지만 간단하게 머릿속에 있는 데이터들을 구체화해보면 다음과 같은 구조를 생각했다
+
+- **유저 테이블**
+  - UserID, 이름, 이메일, 구독권 정보
+- **구독 테이블**
+  - 유저 정보
+  - 시작 시간, 끝 시간
+  - 구독 권한 종류
+  - 기타 정보
+
+`WHERE`문을 사용하여 해당 유저에 대한 구독 정보를 구독 테이블과 연결시키는데,
+
+1. 유저 테이블에는 UserID, 이름, 이메일, 구독권 정보가 저장된다.
+2. 유저의 구독권 정보는 구독 테이블과 연결된다.
+3. 구독 테이블에는 유저 정보, 구독 시작 시간과 끝 시간, 구독 권한 종류, 기타 정보가 포함되며 유저 ID와 같은 고유 데이터를 통해 유저 테이블과 연결된다.<br/><br/>
+
+위 정보들은 임의로 생각해낸 데이터들이며, 실제 결제 시 제공 받는 결제 데이터는 [토스 페이먼츠 공식 문서](https://docs.tosspayments.com/reference#결제)에서 찾을 수 있다. 해당 문서를 바탕으로 스키마를 다시 작성해보면 다음과 같다.
+
+```tsx
+model Payment {
+  id             String       @id @default(uuid()) //결제 ID
+  user        User      @relation(fields: [userId]) //유저 정보
+  paymentKey     String?                // 결제의 키 값 (토스제공)
+  amount         Int                    // 결제 금액 (토스제공)
+  type           PaymentType?           // 결제 타입 정보 (토스제공)
+  orderId        String       @unique   // 주문한 결제를 식별하는 역할 (토스제공)
+  orderName      String?                // 주문명(토스제공)
+  mId            String?                // 상점아이디(MID). 토스페이먼츠에서 발급(토스제공)
+  method         String?                // 결제수단(토스제공)
+  status         PaymentStatus          // 결제 처리 상태(토스제공)
+  requestedAt    String?                // 결제가 일어난 날짜와 시간 정보(토스제공)
+  approvedAt     String?                // 결제 승인이 일어난 날짜와 시간(토스제공)
+  cardNumber     String?                // 카드번호. 번호의 일부는 마스킹(토스제공)
+  cardType       String?                // 카드 종류: 신용, 체크, 기프트, 미확인(토스제공)
+  receiptUrl     String?                // 발행된 영수증 url 정보 (토스제공)
+  checkoutUrl    String?                // 결제창 url 정보 (토스제공)
+  failureCode    String?                // 오류 타입을 보여주는 에러 코드 (토스제공)
+  failureMessage String?                // 에러 메시지 (토스제공)
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @default(now())
+}
+
+enum PaymentType {
+  NORMAL
+  BILLING
+  BRANDPAY
+}
+
+enum PaymentStatus {
+  READY
+  IN_PROGRESS
+  WAITING_FOR_DEPOSIT
+  DONE
+  CANCELED
+  PARTIAL_CANCELED
+  ABORTED
+  EXPIRED
+}
+```
+
+해당 스키마는 토스 페이먼츠에서 제공하는 데이터 구조를 기반으로 작성 되었고, 기본적으로 토스에서 내려주는 데이터에 유저 정보를 연결하기 위해 userId를 추가 해주었고, 구독권 종료일을 파악하고 유효한 구독권인지를 확인하기 위한 `createdAt` 및 `updatedAt` 필드를 추가했다.
+
+<br />
+
+![](/images/tech/implement-revenuemodel/4.png)
+
+[토스 페이먼츠 결제로직](https://docs.tosspayments.com/guides/payment-widget/integration)
+
+토스에서 제공하는 결제 플로우는 위 사진과 같은데, 주요 단계를 간략하게 요약하자면 아래와 같다.
+
+- 요청: 구매자가 상품이나 서비스를 결제하기 위해 주문서에 필요한 정보(상품 정보, 결제 금액 등)를 입력하고 결 제 요청하는 단계. Ex) 카드사를 선택하고 '결제하기' 버튼을 선택하는 행위
+- 인증: 카드사에서 결제 수단(주로 카드)의 유효성을 확인하기 위한 절차. 사용자가 입력한 결제 정보와 카드사의 인증 정보를 통해 거래의 유효성을 확인하는 과정
+- 승인: 인증이 성공한 경우, 가맹점에서 결제를 승인하는 절차. 이를 통해 실제로 결제가 이루어지며, 가맹점이 제 공하는 서비스나 상품을 구매자에게 제공할 수 있음
+- 요청과 승인을 따로 하는 방식을 채택하여 데이터 정합성을 보장하고 가맹점의 연동을 편리하게 만듬
+
+<br />
+
+![](/images/tech/implement-revenuemodel/5.png)
+
+![](/images/tech/implement-revenuemodel/6.png)
+
+백엔드팀에게 요청할 스키마와 더불어 위 토스 플로우를 참고하여 해당 결제 API 이해를 돕기 위한 결제 로직 플로우 문서를 같이 준비했다. 해당 자료를 백엔드팀에 공유하여 설명했고, 구독권 테이블에 데이터를 추가하는 post요청, 구독 결제권을 조회하는 get 요청 API를 부탁하며, 결제 관련 사전 준비를 끝마칠 수 있었다.
+
+<br />
+
+## 구현
+
+### Step1. 주문서 진입 전 결제 정보 확인
+
+![](/images/tech/implement-revenuemodel/7.png)
+
+<FileName>주문서 진입 전 결제 정보 확인</FileName>
+
+```tsx
+const PaymentCheckIndex = () => {
+  const router = useRouter();
+  const { member } = useMemberStore();
+  ...
+
+  const handleClick = () => {
+    if (!isChecked) return;
+    router.push(
+      `/payment/check/confirm?customerKey=${member.uid}&totalAmount=1&orderTitle=첫달무료체험이벤트`
+    );
+  };
+  ...
+
+  return (
+    <div>
+      ...
+      <div
+        onClick={handleClick}
+        className={` my-10 py-[18px] w-full rounded-[12px] flex items-center justify-center text-title1
+      ${isChecked ? 'cursor-pointer bg-gradient2 text-white' : 'bg-gray100 text-gray300'}
+      `}>
+        0원 결제하기
+      </div>
+    </div>
+  );
+};
+```
+
+먼저 제공받은 화면 디자인을 보면 첫 달 무료 이벤트가 전체 사용자에게 적용된다. '결제하기' 버튼을 클릭하면 사용자는 결제 로직 주문서 진입 페이지로 이동하게 되는데, 이 이동 과정에서 router는 사용자의 `userid`, `totalAmount`, 및 `orderTitle`을 params로 함께 전송한다. 해당 정보들은 나중에 결제창 렌더링을 위한 정보이다. 아쉽게도 무료 이벤트임에도 불구하고, 토스 페이먼츠 시스템은 최소한의 1원 이상의 금액을 필요로 하기 때문에 어쩔 수 없이, 0원의 가격 대신 `totalAmount`에 1원을 입력 해야 했다.<br /><br />
+
+### Step2. 주문서 진입 및 결제 요청
+
+![](/images/tech/implement-revenuemodel/8.png)
+
+<FileName>주문서 진입 및 결제 요청</FileName>
+
+```tsx
+const PaymentConfirmPage = () => {
+  const { member } = useMemberStore();
+  const searchParams = useSearchParams();
+  const price = searchParams.get('totalAmount') || '0';
+  const orderTitle = searchParams.get('orderTitle') as string;
+  const customerKey = searchParams.get('customerKey') as string;
+  const paymentWidgetRef = useRef<PaymentWidgetInstance | null>(null);
+  const paymentMethodsWidgetRef = useRef<ReturnType<
+    PaymentWidgetInstance['renderPaymentMethods']
+  > | null>(null);
+
+  useAsync(async () => {
+    const paymentWidget = await loadPaymentWidget(clientKey, customerKey);
+
+    const paymentMethodsWidget = paymentWidget.renderPaymentMethods(
+      '#payment-widget',
+      {
+        value: parseInt(price),
+      },
+      { variantKey: 'DEFAULT' }
+    );
+
+    paymentWidget.renderAgreement('#agreement');
+
+    paymentWidgetRef.current = paymentWidget;
+    paymentMethodsWidgetRef.current = paymentMethodsWidget;
+  }, []);
+
+  useEffect(() => {
+    const paymentMethodsWidget = paymentMethodsWidgetRef.current;
+    if (paymentMethodsWidget == null) {
+      return;
+    }
+    paymentMethodsWidget.updateAmount(parseInt(price));
+  }, [price]);
+
+  const handleClick = async () => {
+    const paymentWidget = paymentWidgetRef.current;
+    try {
+      const uniqueOrderId = uuidv4();
+
+      await paymentWidget
+        ?.requestPayment({
+          orderId: uniqueOrderId,
+          orderName: orderTitle,
+          customerName: member.memberNickName,
+          customerEmail: member.memberEmail,
+          successUrl: 'http://localhost:3000/payment/check/confirm/success',
+          failUrl: 'http://localhost:3000/payment/check/confirm/fail',
+        })
+        .catch(function (error) {
+          if (error.code === 'USER_CANCEL') {
+            alert('결제가 종료되었습니다.');
+          } else if (error.code === 'INVALID_CARD_COMPANY') {
+            alert('유효하지 않은 카드 코드입니다.');
+          } else {
+            alert(error?.message || '문제가 생겼습니다. 다시 시도해주세요');
+          }
+        });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  return (
+    <Suspense>
+      <div className="max-w-2xl mx-auto px-4 my-20">
+        <div className="flex flex-col gap-2 mt-4">
+          <h1 className="text-lg md:text-2xl font-semibold">확인 및 결제</h1>
+          <p className="text-gray-600 mb-4">
+            결제 수단을 선택하고 결제를 진행해주세요. 환불금은 예약 취소 후 2~3일 내에 결제한 카드로
+            입금됩니다. 동의하시는 경우에만 아래 버튼을 눌러 예약을 결제하세요.
+          </p>
+          {(paymentWidgetRef === null || paymentMethodsWidgetRef === null) && <LoaderSkeleton />}
+          <div id="payment-widget" className="w-full" />
+          <div id="agreement" className="w-full" />
+          <div
+            onClick={handleClick}
+            className={` my-10 py-[18px] w-full rounded-[12px] cursor-pointer bg-gradient2 text-white flex items-center justify-center text-heading4`}
+          >
+            결제하기
+          </div>
+        </div>
+      </div>
+    </Suspense>
+  );
+};
+```
+
+해당 코드는 주문서 진입부터 결제 요청까지의 과정으로 사용자가 결제 확인 페이지에 들어오고, 결제 버튼을 눌러 결제를 완료하기까지의 흐름을 처리하는 방식으로 동작한다.
+
+### 주문서 진입 - 페이지 로드 및 결제 위젯 초기화
+
+사용자가 결제 확인 페이지에 진입하면, URL의 쿼리 파라미터를 통해 주문서와 관련된 정보를 가져온다.<br /><br />
+
+**쿼리 파라미터 추출**
+
+- 페이지 URL에 포함된 `totalAmount`, `orderTitle`, `customerKey`와 같은 결제 관련 정보를 `useSearchParams`를 통해 추출한다.
+  - `totalAmount`: 결제할 금액
+  - `orderTitle`: 주문의 제목
+  - `customerKey`: 유저 식별 키<br /><br />
+
+**결제 위젯 로드**
+
+- 사용자가 진입한 후 `useAsync`를 통해 결제 위젯을 비동기적으로 로드한다. 이때, `loadPaymentWidget` 함수를 호출하여 유저 키와 클라이언트 키를 기반으로 결제 위젯을 초기화한다.
+- 결제 위젯이 성공적으로 로드되면 결제 수단 위젯이 사용자의 결제 가능한 수단을 선택할 수 있도록 렌더링 되고 결제 동의를 위한 동의 영역이 화면에 함께 표시<br /><br />
+
+**위젯 참조 저장**
+
+- 결제 위젯 인스턴스는 **`paymentWidgetRef`**, 결제 수단 위젯 인스턴스는 `paymentMethodsWidgetRef`에 저장된다. 이를 통해 결제 요청 시점에 해당 위젯들을 재사용할 수 있다.<br /><br />
+
+**결제 금액 업데이트**
+
+사용자가 페이지에 진입할 때, 또는 특정 상황에서 결제 금액이 변경되면, 그 금액이 결제 수단 위젯에 반영되어야 하는데. 이를 위해 `useEffect` 훅이 동작하여 `price`금액이 변경될 때마다`paymentMethodsWidget.updateAmount` 메서드를 통해 결제 위젯의 금액을 동기화하여 사용자가 결제하려는 금액을 업데이트한다.<br /><br />
+
+**결제 요청 (사용자가 결제 버튼을 클릭)**
+
+결제 확인 페이지가 렌더링된 후, 사용자가 결제 버튼을 클릭하면, **`handleClick`** 함수가 호출되어 결제 요청이 이루어진다. 이 때 각 결제 요청 ID는 고유해야 하므로, **`uuidv4()`** 함수를 사용해 고유한 주문 ID를 생성한다. 결제 위젯 인스턴스를 사용해 **`requestPayment`** 메서드로 결제를 요청한다.<br /><br />
+
+**결제 성공/실패 처리**
+
+- 결제 요청이 성공적으로 이루어지면, 사용자는 성공 페이지로 redirect된다.
+- 만약 결제 요청이 실패하거나 사용자가 결제를 취소하면, 실패 페이지로 이동하거나 적절한 오류 메시지를 화면에 표시한다. 예를 들어 `USER_CANCEL`: 사용자가 결제를 취소한 경우, '결제가 종료되었습니다'라는 메시지가 표시된다. 그 외의 오류는 기본적으로 '문제가 생겼습니다. 다시 시도해주세요'라는 메시지로 안내한다.<br /><br />
+
+<Callout>
+❗ 동작을 짧게 요약해보자면, 사용자가 결제 확인 페이지에 진입하면 URL에서 결제 정보를 추출하고, 결제 위젯을 로드하여 화면에 렌더링 → 사용자가 결제하기 버튼을 누르면, 결제 요청이 서버에 전송되고, 실제 결제 이후 성공 또는 실패 결과에 따라 사용자는 결과 페이지로 이동되는 로직이다.
+
+</Callout>
+
+### Step3 결제 요청 완료시 Success 페이지 이동 및 결제 최종 승인
+
+![](/images/tech/implement-revenuemodel/9.png)
+
+<FileName>Success 페이지 이동 및 결제 최종 승인</FileName>
+
+```tsx
+export default async function PaymentSuccess({ searchParams }: ParamsProps) {
+  const paymentKey = searchParams.paymentKey;
+  const orderId = searchParams.orderId;
+  const amount = searchParams.amount;
+
+  const data: Payment = await getPayment({
+    paymentKey,
+    orderId,
+    amount,
+  });
+
+  if (data?.redirect) {
+    redirect(data?.redirect?.destination || '/');
+  }
+
+  return (
+    <div>
+      <div>//결제 완료 창 렌더링</div>
+    </div>
+  );
+}
+
+async function getPayment({ paymentKey, orderId, amount }: PaymentRequestProps) {
+  try {
+    const { data: payment } = await axios.post<PaymentResponseProps>(
+      'https://api.tosspayments.com/v1/payments/confirm',
+      {
+        paymentKey,
+        orderId,
+        amount,
+      },
+      {
+        headers: {
+          Authorization: `Basic ${Buffer.from(`${process.env.TOSS_CLIENT_SECRET}:`).toString(
+            'base64'
+          )}`,
+        },
+      }
+    );
+
+    if (payment) {
+      // 결제 최종 승인 시 내려온 Toss payment 객체 데이터 중
+      // 미리 요청한 스키마에 맞게 유저 데이터와 조합하여 백엔드에 post 요청 로직
+    }
+
+    return {
+      payment: payment,
+    };
+  } catch (err: any) {
+    console.log(err);
+
+    return {
+      redirect: {
+        destination: `/payments/fail?code=${err.code}&message=${err.message}&orderId=${orderId}`,
+      },
+    };
+  }
+}
+```
+
+**`getPayment` 함수**
+
+[토스 페이먼츠에서 제공하는 결제-승인 API](https://docs.tosspayments.com/reference#결제-승인) 문서를 참고해서 `Toss Payments` API에 결제 정보를 검증하는 요청 함수를 작성한다. 승인 성공 시 결제 승인 데이터를 반환하고, 실패 시 에러 처리와 함께 redirect URL을 반환한다.
+
+- `'https://api.tosspayments.com/v1/payments/confirm'`로 `POST` 요청을 보내, Toss Payments의 결제 검증을 수행
+- 요청 시 body에는 `paymentKey`, `orderId`, `amount`가 전달되는데, 모두 필수 데이터이고 params로 넘어온 그대로 넘겨준다.
+- 요청 header에는 `TOSS_CLIENT_SECRET` 환경 변수를 사용해 클라이언트의 `secret key`를 Base64로 인코딩하여 `Authorization` 헤더에 추가해야 한다.<br /><br />
+
+**결제 승인 성공 처리**
+
+- `payment` 객체가 반환되면, 결제가 성공적으로 완료 되었다는 것을 의미한다. 결제 승인 시 토스에서 보내준 데이터를 사용해 추가적인 로직을 구현할 수 있는데, 현재는 유저 데이터와 결합하고 이를 모아가이드 백엔드 서버로 전송해 구독-결제 테이블에 해당 정보를 추가하고 있다.<br /><br />
+
+**에러 처리 및 리다이렉트**:
+
+- 결제 요청이 실패할 경우, 에러가 발생하면서 해당 에러의 코드와 메시지를 URL 파라미터로 전달하여 결제 실패 페이지로 redirect한다.
+- `redirect` 객체에는 `/payments/fail` 경로와 함께 오류 코드를 쿼리 스트링으로 포함하여 fail페이지에서 해당 params를 사용하여 오류 정보를 렌더링 할 수 있다.<br /><br />
+
+**`PaymentSuccess` 컴포넌트**
+
+결제가 성공한 후 사용자가 방문하게 되는 페이지를 렌더링 하는데 `searchParams`는 결제 완료 후 redirect된 페이지의 쿼리 파라미터로 전달되는 값 ( `paymentKey`, `orderId`, `amount` 을 이용하여 **`getPayment`** 함수를 호출한다.<br /><br />
+
+![](/images/tech/implement-revenuemodel/10.png)
+
+- 결제가 정상적으로 처리되었을 경우, 페이지에는 '결제 완료' 메시지나 다른 내용을 표시하는 UI 요소를 렌더링 한다.
+
+<br />
+
+## 회원가입 여부 + 구독권 여부 예외처리 함수 Hook으로 관리하기
+
+<Callout>
+❗ 이제 구독 기능을 완료했고, 유저가 결제를 진행했을 시 프리미엄 기능을 사용 할 수 있도록 예외처리 작업을 진행해야 한다. 이번 포스팅에서는 우선 구독 유무만 판별하고, 구독권 상세 조회 및 결제내역은 백엔드팀 API 작업이 끝나는대로 진행 할 예정이다.
+
+</Callout>
+
+![](/images/tech/implement-revenuemodel/11.png)
+
+구독이 완료된 후 User 데이터를 받아와보면 기존 user 데이터에 subscribe 값이 새로 생긴 모습이다. 해당 값을 활용해 현재 로그인된 유저가 구독권을 가지고 있는지 확인한 후, 프리미엄 기능에 예외처리를 적용할 수 있다.<br /><br />
+
+![](/images/tech/implement-revenuemodel/12.png)
+
+구독 유무에 따른 프리미엄 기능 예외처리 방식은 앞서 설명한대로 로그인 여부, 구독 여부 총 2가지를 판별하는데, 로그인 여부를 먼저 판단하고 로그인 되지 않았을시는 로그인 페이지로 redirect, 로그인이 되었다면 구독여부를 판별하고 구독이 되지 않았다면 구독페이지로 redirect 된다.<br /><br />
+
+![](/images/tech/implement-revenuemodel/13.png)
+
+해당 화면은 모아가이드 프로젝트의 대표적인 프리미엄 기능인 투자 리포트(가이드) 페이지인데, PM과 컨텐츠팀이 제작한 실제 투자 리포트로 구독 서비스를 이용중인 유저에게는 해당 가이드 글 조회와 [PDF 다운로드 기능](https://www.banghojin.site/tech/pdf-download)을 제공한다. 해당 페이지에 예외처리를 적용해보자.<br /><br />
+
+![](/images/tech/implement-revenuemodel/14.png)
+
+<FileName>투자 리포트 아이템 컴포넌트</FileName>
+
+```tsx
+const CategoryReportItem = ({ id, title, category, date }: ReportListsItem) => {
+  const router = useRouter();
+  return (
+    <div
+      onClick={() => router.push(`/report/${id}`)}
+      className="py-5 border-b border-gray100 flex gap-5 items-center cursor-pointer"
+    >
+      ...
+      <div>...</div>
+    </div>
+  );
+};
+```
+
+현재 투자 리포트 아이템은 로그인/구독 여부에 상관없이 누구나 router를 이용하여 해당 리포트 상세 페이지에 접근할 수 있는 구조로 만들어져있다. 해당 아이템에 로그인/구독 예외처리를 적용해보면<br /><br />
+
+<FileName>아이템 클릭 시</FileName>
+
+```tsx
+const handleClick = useCallback(async () => {
+  const isLoggedIn = !!localStorage.getItem('access_token');
+  if (!isLoggedIn) {
+    router.push('/sign');
+  } else {
+    if (member.subscribe) {
+      router.push(`/report/${id}`);
+    } else {
+      router.push('/payment');
+    }
+  }
+}, [id, member.subscribe, router]);
+```
+
+위와 같은 형태로 예외처리 코드를 작성할 수 있다. 로그인하지 않은 유저는 로그인 페이지로, 구독하지 않은 유저는 결제 페이지로 redirect되며, 구독 중인 유저만 프리미엄 기능에 접근할 수 있다. <br />
+
+<Callout>
+❗ 하지만 프리미엄 기능은 리포트 조회뿐만 아니라 투자 상품 상세 조회 및 투자 학습 콘텐츠와 같은 다양한 곳에서 사용된다. 따라서, 해당 예외처리 코드는 여러 프리미엄 기능의 사용처에서 반복적으로 적용될 것이며, 만약 로직이 변경될 경우 모든 사용처를 찾아다니며 예외처리 코드를 수정해야 하는 비효율적인 상황이 발생할 수 있다. 이를 방지하기 위해서는 예외처리 로직을 재사용 가능한 함수나 커스텀 Hook으로 분리하여 코드 중복을 방지할 수 있다. 또한 로직이 변경될 때 한 곳에서만 수정하면 전체 기능에 적용될 수 있어 유지보수성을 높일 수 있을것이다.
+
+</Callout>
+
+<br />
+<br />
+
+<FileName>커스텀 Hook</FileName>
+
+```tsx
+const useAuthCheck = () => {
+  const router = useRouter();
+  const { member } = useMemberStore();
+
+  const checkAuth = useCallback(
+    (premiumRedirectPath: string) => {
+      const isLoggedIn = !!localStorage.getItem('access_token');
+
+      if (!isLoggedIn) {
+        router.push('/sign'); // 로그인 페이지로 이동
+      } else if (!member.subscribe) {
+        router.push('/payment'); // 구독 결제 페이지로 이동
+      } else {
+        router.push(premiumRedirectPath); // 프리미엄 기능 접근 허용
+      }
+    },
+    [member, router]
+  );
+
+  return { checkAuth };
+};
+
+export default useAuthCheck;
+
+/*
+ * 사용처
+ */
+const handleClick = () => {
+  checkAuth(`/report/${id}`);
+};
+```
+
+이를 커스텀 Hook 관리 해보면 위와 같은 코드로 작성할 수 있다. 로그인 여부와 구독 여부를 확인하고, 각각 로그인 페이지 또는 결제 페이지로 redirect하는 로직을 포함한다. 프리미엄 기능으로 이동할 경로를 `premiumRedirectPath`로 매개변수로 넘겨주어 꼭 리포트 페이지가 아니더라도 다른 프리미엄 기능 페이지로 이동 될 수 있도록 자리를 뚫어주었다.
+
+<br />
+
+## 마무리
+
+토스 페이먼츠를 선택하게 된 주된 이유는 다양한 결제 수단을 한 번에 제공할 수 있다는 점이었다. 사용자가 선호하는 결제 방식은 각기 다를 수 있기 때문에, 카카오페이와 같은 특정 결제 수단만 제공할 경우 제한된 선택지로 인해 사용자 불만이 생길 수 있음을 다양한 결제 옵션을 제공함으로써 사용자 경험을 개선했다.
+
+결제 API를 도입하면서 백엔드 팀과의 협업 또한 매우 중요했다. 특히, 구독 결제 관련 정보를 유저 테이블에 추가하는 과정에서 백엔드의 데이터 스키마를 수정하고, 결제 데이터를 어떻게 저장할 것인지에 대한 논의가 필요했다. 이를 통해 유저 정보와 결제 데이터를 유연하게 연결할 수 있는 구조를 설계하면서, 데이터 스키마 설계의 중요성을 느낄 수 있었다.
+
+이번 프로젝트를 통해 결제 시스템을 처음으로 구현해보면서 느낀 것은, 결제 로직 자체는 복잡하지만 적절한 서비스와 도구를 선택하면 사용자 경험을 크게 향상시킬 수 있다는 점이다. 특히, 토스 페이먼츠에서 제공하는 테스트 환경 덕분에 다양한 시나리오에서 결제 로직을 미리 검증할 수 있었고, 백엔드와의 긴밀한 협업을 통해 데이터 구조를 효과적으로 구축할 수 있었다.<br /><br />
+
+<Callout>
+💡 무엇보다 비즈니스 모델의 핵심인 결제 시스템을 처음부터 끝까지 구현해 보며 스스로 많은 자신감을 얻게 되었다. 실제 사용자에게 제공될 결제 시스템을 구축하고, 이를 통해 실질적인 비즈니스 모델을 구현할 수 있다는 점에서 흥미롭고 보람 있는 경험이었다.
+
+</Callout>
+
+<br />
+<br />
+
+---
