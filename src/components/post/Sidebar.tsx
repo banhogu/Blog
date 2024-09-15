@@ -6,6 +6,7 @@ import SideTheme from './SideTheme';
 import AiBot from './AiBot';
 import ToTop from './ToTop';
 import { Post } from '@/models/post';
+import DownPDF from './DownPDF';
 
 interface SidebarType {
   parsedContent: ParsedPost[];
@@ -49,6 +50,9 @@ const Sidebar = ({ parsedContent, post }: SidebarType) => {
           <AiBot post={post} />
 
           <SideTheme />
+
+          {/* Todo : pdf 다운로드 버튼 */}
+          <DownPDF />
         </div>
       </div>
     </>
