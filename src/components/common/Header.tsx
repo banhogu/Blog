@@ -1,10 +1,11 @@
 'use client';
+import type { Post } from '@/models/post';
+
 import React, { useEffect } from 'react';
 import { Logo } from './Logo';
 import ToggleTheme from './ToggleTheme';
 import Link from 'next/link';
 import { IoIosSearch } from 'react-icons/io';
-import { Post } from '@/models/post';
 import { disablePageScroll, enablePageScroll } from 'scroll-lock';
 import { useModalStore } from '@/store/useModal.store';
 import { usePathname } from 'next/navigation';

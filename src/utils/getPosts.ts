@@ -1,4 +1,5 @@
-import { Post } from '@/models/post';
+import type { Post } from '@/models/post';
+
 import fs from 'fs';
 import matter from 'gray-matter';
 import { join } from 'path';

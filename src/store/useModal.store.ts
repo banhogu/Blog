@@ -1,4 +1,4 @@
-import { Post } from '@/models/post';
+import type { Post } from '@/models/post';
 import { create } from 'zustand';
 
 /**
