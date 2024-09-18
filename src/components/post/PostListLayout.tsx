@@ -1,9 +1,10 @@
 'use client';
-import { Post } from '@/models/post';
+import type { Post } from '@/models/post';
+import type { Option } from '@/models/options';
+
 import { Suspense, useMemo, useState } from 'react';
 import PostList from './PostList';
 import { getTag } from '@/utils/getTag';
-import { Option } from '@/models/options';
 
 interface PostListLayoutType {
   posts: Post[];

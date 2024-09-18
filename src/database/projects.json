@@ -1,0 +1,71 @@
+{
+  "projects": [
+    {
+      "title": "모아가이드",
+      "description": "조각 투자 상품 플랫폼",
+      "github": "https://github.com/Moaguide-develop",
+      "notion": "https://radical-chatter-f1a.notion.site/STO-MVP-1e93646e83dc4d328d5fc4bcc526841f",
+      "link": "https://moaguide.vercel.app/",
+      "date": "2024.07 ~ ",
+      "img": "/images/projects/moaguide.svg",
+      "imgSize": [200, 51]
+    },
+    {
+      "title": "Sporting",
+      "description": "운동 약속 플랫폼 랜딩 페이지",
+      "github": "https://github.com/banhogu/Spoting",
+      "notion": "https://radical-chatter-f1a.notion.site/SPORTING-d4138d73031c4750b8e026228e2103da?pvs=4",
+      "link": "https://www.spoting.site/",
+      "date": "2024.08 ~ 2024.08",
+      "img": "/images/projects/spoting.png",
+      "imgSize": [300, 151]
+    },
+    {
+      "title": "Offispace",
+      "description": "직장인들을 위한 거점공유 오피스",
+      "github": "https://github.com/4bujak-4bujak",
+      "notion": "https://radical-chatter-f1a.notion.site/Offispace-a8fcd1169ad64f0085508fa8c334f655",
+      "link": "https://4busak.vercel.app",
+      "date": "2024.04 ~ 2024.06",
+      "img": "/images/projects/offispace.png",
+      "imgSize": [130, 51]
+    },
+    {
+      "title": "호진방 블로그",
+      "description": "직장인들을 위한 거점공유 오피스",
+      "github": "https://github.com/banhogu/Blog",
+      "date": "2024.06 ~ ",
+      "img": "/images/projects/blog.png",
+      "imgSize": [300, 150]
+    },
+    {
+      "title": "휴방",
+      "description": "국내 숙소를 조회하고 예약할 수 있는 플랫폼",
+      "github": "https://github.com/banhogu/HyuBang-Project",
+      "notion": "https://radical-chatter-f1a.notion.site/2579e48e7de4462fb461a4c3fb69df29",
+      "link": "https://fast-campus-mini-project.vercel.app",
+      "date": "2024.03 ~ 2024.04",
+      "img": "/images/projects/hyubang.png",
+      "imgSize": [380, 300]
+    },
+    {
+      "title": "4UTeamIntranet",
+      "description": "직원들을 위한 급여 및 업무 관리 플랫폼",
+      "github": "https://github.com/banhogu/4UTeamIntranet-Project",
+      "notion": "https://radical-chatter-f1a.notion.site/4UTeamIntranet-481a886c5ad3418db34f1fffa4c46e24",
+      "link": "https://test--4uteam.netlify.app/",
+      "date": "2024.02 ~ 2024.03",
+      "img": "/images/projects/foruteam.png",
+      "imgSize": [320, 80]
+    },
+    {
+      "title": "FourUnity",
+      "description": "직원들을 위한 급여 및 업무 관리 플랫폼",
+      "github": "https://github.com/banhogu/FourUnity-Project",
+      "link": "https://fourunity.netlify.app",
+      "date": "2024.01 ~ 2024.02",
+      "img": "/images/projects/forunity.png",
+      "imgSize": [320, 80]
+    }
+  ]
+}
