@@ -1,11 +1,12 @@
-import { useHeadingsObserver } from '@/hooks/useHeadingObserver';
-import { ParsedPost } from '@/models/parsedPost';
-import Link from 'next/link';
+import type { Post } from '@/models/post';
+import type { ParsedPost } from '@/models/parsedPost';
+
 import React from 'react';
+import { useHeadingsObserver } from '@/hooks/useHeadingObserver';
+import Link from 'next/link';
 import SideTheme from './SideTheme';
 import AiBot from './AiBot';
 import ToTop from './ToTop';
-import { Post } from '@/models/post';
 import DownPDF from './DownPDF';
 
 interface SidebarType {

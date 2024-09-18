@@ -1,8 +1,9 @@
-import { Option } from '@/models/options';
+import type { Option } from '@/models/options';
+
+import React, { useMemo } from 'react';
 import { Post } from '@/models/post';
 import { getTag } from '@/utils/getTag';
 import Link from 'next/link';
-import React, { useMemo } from 'react';
 
 type PostListType = {
   posts: Post[];

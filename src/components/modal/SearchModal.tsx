@@ -1,7 +1,8 @@
+import type { Post } from '@/models/post';
+
+import { ChangeEvent, useCallback, useEffect, useRef, useState } from 'react';
 import useDebounce from '@/hooks/useDebounce';
 import useOnClickOutside from '@/hooks/useOnClickOutside';
-import { Post } from '@/models/post';
-import { ChangeEvent, useCallback, useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { getTag } from '@/utils/getTag';
 import { useModalStore } from '@/store/useModal.store';

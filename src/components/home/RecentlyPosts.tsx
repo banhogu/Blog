@@ -1,5 +1,6 @@
 'use client';
-import { Post } from '@/models/post';
+import type { Post } from '@/models/post';
+
 import React, { useMemo } from 'react';
 import { format } from 'date-fns';
 import Link from 'next/link';
