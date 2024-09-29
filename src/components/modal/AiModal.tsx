@@ -3,12 +3,11 @@ import useOnClickOutside from '@/hooks/useOnClickOutside';
 import { useModalStore } from '@/store/useModal.store';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import type { ChatCompletionMessageParam } from 'openai/resources/index';
-import { useMutation } from '@tanstack/react-query';
-import axios from 'axios';
 import Message, { MessageType } from './Message';
 import Image from 'next/image';
 import { LiaRobotSolid } from 'react-icons/lia';
 import { motion } from 'framer-motion';
+import useChatbotMutation from '../factory/useChatbotMutation';
 
 const AiModal = () => {
   const { content, setOpen } = useModalStore();
@@ -16,21 +15,8 @@ const AiModal = () => {
   const [messageParams, setMessageParams] = useState<ChatCompletionMessageParam[]>([]);
   const [dotCount, setDotCount] = useState(1);
 
-  const { mutate, isPending } = useMutation<
-    ChatCompletionMessageParam[],
-    unknown,
-    ChatCompletionMessageParam[]
-  >({
-    mutationFn: async (messages) => {
-      const res = await axios.post('/api/chatbot', {
-        messages,
-      });
-
-      return res.data.messages;
-    },
-    onSuccess: (data) => {
-      setMessageParams(data);
-    },
+  const { mutate, isPending } = useChatbotMutation((data) => {
+    setMessageParams(data);
   });
 
   const ref = useRef<HTMLDivElement>(null);
