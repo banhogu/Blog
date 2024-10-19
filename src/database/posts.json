@@ -194,6 +194,11 @@
       "id": "implement-revenuemodel",
       "tag": "tech",
       "title": "토스 페이먼츠 API를 이용하여 프로젝트 수익 모델 구현해보기"
+    },
+    {
+      "id": "what-is-oop",
+      "tag": "study",
+      "title": "객체지향 설계의 모든것"
     }
   ]
 }

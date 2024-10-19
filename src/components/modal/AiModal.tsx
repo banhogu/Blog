@@ -36,12 +36,14 @@ const AiModal = () => {
     mutate(firstMessage);
   }, [content.content, mutate]);
 
+  // 새로운 메시지가 추가될 때 스크롤 하단으로 이동
   useEffect(() => {
     if (messageListRef.current) {
       messageListRef.current.scrollTop = messageListRef.current.scrollHeight;
     }
   }, [messageParams]);
 
+  // 점이 추가되는 애니메이션 효과
   useEffect(() => {
     const interval = setInterval(() => {
       setDotCount((prev) => (prev % 3) + 1);
