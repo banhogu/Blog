@@ -199,6 +199,11 @@
       "id": "what-is-oop",
       "tag": "study",
       "title": "객체지향 설계의 모든것"
+    },
+    {
+      "id": "js-loop",
+      "tag": "study",
+      "title": "자바스크립트에서의 순환, 반복 메서드"
     }
   ]
 }
