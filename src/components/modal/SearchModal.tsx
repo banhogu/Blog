@@ -35,10 +35,6 @@ const SearchModal = () => {
   };
 
   useEffect(() => {
-    inputRef.current.focus();
-  }, []);
-
-  useEffect(() => {
     if (debouncedKeyword !== '') {
       searchedPost(debouncedKeyword);
     } else {
@@ -47,13 +43,13 @@ const SearchModal = () => {
   }, [debouncedKeyword]);
 
   return (
-    <div className="fixed inset-0 overflow-y-scroll bg-gray-400 bg-opacity-20 z-50 backdrop-blur-sm">
+    <div className="fixed inset-0 overflow-y-scroll bg-gray-500 bg-opacity-20 z-50 backdrop-blur-sm">
       <motion.div
         className="box"
         initial={{ opacity: 0, scale: 0.5 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{
-          duration: 0.5,
+          duration: 0.25,
           delay: 0,
           ease: [0, 0.71, 0.2, 1.01],
         }}
