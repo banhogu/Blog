@@ -30,6 +30,8 @@ export function PostHeader({ posts }: PostHeaderType) {
 
   if (post == null) return <></>;
 
+  console.log(post);
+
   const parsedContent = parseContent(post.content);
 
   const formattedDate = format(new Date(post.date), 'yyyy.MM.dd');
