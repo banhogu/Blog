@@ -8,5 +8,4 @@ export interface Post {
   postTag: string;
   subTitle: string;
   date: string;
-  readingMinutes: number;
 }
