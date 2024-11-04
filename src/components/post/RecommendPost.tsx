@@ -18,7 +18,7 @@ const RecommendPost = ({ posts }: PostHeaderType) => {
   const RecommendPosts = getRecommend(post.tag);
 
   return (
-    <div className="mt-5 pb-5 ">
+    <div className="mt-4 pt-10 pb-10 flex items-center justify-between gap-5">
       {RecommendPosts.map((item) => (
         <RecommendPostItem key={item.id} {...item} />
       ))}

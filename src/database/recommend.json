@@ -19,7 +19,7 @@
       "tag": "tech",
       "title": "응집도와 결합도를 고려한 회원가입 설계와 유저가 지치지 않는 UI",
       "date": "2024-05-02",
-      "img": "/images/thumbnail/signup-design.png"
+      "img": "/images/thumbnail/signup-design.jpg"
     },
     {
       "id": "next-blog-1",
@@ -40,14 +40,14 @@
       "tag": "experience",
       "title": "Next.js 블로그 모달 관리 개선하기",
       "date": "2024-07-08",
-      "img": "/images/thumbnail/next-blog-manage-modal.png"
+      "img": "/images/thumbnail/next-blog-manage-modal.jpg"
     },
     {
       "id": "web-rendering-methodology",
       "tag": "study",
       "title": "전체적인 흐름으로 이해해보는 웹 렌더링의 발전과정",
       "date": "2023-12-27",
-      "img": "/images/thumbnail/web-rendering-methodology.png"
+      "img": "/images/thumbnail/web-rendering-methodology.avif"
     },
     {
       "id": "what-is-servercomponent",
@@ -68,7 +68,7 @@
       "tag": "think",
       "title": "2024 블레이버스 해커톤 참가 및 수상 후기",
       "date": "2024-08-16",
-      "img": "/images/thumbnail/my-first-hackathon.png"
+      "img": "/images/thumbnail/my-first-hackathon.avif"
     },
     {
       "id": "retrospect-likelion",
