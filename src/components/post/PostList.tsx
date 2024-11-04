@@ -33,7 +33,10 @@ const PostList = ({ posts, divide }: PostListType) => {
         const isLast = i === dividedPosts.length - 1;
 
         return (
-          <li key={post.slug}>
+          <li
+            key={post.slug}
+            className="transition-transform duration-100 transform hover:scale-105"
+          >
             <Link href={post.slug}>
               <div
                 className={` flex items-center py-[15px] transition-[background-color] hover:bg-gray-100 dark:hover:bg-[#242424] active:bg-gray-200 dark:active:bg-[#222] border-y border-gray-200 dark:border-[#313131]

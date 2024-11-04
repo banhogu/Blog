@@ -1,4 +1,5 @@
 import { PostHeader } from '@/components/post/PostHeader';
+import RecommendPost from '@/components/post/RecommendPost';
 import { getPosts } from '@/utils/getPosts';
 import dynamic from 'next/dynamic';
 
@@ -12,6 +13,7 @@ export default async function Layout({ children }) {
       <PostHeader posts={posts} />
       {children}
       <div className="h-8 w-full" />
+      <RecommendPost posts={posts} />
       <Giscus />
     </article>
   );

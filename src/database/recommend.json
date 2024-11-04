@@ -1,0 +1,88 @@
+{
+  "recommendPost": [
+    {
+      "id": "implement-revenuemodel",
+      "tag": "tech",
+      "title": "토스 페이먼츠 API를 이용하여 프로젝트 수익 모델 구현해보기",
+      "date": "2024-09-10",
+      "img": "/images/thumbnail/implement-revenuemodel.png"
+    },
+    {
+      "id": "optimization-infinitescroll",
+      "tag": "tech",
+      "title": "가상화를 이용하여 대형 리스트 무한스크롤 최적화 해보기",
+      "date": "2024-08-19",
+      "img": "/images/thumbnail/optimization-infinitescroll.png"
+    },
+    {
+      "id": "signup-design",
+      "tag": "tech",
+      "title": "응집도와 결합도를 고려한 회원가입 설계와 유저가 지치지 않는 UI",
+      "date": "2024-05-02",
+      "img": "/images/thumbnail/signup-design.jpg"
+    },
+    {
+      "id": "next-blog-1",
+      "tag": "experience",
+      "title": "Next.js 블로그 만들기 ver1",
+      "date": "2024-06-24",
+      "img": "/images/thumbnail/next-blog-1.png"
+    },
+    {
+      "id": "next-blog-test2",
+      "tag": "experience",
+      "title": "Next.js 블로그에 Cypress를 통한 E2E 테스트 적용해보기 Ver.2",
+      "date": "2024-07-06",
+      "img": "/images/thumbnail/next-blog-test2.png"
+    },
+    {
+      "id": "next-blog-manage-modal",
+      "tag": "experience",
+      "title": "Next.js 블로그 모달 관리 개선하기",
+      "date": "2024-07-08",
+      "img": "/images/thumbnail/next-blog-manage-modal.jpg"
+    },
+    {
+      "id": "web-rendering-methodology",
+      "tag": "study",
+      "title": "전체적인 흐름으로 이해해보는 웹 렌더링의 발전과정",
+      "date": "2023-12-27",
+      "img": "/images/thumbnail/web-rendering-methodology.avif"
+    },
+    {
+      "id": "what-is-servercomponent",
+      "tag": "study",
+      "title": "서버 컴포넌트 이해하기",
+      "date": "2024-03-04",
+      "img": "/images/thumbnail/what-is-servercomponent.png"
+    },
+    {
+      "id": "next-blog-test1",
+      "tag": "study",
+      "title": "Next.js 블로그에 Cypress를 통한 E2E 테스트 적용해보기 Ver.1",
+      "date": "2024-07-02",
+      "img": "/images/thumbnail/next-blog-test1.png"
+    },
+    {
+      "id": "my-first-hackathon",
+      "tag": "think",
+      "title": "2024 블레이버스 해커톤 참가 및 수상 후기",
+      "date": "2024-08-16",
+      "img": "/images/thumbnail/my-first-hackathon.avif"
+    },
+    {
+      "id": "retrospect-likelion",
+      "tag": "think",
+      "title": "멋쟁이사자처럼 10기 회고록",
+      "date": "2023-01-12",
+      "img": "/images/thumbnail/retrospect-likelion.webp"
+    },
+    {
+      "id": "why-i-use-next",
+      "tag": "think",
+      "title": "나는 Next를 왜 쓰는가, 취업 할 때 유리해서? 기술 스택 하나 더 채우려고?",
+      "date": "2024-01-12",
+      "img": "/images/thumbnail/why-i-use-next.png"
+    }
+  ]
+}

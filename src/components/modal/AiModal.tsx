@@ -27,7 +27,7 @@ const AiModal = () => {
   useEffect(() => {
     const firstMessage = [
       {
-        content: `${content.content} 
+        content: `${content.content}
         너가 요약해야 할 글이야. system 메세지에 요구한대로 작성해줘
         `,
         role: 'user' as const,
@@ -67,9 +67,9 @@ const AiModal = () => {
             duration: 0.4,
             ease: [0, 0.71, 0.2, 1.01],
           }}
-          className="bg-gray-50 border-[0.3px] border-gray-500 overflow-y-auto mx-auto pb-4 rounded-xl shadow-lg custom-scrollbar2 w-[720px] min-h-[600px] max-h-[700px]"
+          className="bg-gray-50  overflow-y-auto mx-auto pb-4 rounded-xl shadow-lg custom-scrollbar2 w-[720px] min-h-[600px] max-h-[700px]"
         >
-          <div className="w-full h-9 bg-gray-900 px-3 py-3 flex items-center gap-2">
+          <div className="w-full h-9 bg-gray-900 px-3 py-3 flex items-center gap-2 fixed rounded-lg">
             <div
               onClick={() => setOpen(false)}
               className="w-[14px] h-[14px] flex items-center justify-center cursor-pointer rounded-full bg-red-500 hover-button"
@@ -77,7 +77,7 @@ const AiModal = () => {
             <div className="w-[14px] h-[14px] flex items-center justify-center cursor-pointer rounded-full bg-yellow-500 "></div>
             <div className="w-[14px] h-[14px] flex items-center justify-center cursor-pointer rounded-full bg-green-500 "></div>
           </div>
-          <div className="mx-6 mt-4 items-end flex flex-col gap-2">
+          <div className="pt-10 mx-6 mt-4 items-end flex flex-col gap-2">
             <div className="flex items-center">
               <Image
                 src="/images/about_me.png"

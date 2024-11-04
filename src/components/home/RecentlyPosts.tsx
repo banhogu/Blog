@@ -30,7 +30,7 @@ const RecentlyPosts = (posts: RecentlyPostsType) => {
         {sortedPosts.map((item, i) => {
           const isLast = i === sortedPosts.length - 1;
           return (
-            <li key={i} className="text-zinc-700 dark:text-gray-300">
+            <li key={i} className="text-zinc-700 dark:text-gray-300 group">
               <Link href={item.slug}>
                 <div
                   className={` py-[12px] border-b border-gray-300 flex flex-col gap-[3px] hover:bg-gray-100 dark:hover:bg-[#242424] active:bg-gray-200 dark:active:bg-[#222]
@@ -40,7 +40,7 @@ const RecentlyPosts = (posts: RecentlyPostsType) => {
                   <div className="text-sky-900 text-[12px] max-w-max flex items-center py-[1.5px] px-[4px] bg-gray-200 font-bold rounded-md dark:text-white dark:bg-gray-800">
                     {getTag(item.tag)}
                   </div>
-                  <p className="font-bold text-zinc-800 text-[15.5px] dark:text-gray-300">
+                  <p className="font-bold text-zinc-800 text-[15.5px] dark:text-gray-300 group-hover:underline">
                     {item.title}
                   </p>
                   <p className="font-semibold text-[14px]"># {item.subTitle}</p>

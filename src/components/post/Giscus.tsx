@@ -39,5 +39,5 @@ export default function Giscus() {
     iframe?.contentWindow?.postMessage({ giscus: { setConfig: { theme } } }, 'https://giscus.app');
   }, [currentTheme]);
 
-  return <section ref={ref} />;
+  return <section className="mt-10" ref={ref} />;
 }
