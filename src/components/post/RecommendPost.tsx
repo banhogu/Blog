@@ -18,10 +18,13 @@ const RecommendPost = ({ posts }: PostHeaderType) => {
   const RecommendPosts = getRecommend(post.tag);
 
   return (
-    <div className="mt-4 pt-10 pb-10 flex items-center justify-between gap-5">
-      {RecommendPosts.map((item) => (
-        <RecommendPostItem key={item.id} {...item} />
-      ))}
+    <div className="mt-4 pt-10 pb-10 border-t-2 border-gray-200">
+      <p className=" font-semibold text-[21px] mt-2 dark:text-gray-100">📌 Suggested Posts</p>
+      <div className=" flex items-center justify-between gap-4 mt-5">
+        {RecommendPosts.map((item) => (
+          <RecommendPostItem key={item.id} {...item} />
+        ))}
+      </div>
     </div>
   );
 };
