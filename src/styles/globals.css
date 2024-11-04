@@ -36,12 +36,12 @@
 }
 
 /* <pre> 태그로 감싸진 코드 블록의 가로 스크롤바를 숨기기 */
-pre::-webkit-scrollbar {
+/* pre::-webkit-scrollbar {
   display: none;
-}
+} */
 
 pre {
-  scrollbar-width: none;
+  scrollbar-width: thin;
 }
 
 .custom-scrollbar::-webkit-scrollbar {

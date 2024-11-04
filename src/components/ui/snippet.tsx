@@ -12,7 +12,7 @@ export const Snippet = ({ children, scroll = true, caption = null }) => (
       bg-[#222] text-white
       dark:bg-[#222] dark:text-gray-300
 
-      ${scroll ? 'overflow-scroll' : 'whitespace-pre-wrap break-all overflow-hidden'}
+      ${scroll ? 'overflow-x-scroll' : 'whitespace-pre-wrap break-all overflow-x-scroll'}
     `}
     >
       <code>{children}</code>
