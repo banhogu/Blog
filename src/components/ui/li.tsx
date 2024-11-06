@@ -3,6 +3,7 @@ export function LI({ children }) {
   return (
     <li
       className={`
+      
     my-2
     [ul_&]:relative
     [ul_&]:pl-4
@@ -17,7 +18,15 @@ export function LI({ children }) {
     text-[17px]
   `}
     >
-      {children}
+      <p
+        className="border-b
+      pb-1
+      border-gray-300
+      max-w-max
+      "
+      >
+        {children}
+      </p>
     </li>
   );
 }

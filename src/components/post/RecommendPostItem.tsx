@@ -23,7 +23,7 @@ const RecommendPostItem = ({ id, tag, title, date, img }: items) => {
     >
       {' '}
       {/* group 클래스 유지 */}
-      <div className="relative w-full h-[200px] rounded-lg overflow-hidden ">
+      <div className="relative w-full h-[200px] rounded-lg overflow-hidden">
         <Image
           src={img}
           alt=""
@@ -32,7 +32,8 @@ const RecommendPostItem = ({ id, tag, title, date, img }: items) => {
           loading="lazy"
         />
       </div>
-      <div className=" text-sky-900 text-[14px] max-w-max flex items-center py-[1.5px] px-[4px] bg-gray-200 font-bold rounded-md dark:text-white dark:bg-gray-800">
+      <div className="w-full h-[1.5px] bg-gray-200" />
+      <div className="mt-4  max-w-max text-sky-900 text-[14px] flex items-center py-[1.5px] px-[4px] bg-gray-200 font-bold rounded-md dark:text-white dark:bg-gray-800">
         {getTag(tag)}
       </div>
       <p className="line-clamp-2 overflow-hidden mt-[6px] min-h-[50px] max-h-[50px] font-bold text-zinc-800 text-[15.5px] dark:text-gray-300 group-hover:underline">
