@@ -21,7 +21,7 @@ export function LI({ children }) {
       <p
         className="border-b
       pb-1
-      border-gray-300
+      border-gray-200
       max-w-max
       "
       >

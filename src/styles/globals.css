@@ -12,7 +12,7 @@
 
   :root.dark {
     color-scheme: dark;
-    @apply bg-[#171717];
+    @apply bg-[#111b26];
   }
 
   :root.pause-transitions * {

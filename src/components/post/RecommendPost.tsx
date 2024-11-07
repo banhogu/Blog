@@ -18,8 +18,8 @@ const RecommendPost = ({ posts }: PostHeaderType) => {
   const RecommendPosts = getRecommend(post.tag);
 
   return (
-    <div className="mt-4 pt-10 pb-10  sm:block hidden">
-      <p className=" font-bold text-[20px] mt-2 dark:text-gray-100">Suggested Posts</p>
+    <div className=" pt-8 pb-10  sm:block hidden">
+      <p className=" font-bold text-[20px] mt-2 dark:text-gray-100">관련 글</p>
       <div className=" flex items-center justify-between gap-4 mt-5">
         {RecommendPosts.map((item) => (
           <RecommendPostItem key={item.id} {...item} />

@@ -32,7 +32,7 @@ const ProjectItem = ({
         <div className="font-bold text-gray-800 text-[15px] sm:text-[17.5px] dark:text-gray-300">
           {title}
         </div>
-        <div className="flex gap-[6px] sm:gap-2 items-center">
+        <div className="flex gap-[4px] sm:gap-2 items-center">
           {github ? (
             <Link href={github} target="_blank">
               <FiGithub className="text-[15px] sm:text-[17px]" />

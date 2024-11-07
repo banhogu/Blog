@@ -1,8 +1,9 @@
 'use client';
 import React from 'react';
-import { A } from '@/components/ui/a';
+
 import { FiGithub } from 'react-icons/fi';
 import { FaInstagram } from 'react-icons/fa6';
+import Link from 'next/link';
 
 const Footer = () => {
   return (
@@ -13,18 +14,26 @@ const Footer = () => {
           (
           <div className="flex items-center gap-1">
             <FaInstagram size={14} />
-            <A target="_blank" href="https://www.instagram.com/banhogu" className="font-bold">
+            <Link
+              target="_blank"
+              href="https://www.instagram.com/banhogu"
+              className="text-gray-600 dark:text-gray-300 underline"
+            >
               banhogu
-            </A>
+            </Link>
           </div>
           )
         </div>
       </div>
-      <div className="flex items-center gap-1">
+      <div className="flex font-semibold items-center gap-1 ">
         <FiGithub size={14} />
-        <A target="_blank" href="https://github.com/banhogu/Blog" className="font-bold">
+        <Link
+          target="_blank"
+          href="https://github.com/banhogu/Blog"
+          className="text-gray-600 dark:text-gray-300 underline"
+        >
           Source
-        </A>
+        </Link>
       </div>
     </footer>
   );
