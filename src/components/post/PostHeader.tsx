@@ -56,8 +56,12 @@ export function PostHeader({ posts }: PostHeaderType) {
         >
           {getTag(post.tag)}
         </div>
-        <h1 className=" text-[30px] font-bold dark:text-gray-100 text-center">{post.title}</h1>
-        <p className=" font-semibold text-[16px] mt-2 dark:text-gray-100"># {post.subTitle}</p>
+        <h1 className="text-[24px] sm:text-[30px] font-bold dark:text-gray-100 text-center">
+          {post.title}
+        </h1>
+        <p className=" font-semibold text-[14px] sm:text-[16px] mt-2 dark:text-gray-100">
+          # {post.subTitle}
+        </p>
         <p className="mt-1 font-semibold text-gray-500 dark:text-gray-100">{formattedDate}</p>
       </div>
       {showToTop && <ToTop postId={post.id} />}
