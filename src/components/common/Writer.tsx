@@ -14,6 +14,9 @@ const Writer = () => {
   const [isAboutHover, setIsAboutHover] = useState(false);
   return (
     <div className=" mt-20 mb-6 py-8 border-t-[1px] border-b-[1px] border-dashed border-gray-500">
+      <p className="flex items-center justify-end font-semibold font-gray-500 text-md">
+        Written by
+      </p>
       <div className="flex gap-7 items-center px-3 ">
         <div>
           <Image
