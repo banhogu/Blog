@@ -66,7 +66,7 @@ export function PostHeader({ posts }: PostHeaderType) {
       </div>
       {showToTop && <ToTop postId={post.id} />}
       <Sidebar parsedContent={parsedContent} post={post} />
-      <Progressbar />
+      <Progressbar title={post.title} />
     </>
   );
 }

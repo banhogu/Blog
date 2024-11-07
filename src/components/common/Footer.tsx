@@ -8,7 +8,7 @@ import Link from 'next/link';
 const Footer = () => {
   return (
     <footer className="p-6 pt-3 pb-7 flex text-[14px] text-center  dark:text-gray-400 text-gray-700 font-mono">
-      <div className="grow font-naverBold text-left flex items-center gap-1 dark:text-gray-300">
+      <div className="grow font-semibold text-left flex items-center gap-1 dark:text-gray-300">
         호진방 블로그
         <div className="flex items-center">
           (
@@ -25,7 +25,7 @@ const Footer = () => {
           )
         </div>
       </div>
-      <div className="flex font-naverBold items-center gap-1 ">
+      <div className="flex font-semibold items-center gap-1 ">
         <FiGithub size={14} />
         <Link
           target="_blank"

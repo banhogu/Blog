@@ -13,7 +13,7 @@ const Writer = () => {
   const [isResumeHover, setIsResumeHover] = useState(false);
   const [isAboutHover, setIsAboutHover] = useState(false);
   return (
-    <div className=" my-6 py-8 border-t-[1px] border-b-[1px] border-dashed border-gray-500">
+    <div className=" mt-20 mb-6 py-8 border-t-[1px] border-b-[1px] border-dashed border-gray-500">
       <div className="flex gap-7 items-center px-3 ">
         <div>
           <Image
