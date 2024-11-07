@@ -6,7 +6,7 @@ export function A({ children, className = '', href, ...props }) {
     return (
       <a
         href={href}
-        className={`font-naverSemi border-b text-gray-600 border-gray-300 transition-[border-color] hover:border-gray-600 dark:text-white dark:border-gray-500 dark:hover:border-white ${className}`}
+        className={`font-bold border-b text-sky-700 border-gray-300 transition-[border-color] hover:border-gray-800 dark:text-white dark:border-gray-500 dark:hover:border-white ${className}`}
         {...props}
       >
         {children}
@@ -16,7 +16,7 @@ export function A({ children, className = '', href, ...props }) {
     return (
       <Link
         href={href}
-        className={`font-naverSemi border-b text-gray-600 border-gray-300 transition-[border-color] hover:border-gray-600 dark:text-white dark:border-gray-500 dark:hover:border-white ${className}`}
+        className={`font-bold border-b text-sky-700 border-gray-300 transition-[border-color] hover:border-gray-800 dark:text-white dark:border-gray-500 dark:hover:border-white ${className}`}
         {...props}
       >
         {children}
