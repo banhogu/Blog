@@ -1,4 +1,4 @@
-import { LiaRobotSolid } from 'react-icons/lia';
+import { BsRobot } from 'react-icons/bs';
 import React from 'react';
 
 export interface MessageType {
@@ -20,7 +20,7 @@ const Message = ({ content, role }: MessageType) => {
       <div className="flex items-center">
         <div className="flex items-center gap-1">
           <div className="shadow-lg bg-gray-50 rounded-full flex items-center justify-center p-1">
-            <LiaRobotSolid size={40} color="black" />
+            <BsRobot size={40} color="black" />
           </div>
 
           <div className="font-semibold text-[15px] text-zinc-800">호진봇</div>

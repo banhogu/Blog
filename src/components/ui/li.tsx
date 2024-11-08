@@ -18,7 +18,7 @@ export function LI({ children }) {
     text-[17px]
   `}
     >
-      <p
+      <div
         className="border-b
       pb-1
       border-gray-200
@@ -26,7 +26,7 @@ export function LI({ children }) {
       "
       >
         {children}
-      </p>
+      </div>
     </li>
   );
 }

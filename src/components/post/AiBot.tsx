@@ -2,8 +2,8 @@
 import { Post } from '@/models/post';
 import { useModalStore } from '@/store/useModal.store';
 import React, { useEffect, useState } from 'react';
-import { LiaRobotSolid } from 'react-icons/lia';
 import { disablePageScroll, enablePageScroll } from 'scroll-lock';
+import { BsRobot } from 'react-icons/bs';
 
 interface AiBot {
   post: Post;
@@ -39,7 +39,7 @@ const AiBot = ({ post }) => {
         ${isHover ? 'bg-gray-200 dark:bg-gray-700' : ''}
         `}
       >
-        <LiaRobotSolid size={24} className="text-sky-900 dark:text-white" />
+        <BsRobot size={21} className="text-sky-900 dark:text-white" />
       </div>
       {isHover && (
         <div className="text-sm bg-white text-zinc-600 font-semibold  py-2 px-3 flex items-center justify-center rounded-lg  absolute -bottom-10 shadow-lg left-[30px] dark:bg-gray-600 dark:text-white">

@@ -5,7 +5,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import type { ChatCompletionMessageParam } from 'openai/resources/index';
 import Message, { MessageType } from './Message';
 import Image from 'next/image';
-import { LiaRobotSolid } from 'react-icons/lia';
+import { BsRobot } from 'react-icons/bs';
 import { motion } from 'framer-motion';
 import useChatbotMutation from '../factory/useChatbotMutation';
 
@@ -97,8 +97,8 @@ const AiModal = () => {
           {isPending && (
             <div className="mx-6 mt-5 items-start flex flex-col gap-2">
               <div className="flex items-center">
-                <div className="flex items-center gap-1">
-                  <LiaRobotSolid size={40} color="black" />
+                <div className="flex items-center gap-2">
+                  <BsRobot size={32} color="black" />
                   <div className="text-zinc-800 font-semibold text-[15px]">호진봇</div>
                 </div>
               </div>

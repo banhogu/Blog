@@ -7,6 +7,8 @@ import Link from 'next/link';
 import SideTheme from './SideTheme';
 import AiBot from './AiBot';
 import ToTop from './ToTop';
+import Share from './Share';
+import { useGetFirstImage } from '@/hooks/useGetFirstImage';
 
 interface SidebarType {
   parsedContent: ParsedPost[];
@@ -19,6 +21,7 @@ const Sidebar = ({ parsedContent, post }: SidebarType) => {
   }
 
   const activeHeading = useHeadingsObserver('h2');
+  const firstImage = useGetFirstImage(post.content);
 
   return (
     <>
@@ -50,6 +53,8 @@ const Sidebar = ({ parsedContent, post }: SidebarType) => {
           <AiBot post={post} />
 
           <SideTheme />
+
+          <Share title={post.title} description={post.description} image={firstImage} />
         </div>
       </div>
     </>
