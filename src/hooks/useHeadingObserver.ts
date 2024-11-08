@@ -32,7 +32,6 @@ export const useHeadingsObserver = (query: string) => {
     const elements = document.querySelectorAll(query);
     elements.forEach((elem) => observer.current?.observe(elem));
 
-    // Cleanup function to disconnect observer on component unmount
     return () => {
       if (observer.current) {
         observer.current.disconnect();

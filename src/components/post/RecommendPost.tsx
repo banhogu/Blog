@@ -20,7 +20,7 @@ const RecommendPost = ({ posts }: PostHeaderType) => {
   return (
     <div className=" pt-8 pb-10  sm:block hidden">
       <p className=" font-bold text-[19px] mt-2 dark:text-gray-100">관련 글</p>
-      <div className=" flex items-center justify-between gap-4 mt-5">
+      <div className=" flex items-center justify-between gap-4 mt-3">
         {RecommendPosts.map((item) => (
           <RecommendPostItem key={item.id} {...item} />
         ))}
