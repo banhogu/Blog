@@ -7,6 +7,7 @@ import Link from 'next/link';
 import SideTheme from './SideTheme';
 import AiBot from './AiBot';
 import ToTop from './ToTop';
+import Share from './Share';
 
 interface SidebarType {
   parsedContent: ParsedPost[];
@@ -50,6 +51,8 @@ const Sidebar = ({ parsedContent, post }: SidebarType) => {
           <AiBot post={post} />
 
           <SideTheme />
+
+          <Share />
         </div>
       </div>
     </>
