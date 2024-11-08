@@ -45,7 +45,7 @@ const Share = ({ title, description, image }: Share) => {
       },
       buttons: [
         {
-          title: '공유 하기',
+          title: '블로그 방문',
           link: {
             mobileWebUrl: window.location.href,
             webUrl: window.location.href,

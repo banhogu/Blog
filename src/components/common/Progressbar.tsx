@@ -39,14 +39,14 @@ const Progressbar = ({ title }: { title: string }) => {
     <div>
       {/* Menu*/}
       <div
-        className={` border-b border-gray-300 pt-[12.5px] pb-[8.5px] px-8 z-50 fixed top-0 left-0 right-0 hidden sm:flex justify-between items-center transition-transform duration-200 ease-in-out dark:border-none ${
+        className={`shadow-md border-gray-300 pt-[12.5px] pb-[8.5px] px-8 z-50 fixed top-0 left-0 right-0 hidden sm:flex justify-between items-center transition-transform duration-200 ease-in-out dark:border-none ${
           isVisible
             ? 'translate-y-0 backdrop-blur-sm bg-zinc-50/90 dark:bg-gray-800'
             : '-translate-y-full'
         }`}
       >
         {/* <Image src={'/images/about_me.png'} width={50} height={50} alt="" /> */}
-        <p className="font-bold text-[16px]"># {title}</p>
+        <p className="font-bold text-[16.5px]"># {title}</p>
         <div className="flex items-center gap-2">
           <Link
             id="aboutLink"
