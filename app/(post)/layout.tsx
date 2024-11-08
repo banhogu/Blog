@@ -1,4 +1,3 @@
-import Finish from '@/components/common/Finish';
 import Writer from '@/components/common/Writer';
 import { PostHeader } from '@/components/post/PostHeader';
 import RecommendPost from '@/components/post/RecommendPost';

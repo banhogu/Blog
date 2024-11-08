@@ -20,6 +20,8 @@ const Sidebar = ({ parsedContent, post }: SidebarType) => {
     return null;
   }
 
+  console.log(post);
+
   const activeHeading = useHeadingsObserver('h2');
   const firstImage = useGetFirstImage(post.content);
 

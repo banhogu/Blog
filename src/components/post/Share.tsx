@@ -17,8 +17,6 @@ interface Share {
 const Share = ({ title, description, image }: Share) => {
   const [isHover, setIsHover] = useState(false);
 
-  console.log(image);
-
   useEffect(() => {
     const script = document.createElement('script');
     script.src = 'https://t1.kakaocdn.net/kakao_js_sdk/2.3.0/kakao.min.js';
